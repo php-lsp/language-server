@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Lsp\Kernel\Attribute\AsController;
+use Lsp\Protocol\Type\CodeLensOptions;
+use Lsp\Protocol\Type\CompletionOptions;
+use Lsp\Protocol\Type\DiagnosticOptions;
 use Lsp\Protocol\Type\FileOperationOptions;
 use Lsp\Protocol\Type\FileOperationRegistrationOptions;
+use Lsp\Protocol\Type\HoverOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
 use Lsp\Protocol\Type\ServerCapabilities;
@@ -17,12 +21,20 @@ use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
 use Lsp\Protocol\Type\WorkspaceOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\File\VirtualFileInterface;
+use Psr\Log\LoggerInterface;
 
 #[AsController, Route('initialize')]
 final class InitializeController
 {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    )
+    {
+    }
+
     public function __invoke(InitializeParams $request): InitializeResult
     {
+        $this->logger->info('LSP Started');
         // Example workspace folders
         foreach ($request->workspaceFolders ?? [] as $folder) {
             $this->examplePrintWorkspaceFolder($folder);
@@ -31,6 +43,20 @@ final class InitializeController
         return new InitializeResult(
             capabilities: new ServerCapabilities(
                 textDocumentSync: TextDocumentSyncKind::Incremental,
+                completionProvider: new CompletionOptions(
+                    triggerCharacters: ['.', ':', '<'],
+                    resolveProvider: true,
+                ),
+                hoverProvider: true,
+//                codeLensProvider: new CodeLensOptions(
+//                    resolveProvider: true,
+//                ),
+                diagnosticProvider: new DiagnosticOptions(
+                    interFileDependencies: true,
+                    workspaceDiagnostics: false,
+                    identifier: null,
+                    workDoneProgress: null
+                ),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(
                         supported: true,

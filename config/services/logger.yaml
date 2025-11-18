@@ -14,7 +14,7 @@ services:
     class: Monolog\Handler\StreamHandler
     arguments:
       $stream: '%kernel.logs_dir%/%kernel.environment%.log'
-      $level: !php/enum Monolog\Level::Error
+      $level: !php/enum Monolog\Level::Debug
 
   Psr\Log\LoggerInterface:
     class: Monolog\Logger

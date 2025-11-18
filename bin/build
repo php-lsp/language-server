@@ -20,7 +20,7 @@ bin/lsp cache:clear --env=prod
 # install box/phar
 mkdir -p var/bin
 if [ ! -x var/bin/box ]; then
-    wget -O var/bin/box "https://github.com/box-project/box/releases/download/4.1.0/box.phar"
+    wget -O var/bin/box "https://github.com/box-project/box/releases/download/4.6.10/box.phar"
     chmod +x var/bin/box
 fi
 

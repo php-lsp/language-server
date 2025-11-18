@@ -6,3 +6,6 @@ services:
 
   App\Controller\:
     resource: '%kernel.project_dir%/app/Controller'
+
+  App\Module\:
+    resource: '%kernel.project_dir%/app/Module'

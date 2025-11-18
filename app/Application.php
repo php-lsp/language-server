@@ -6,6 +6,7 @@ namespace App;
 
 use Lsp\Extension\DocumentManager\DocumentManagerExtension;
 use Lsp\Kernel\LanguageServerKernel;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class Application extends LanguageServerKernel
@@ -14,6 +15,7 @@ final class Application extends LanguageServerKernel
     {
         parent::build($container);
 
+//        dump($container->get(LoggerInterface::class));
         $container->addCompilerPass(new DocumentManagerExtension());
     }
 }
