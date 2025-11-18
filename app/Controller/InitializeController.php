@@ -44,8 +44,7 @@ final class InitializeController
             capabilities: new ServerCapabilities(
                 textDocumentSync: TextDocumentSyncKind::Incremental,
                 completionProvider: new CompletionOptions(
-                    triggerCharacters: ['.', ':', '<'],
-                    resolveProvider: true,
+                    triggerCharacters: ['.', ':', '<', '\'', '"', '`'],
                 ),
                 hoverProvider: true,
 //                codeLensProvider: new CodeLensOptions(

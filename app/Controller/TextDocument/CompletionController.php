@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
 
-use App\Core\FunctionCompletionProvider;
+use App\Core\Completion\FunctionCompletionContributor;
+use App\Core\Completion\SuperglobalsCompletionContributor;
+use App\Core\Contracts\CompletionConsumer;
+use App\Core\Contracts\CompletionContext;
+use App\Core\Contracts\CompletionContributor;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\Tree;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
@@ -13,7 +17,6 @@ use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 use Lsp\Protocol\Type\CompletionParams;
 use Lsp\Router\Attribute\Route;
-use Microsoft\PhpParser\MissingToken;
 use PhpParser\Node\Stmt\ClassMethod;
 
 #[AsController, Route('textDocument/completion')]
@@ -30,10 +33,6 @@ final class CompletionController
     {
         dump('CompletionParams: ', $request);
 
-        $functionCompletionProvider = new FunctionCompletionProvider();
-        ['internal' => $internalFunctions, 'user' => $userFunctions] = $functionCompletionProvider->complete();
-        $internalFunctions = $this->filter($internalFunctions, $request);
-        $userFunctions = $this->filter($userFunctions, $request);
 
         $this->fileManager->commit($editor, $request->textDocument);
         $file = $this->fileManager->findPsiFile($editor, $request->textDocument);
@@ -49,20 +48,22 @@ final class CompletionController
 //        dump('file', count($internalFunctions), count($userFunctions));
 //        dump('counts', count($internalFunctions), count($userFunctions));
 
-        return array_map(
-            fn(string $name) => new CompletionItem(
-                label: $name,
-                kind: CompletionItemKind::FunctionKind,
-            ),
-            $internalFunctions,
-        );
-    }
+        /**
+         * @var class-string<CompletionContributor>[] $contributors
+         */
+        $contributors = [
+            SuperglobalsCompletionContributor::class,
+            FunctionCompletionContributor::class,
+        ];
 
-    private function filter(array $functions, CompletionParams $request): array
-    {
-        $result = [];
+        $context = new CompletionContext();
+        $consumer = new CompletionConsumer();
 
-        $result = array_splice($functions, 0, 50);
-        return $result;
+        foreach ($contributors as $contributor) {
+            $contributor = new $contributor();
+            $contributor->contribute($context, $consumer);
+        }
+
+        return $consumer->results;
     }
 }
