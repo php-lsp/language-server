@@ -7,6 +7,7 @@ use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use PhpParser\Error;
 use PhpParser\ErrorHandler\Collecting;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\NodeVisitor\NodeConnectingVisitor;
 use PhpParser\NodeVisitor\ParentConnectingVisitor;
 use PhpParser\Parser;
@@ -30,6 +31,7 @@ class PHPPsiFileParser
             $ast = $this->parser->parse($content->getContents(), $errorHandler);
 
             $traverser = new NodeTraverser(
+                new NameResolver($errorHandler, ['preserveOriginalNames' => true]),
                 new NodeConnectingVisitor(),
                 new ParentConnectingVisitor(),
             );

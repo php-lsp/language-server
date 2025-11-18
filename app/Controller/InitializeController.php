@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Module\Indexing\Indexer;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeLensOptions;
 use Lsp\Protocol\Type\CompletionOptions;
@@ -21,13 +22,17 @@ use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
 use Lsp\Protocol\Type\WorkspaceOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\File\VirtualFileInterface;
+use Lsp\Workspace\Project\ProjectFactory;
+use Lsp\Workspace\Project\ProjectInterface;
 use Psr\Log\LoggerInterface;
+use function str_repeat;
 
 #[AsController, Route('initialize')]
 final class InitializeController
 {
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly Indexer $indexer,
     )
     {
     }
@@ -37,7 +42,7 @@ final class InitializeController
         $this->logger->info('LSP Started');
         // Example workspace folders
         foreach ($request->workspaceFolders ?? [] as $folder) {
-            $this->examplePrintWorkspaceFolder($folder);
+            $this->walkWorkspaceFolder($folder);
         }
 
         return new InitializeResult(
@@ -84,33 +89,17 @@ final class InitializeController
                 ),
             ),
             serverInfo: new ServerInfo(
-                name: 'example-lsp-server',
+                name: 'PHP Server',
                 version: '0.0.1',
             ),
         );
     }
 
-    private function examplePrintWorkspaceFolder(WorkspaceFolder $folder): void
+    private function walkWorkspaceFolder(WorkspaceFolder $folder): void
     {
-        $projects = new \Lsp\Workspace\Project\ProjectFactory();
-
+        $projects = new ProjectFactory();
         $project = $projects->create($folder->uri, $folder->name);
 
-        foreach ($project as $file) {
-            $this->examplePrintProjectStructure($file, 0);
-        }
-    }
-
-    private function examplePrintProjectStructure(VirtualFileInterface $file, int $level): void
-    {
-        if ($file->name === 'vendor') {
-            return;
-        }
-
-        echo \str_repeat('  ', $level) . '- ' . $file . "\n";
-
-        foreach ($file as $child) {
-            $this->examplePrintProjectStructure($child, $level + 1);
-        }
+        $this->indexer->index($project);
     }
 }

@@ -5,10 +5,14 @@ namespace App\Module\PsiFile;
 
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use PhpParser\Error;
+use PhpParser\Node;
 
 class SourceFileRoot
 {
     public function __construct(
+        /**
+         * @var array<Node>
+         */
         public array $children,
         public Document $document,
         /**

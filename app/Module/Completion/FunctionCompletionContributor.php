@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Completion;
+namespace App\Module\Completion;
 
+use App\Core\Contracts\Completion\AsCompletionContributor;
 use App\Core\Contracts\CompletionConsumer;
 use App\Core\Contracts\CompletionContext;
 use App\Core\Contracts\CompletionContributor;
@@ -11,6 +12,7 @@ use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 use Lsp\Protocol\Type\CompletionParams;
 
+#[AsCompletionContributor]
 final class FunctionCompletionContributor implements CompletionContributor
 {
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void

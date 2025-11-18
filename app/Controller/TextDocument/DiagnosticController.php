@@ -43,7 +43,7 @@ final class DiagnosticController
 {
     public function __construct(
         private PHPPsiFileParser $fileParser,
-        private DocumentFactoryInterface $documentFactory,
+//        private DocumentFactoryInterface $documentFactory,
     )
     {
     }
