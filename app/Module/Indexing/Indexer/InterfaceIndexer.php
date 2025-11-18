@@ -21,11 +21,13 @@ class InterfaceIndexer extends AbstractPhpIndexer
 
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
-        $classes = Tree::childrenOfType($phpFile->ast, Interface_::class);
+        $interfaces = Tree::childrenOfType($phpFile->ast, Interface_::class);
 
-        return array_map(
-            fn(Interface_ $interface) => $interface->namespacedName->toString(),
-            $classes,
-        );
+        $results = [];
+        foreach ($interfaces as $interface) {
+            $results[] = $interface->namespacedName->toString();
+        }
+
+        return $results;
     }
 }

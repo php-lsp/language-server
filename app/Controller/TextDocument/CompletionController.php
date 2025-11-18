@@ -37,7 +37,7 @@ final class CompletionController
     {
         dump('CompletionParams: ', $request);
 
-        $this->fileManager->commit($editor, $request->textDocument);
+        $this->fileManager->refreshFile($editor, $request->textDocument);
         $file = $this->fileManager->findPsiFile($editor, $request->textDocument);
         $position = $request->position;
         $tokens = $file->findAtPosition($position);

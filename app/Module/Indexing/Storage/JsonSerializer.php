@@ -7,7 +7,7 @@ class JsonSerializer implements SerializerInterface
     public function serialize(Entry $entry): string
     {
         return json_encode([
-            'indexKey' => $entry->indexKey,
+            'key' => $entry->key,
             'value' => $entry->value,
             'uri' => $entry->uri,
         ]);
@@ -18,7 +18,7 @@ class JsonSerializer implements SerializerInterface
         $decoded = json_decode($value, true);
 
         return new Entry(
-            $decoded['indexKey'],
+            $decoded['key'],
             $decoded['value'],
             $decoded['uri'],
         );

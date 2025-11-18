@@ -6,16 +6,17 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 
 #[AsIndexer]
 /**
- * @implements AbstractPhpIndexer<string>
+ * @implements AbstractPhpIndexer<array<string, list<string>>
  */
-class ClassIndexer extends AbstractPhpIndexer
+class ClassMethodIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
     {
-        return 'php.classes.fqn';
+        return 'php.classMethods.fqn';
     }
 
     protected function indexInternal(PHPPsiFile $phpFile): array
@@ -24,7 +25,12 @@ class ClassIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($classes as $class) {
-            $results[] = $class->namespacedName->toString();
+            $methods = Tree::childrenOfType($class, ClassMethod::class);
+
+            $className = $class->namespacedName->toString();
+            foreach ($methods as $method) {
+                $results[$className][] = $method->name->toString();
+            }
         }
 
         return $results;

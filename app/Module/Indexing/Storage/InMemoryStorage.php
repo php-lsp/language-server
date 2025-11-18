@@ -37,8 +37,12 @@ class InMemoryStorage implements StorageInterface
             $this->entries[$indexKey] = [];
         }
 
-        foreach ($values as $value) {
-            $this->entries[$indexKey][] = new Entry($indexKey, $value, $uri);
+        foreach ($values as $key => $value) {
+            if (is_int($key)) {
+                $this->entries[$indexKey][] = new Entry($key, $value, $uri);
+            } else {
+                $this->entries[$indexKey][$key] = new Entry($key, $value, $uri);
+            }
         }
     }
 }

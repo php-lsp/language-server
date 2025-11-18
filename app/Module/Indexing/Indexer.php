@@ -41,7 +41,7 @@ final class Indexer
 
     private function walkFilesInternal(VirtualFileInterface $file, int $level): void
     {
-        if ($file->name === 'node_modules' || $file->name === '.git' || $file->name === '.idea') {
+        if ($file->name === 'node_modules' || $file->name === '.git' || $file->name === '.idea' || $file->name === 'vendor') {
 //            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";
             return;
         }

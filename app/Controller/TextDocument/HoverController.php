@@ -18,8 +18,6 @@ final class HoverController
 {
     public function __invoke(HoverParams $request): Hover
     {
-        var_dump($request);
-
         return new Hover(
             contents: new MarkupContent(
                 kind: MarkupKind::Markdown,

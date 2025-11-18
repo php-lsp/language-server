@@ -26,7 +26,7 @@ final class ClassesCompletionContributor implements CompletionContributor
 
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $value) {
+        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $key => $value) {
             $consumer(new CompletionItem(
                 label: $value->value,
                 kind: CompletionItemKind::ClassKind,

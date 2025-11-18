@@ -7,6 +7,7 @@ namespace App\Module\PsiFile;
 use Lsp\Contracts\Server\ConnectionInterface;
 use Lsp\Dispatcher\DispatcherInterface;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
+use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Extension\DocumentManager\Editor\MutableEditorInterface;
 use Lsp\Protocol\Type\Diagnostic;
@@ -38,7 +39,7 @@ class InMemoryPsiFileManager
     {
     }
 
-    public function commit(EditorInterface $editor, TextDocumentIdentifier $identifier)
+    public function refreshFile(EditorInterface $editor, TextDocumentIdentifier $identifier): PHPPsiFile
     {
         $document = $this->getDocument($editor, $identifier);
 
@@ -86,15 +87,20 @@ class InMemoryPsiFileManager
 //            );
         }
 
-        $this->models[$identifier->uri] = new PHPPsiFile($root);
+        return $this->models[$identifier->uri] = new PHPPsiFile($root);
     }
 
     public function findPsiFile(EditorInterface $editor, TextDocumentIdentifier $identifier): ?PHPPsiFile
     {
-        return $this->models[$identifier->uri] ?? null;
+        $psiFile = $this->models[$identifier->uri] ?? null;
+        if ($psiFile === null) {
+            $psiFile = $this->refreshFile($editor, $identifier);
+        }
+
+        return $psiFile;
     }
 
-    private function getDocument(EditorInterface $editor, TextDocumentIdentifier $identifier): ?\Lsp\Extension\DocumentManager\Editor\Document\Document
+    private function getDocument(EditorInterface $editor, TextDocumentIdentifier $identifier): ?Document
     {
         $document = $editor->findByUriString($identifier->uri);
 //        if ($document === null) {

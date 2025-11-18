@@ -8,7 +8,7 @@ namespace App\Module\Indexing\Storage;
 class Entry
 {
     public function __construct(
-        public readonly string $indexKey,
+        public readonly string $key,
         /**
          * @var TValue
          */

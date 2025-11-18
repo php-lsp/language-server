@@ -29,8 +29,9 @@ final class IndexLookup
      */
     public function findByKey(string $indexerClass): iterable
     {
-        foreach ($this->storage->read($indexerClass::getKey()) as $entry) {
-            yield $entry;
+        yield from $this->storage->read($indexerClass::getKey());
+        foreach ($this->storage->read($indexerClass::getKey()) as $key => $entry) {
+            yield $key => $entry;
         }
     }
 }

@@ -14,6 +14,7 @@ use Lsp\Protocol\Type\FileOperationRegistrationOptions;
 use Lsp\Protocol\Type\HoverOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
+use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
 use Lsp\Protocol\Type\TextDocumentSyncKind;
@@ -55,6 +56,9 @@ final class InitializeController
 //                codeLensProvider: new CodeLensOptions(
 //                    resolveProvider: true,
 //                ),
+                referencesProvider: new ReferenceOptions(
+                    workDoneProgress: null,
+                ),
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
