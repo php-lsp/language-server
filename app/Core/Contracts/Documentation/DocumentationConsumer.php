@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Core\Contracts;
+namespace App\Core\Contracts\Documentation;
 
-use Lsp\Protocol\Type\CompletionItem;
-
-class CompletionConsumer
+class DocumentationConsumer
 {
     public function __construct(
         public array $results = [],
@@ -12,7 +10,7 @@ class CompletionConsumer
     {
     }
 
-    public function __invoke(CompletionItem ...$items): void
+    public function __invoke(string ...$items): void
     {
         array_push($this->results, ...$items);
     }

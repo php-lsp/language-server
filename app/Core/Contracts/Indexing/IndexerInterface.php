@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Indexing;
+namespace App\Core\Contracts\Indexing;
 
 use Lsp\Workspace\File\VirtualFileInterface;
 

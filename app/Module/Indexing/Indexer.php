@@ -2,17 +2,10 @@
 
 namespace App\Module\Indexing;
 
-use App\Module\Indexing\Indexer\ClassIndexer;
-use App\Module\Indexing\Storage\Entry;
-use App\Module\Indexing\Storage\InMemoryStorage;
+use App\Core\Contracts\Indexing\IndexerInterface;
 use App\Module\Indexing\Storage\StorageInterface;
-use App\Module\PsiFile\PHPPsiFileParser;
-use Lsp\Protocol\Type\WorkspaceFolder;
-use Lsp\Workspace\File\FileFactoryInterface;
 use Lsp\Workspace\File\VirtualFileInterface;
 use Lsp\Workspace\Project\Project;
-use Lsp\Workspace\Project\ProjectFactory;
-use PhpParser\Node\Stmt\Class_;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 

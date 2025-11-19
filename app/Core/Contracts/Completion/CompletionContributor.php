@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Contracts;
+namespace App\Core\Contracts\Completion;
 
 interface CompletionContributor
 {

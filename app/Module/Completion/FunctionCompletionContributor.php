@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Module\Completion;
 
 use App\Core\Contracts\Completion\AsCompletionContributor;
-use App\Core\Contracts\CompletionConsumer;
-use App\Core\Contracts\CompletionContext;
-use App\Core\Contracts\CompletionContributor;
+use App\Core\Contracts\Completion\CompletionConsumer;
+use App\Core\Contracts\Completion\CompletionContext;
+use App\Core\Contracts\Completion\CompletionContributor;
 use App\Module\Indexing\Indexer\FunctionIndexer;
 use App\Module\Indexing\IndexLookup;
 use Lsp\Protocol\Type\CompletionItem;
@@ -28,7 +28,7 @@ final class FunctionCompletionContributor implements CompletionContributor
             $consumer(new CompletionItem(
                 label: $value->value,
                 kind: CompletionItemKind::FunctionKind,
-                detail: '[class]',
+                detail: '[function]',
             ));
         }
     }

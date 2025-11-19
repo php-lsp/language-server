@@ -2,6 +2,7 @@
 
 namespace App\Module\Indexing;
 
+use App\Core\Contracts\Indexing\IndexerInterface;
 use App\Module\Indexing\Storage\Entry;
 use App\Module\Indexing\Storage\StorageInterface;
 

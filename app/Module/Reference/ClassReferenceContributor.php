@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace App\Module\Reference;
 
-use App\Core\Contracts\Completion\AsCompletionContributor;
-use App\Core\Contracts\CompletionConsumer;
-use App\Core\Contracts\CompletionContext;
-use App\Core\Contracts\CompletionContributor;
-use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\References\AsReferenceContributor;
 use App\Core\Contracts\References\ReferenceConsumer;
 use App\Core\Contracts\References\ReferenceContext;
@@ -16,9 +11,6 @@ use App\Core\Contracts\References\ReferenceContributor;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
-use Lsp\Protocol\Type\CompletionItem;
-use Lsp\Protocol\Type\CompletionItemKind;
-use Lsp\Protocol\Type\CompletionParams;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;

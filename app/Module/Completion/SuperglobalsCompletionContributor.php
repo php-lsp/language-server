@@ -3,9 +3,9 @@
 namespace App\Module\Completion;
 
 use App\Core\Contracts\Completion\AsCompletionContributor;
-use App\Core\Contracts\CompletionConsumer;
-use App\Core\Contracts\CompletionContext;
-use App\Core\Contracts\CompletionContributor;
+use App\Core\Contracts\Completion\CompletionConsumer;
+use App\Core\Contracts\Completion\CompletionContext;
+use App\Core\Contracts\Completion\CompletionContributor;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 

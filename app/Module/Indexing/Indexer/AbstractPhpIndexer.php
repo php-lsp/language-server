@@ -2,7 +2,7 @@
 
 namespace App\Module\Indexing\Indexer;
 
-use App\Module\Indexing\IndexerInterface;
+use App\Core\Contracts\Indexing\IndexerInterface;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\PHPPsiFileParser;
 use Lsp\Extension\DocumentManager\Editor\Document\DocumentFactory;

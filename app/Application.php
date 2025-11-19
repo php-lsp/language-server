@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Core\Contracts\Completion\AsCompletionContributor;
+use App\Core\Contracts\Documentation\AsDocumentationContributor;
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\References\AsReferenceContributor;
 use App\Infrastructure\Symfony\LSPCompilerPass;
@@ -20,6 +21,7 @@ final class Application extends LanguageServerKernel
         AsIndexer::class => 'lsp.indexers',
         AsCompletionContributor::class => 'lsp.completionContributors',
         AsReferenceContributor::class => 'lsp.referenceContributors',
+        AsDocumentationContributor::class => 'lsp.documentationContributors',
     ];
 
     protected function build(ContainerBuilder $container): void

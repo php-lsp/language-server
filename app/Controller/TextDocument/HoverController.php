@@ -4,73 +4,41 @@ declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
 
-use App\Controller\PHPStanAnalyzer;
+use App\Core\Contracts\Documentation\DocumentationConsumer;
+use App\Core\Contracts\Documentation\DocumentationContext;
+use App\Core\Contracts\Documentation\DocumentationContributor;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\Hover;
 use Lsp\Protocol\Type\HoverParams;
-use Lsp\Protocol\Type\MarkupContent;
-use Lsp\Protocol\Type\MarkupKind;
-use Lsp\Protocol\Type\Position;
-use Lsp\Protocol\Type\Range;
 use Lsp\Router\Attribute\Route;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 #[AsController, Route('textDocument/hover')]
 final class HoverController
 {
+    /**
+     * @var list<DocumentationContributor>
+     */
+    private array $contributors;
+
     public function __construct(
-        private PHPStanAnalyzer $analyzer
+        #[AutowireIterator('lsp.documentationContributors')]
+        iterable $contributors,
     )
     {
+        $this->contributors = iterator_to_array($contributors);
     }
 
-    public function __invoke(EditorInterface $editor, HoverParams $request): Hover
+    public function __invoke(EditorInterface $editor, HoverParams $params): Hover
     {
-        $type = $this->analyzer->getTypeAtPosition(
-            $editor,
-            $request->textDocument,
-            $request->position
-        );
+        $context = new DocumentationContext($params->textDocument, $params->position, $editor);
+        $consumer = new DocumentationConsumer();
 
-        if ($type === null) {
-            return new Hover(contents: new MarkupContent(
-                kind: MarkupKind::Markdown,
-                value: 'No type information available'
-            ));
+        foreach ($this->contributors as $contributor) {
+            $contributor->contribute($context, $consumer);
         }
-        return new Hover(
-            contents: new MarkupContent(
-                kind: MarkupKind::Markdown,
-                value: $this->formatType($type)
-            )
-        );
-        return new Hover(
-            contents: new MarkupContent(
-                kind: MarkupKind::Markdown,
-                value: <<<Markdown
-# Big big header
 
-Markdown
-            ),
-            range: new Range(
-                start: $request->position,
-                end: new Position(
-                    line: $request->position->line + 2,
-                    character: 0,
-                ),
-            ),
-        );
-    }
-
-    private function formatType(\PHPStan\Type\Type $type): string
-    {
-        return sprintf(
-            <<<MARKDOWN
-            PHPStan Type:
-            %s (%s)
-            MARKDOWN,
-            $type->describe(\PHPStan\Type\VerbosityLevel::precise()),
-            $type->describe(\PHPStan\Type\VerbosityLevel::typeOnly())
-        );
+        return new Hover($consumer->results);
     }
 }

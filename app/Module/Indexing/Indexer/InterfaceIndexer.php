@@ -3,14 +3,14 @@
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
-use App\Module\Indexing\IndexerInterface;
+use App\Core\Contracts\Indexing\IndexerInterface;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use PhpParser\Node\Stmt\Interface_;
 
 #[AsIndexer]
 /**
- * @implements IndexerInterface<string>
+ * @implements \App\Core\Contracts\Indexing\IndexerInterface<string>
  */
 class InterfaceIndexer extends AbstractPhpIndexer
 {
