@@ -6,6 +6,7 @@ namespace App\Module\PsiFile;
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
+use Phplrt\Contracts\Source\SourceExceptionInterface;
 use PhpParser\Node;
 
 class Tree
@@ -72,7 +73,7 @@ class Tree
             $node instanceof Node\Stmt\Function_ => $node->stmts,
             $node instanceof Node\Stmt\ClassMethod => $node->stmts,
             default => [],
-        };
+        } ?? [];
     }
 
     public static function getRange(Node $node, PHPPsiFile $file): Range
@@ -80,16 +81,16 @@ class Tree
         return new Range(
             start: new Position(
                 $node->getStartLine() - 1,
-                self::toColumn($file->ast->document, $node->getStartTokenPos() - 1),
+                self::toColumn($file->ast->document, $node->getStartFilePos() - 1),
             ),
             end: new Position(
                 $node->getEndLine() - 1,
-                self::toColumn($file->ast->document, $node->getEndTokenPos() - 1),
+                self::toColumn($file->ast->document, $node->getEndFilePos() - 1),
             ),
         );
     }
 
-    private static function toColumn(Document $document, int $pos): int
+    public static function toColumn(Document $document, int $pos): int
     {
         $text = $document->getContents();
         if ($pos > strlen($text)) {
@@ -102,5 +103,27 @@ class Tree
         }
 
         return $pos - $lineStartPos;
+    }
+
+    /**
+     * @return array{int, int}
+     */
+    public static function toLineColumn(Document $document, int $pos): array
+    {
+        $text = $document->getContents();
+        if ($pos > strlen($text)) {
+            throw new \RuntimeException('Invalid position information');
+        }
+
+        $line = substr_count($text, "\n", 0, $pos);
+
+        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
+        if (false === $lineStartPos) {
+            $lineStartPos = -1;
+        }
+
+        $column = $pos - $lineStartPos - 1;
+
+        return [$line, $column];
     }
 }

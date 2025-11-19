@@ -27,6 +27,7 @@ use Lsp\Protocol\Type\WorkspaceOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\File\VirtualFileInterface;
 use Lsp\Workspace\Project\ProjectFactory;
+use Lsp\Workspace\Project\ProjectFactoryInterface;
 use Lsp\Workspace\Project\ProjectInterface;
 use Psr\Log\LoggerInterface;
 use function str_repeat;
@@ -37,6 +38,7 @@ final class InitializeController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly Indexer $indexer,
+        private readonly ProjectFactoryInterface $projectFactory,
         private readonly ProjectManager $projectManager,
     )
     {
@@ -110,8 +112,7 @@ final class InitializeController
 
     private function walkWorkspaceFolder(WorkspaceFolder $folder): void
     {
-        $projects = new ProjectFactory();
-        $project = $projects->create($folder->uri, $folder->name);
+        $project = $this->projectFactory->create($folder->uri, $folder->name);
         $this->projectManager->setProject($project);
 
         $this->indexer->index($project);

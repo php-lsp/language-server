@@ -47,3 +47,14 @@ when@dev:
 
 
 
+    Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory: ~
+    Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface:
+      class: Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory
+
+    Lsp\Workspace\Project\ProjectFactory: ~
+    Lsp\Workspace\Project\ProjectFactoryInterface:
+      class: Lsp\Workspace\Project\ProjectFactory
+
+    Lsp\Workspace\File\FileFactory: ~
+    Lsp\Workspace\File\FileFactoryInterface:
+      class: Lsp\Workspace\File\FileFactory

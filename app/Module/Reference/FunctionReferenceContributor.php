@@ -11,9 +11,11 @@ use App\Core\Contracts\References\ReferenceContributor;
 use App\Module\Indexing\Indexer\FunctionIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
+use Lsp\Protocol\Type\TextDocumentIdentifier;
 use PhpParser\Node;
 
 #[AsReferenceContributor]
@@ -57,13 +59,18 @@ final class FunctionReferenceContributor implements ReferenceContributor
         }
         $functionName = $node->name->toString();
 
-        $zeroPosition = new Position(0, 0);
-        $startRange = new Range($zeroPosition, $zeroPosition);
-
         foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $value) {
-            if ($value->value !== $functionName) {
+            if ($value->value[0] !== $functionName) {
                 continue;
             }
+            $source = $this->fileManager->findPsiFile($context->editor, new TextDocumentIdentifier($value->uri));
+            $position = $value->value[1];
+
+            [$line, $column] = Tree::toLineColumn($source->ast->document, $position);
+
+            $exactPosition = new Position($line, $column);
+            $startRange = new Range($exactPosition, $exactPosition);
+
             $consumer(new Location(
                 uri: $value->uri,
                 range: $startRange,

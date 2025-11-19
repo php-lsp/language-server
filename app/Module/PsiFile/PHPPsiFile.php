@@ -20,27 +20,36 @@ class PHPPsiFile
     /**
      * @return array<Node>
      */
-    public function findAtPosition(Position $position): array
+    public function findAtPosition(Position|int $position): array
     {
-        $line = $position->line + 1;
+        if (is_int($position)) {
+            $visitor = new NodeFinder();
+            return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
+                return $node->getStartFilePos() <= $position && $position <= $node->getEndFilePos();
 
-        $visitor = new NodeFinder();
-        $result = $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
-            if (
-                $node->getStartLine() <= $line && $line <= $node->getEndLine()
-            ) {
+            });
+        }
+        if ($position instanceof Position) {
+            $line = $position->line + 1;
+
+            $visitor = new NodeFinder();
+            return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
+                if (
+                    $node->getStartLine() <= $line && $line <= $node->getEndLine()
+                ) {
 //                $length = $node->getEndFilePos() - $node->getStartFilePos();
-                $startColumn = $this->toColumn($this->ast->document, $node->getStartFilePos());
-                $endColumn = $this->toColumn($this->ast->document, $node->getEndFilePos());
+                    $startColumn = $this->toColumn($this->ast->document, $node->getStartFilePos());
+                    $endColumn = $this->toColumn($this->ast->document, $node->getEndFilePos());
 
-                $result = $startColumn <= $position->character && $position->character <= $endColumn;
-                return $result;
-            }
+                    $result = $startColumn <= $position->character && $position->character <= $endColumn;
+                    return $result;
+                }
 
-            return false;
-        });
+                return false;
+            });
+        }
 
-        return $result;
+        return [];
     }
 
     public function findLastAtPosition(Position $position): null|Node

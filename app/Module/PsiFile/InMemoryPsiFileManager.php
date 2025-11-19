@@ -42,6 +42,9 @@ class InMemoryPsiFileManager
     public function refreshFile(EditorInterface $editor, TextDocumentIdentifier $identifier): PHPPsiFile
     {
         $document = $this->getDocument($editor, $identifier);
+        if ($document === null) {
+            throw new \RuntimeException('Document ' . $identifier->uri . ' not found');
+        }
 
         $root = $this->fileParser->parse($document);
         if ($root->errors) {

@@ -15,11 +15,14 @@ use App\Core\Contracts\Signature\SignatureContributor;
 use App\Module\Indexing\Indexer\FunctionIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\PHPPsiFile;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 use Lsp\Protocol\Type\ParameterInformation;
 use Lsp\Protocol\Type\SignatureInformation;
+use Lsp\Protocol\Type\TextDocumentIdentifier;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Stmt\Function_;
 
 #[AsSignatureContributor]
 final class FunctionSignatureContributor implements SignatureContributor
@@ -47,12 +50,13 @@ final class FunctionSignatureContributor implements SignatureContributor
         }
 
         foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $key => $value) {
-            if ($value->value !== $node->name->toString()) {
+            if ($value->value[0] !== $node->name->toString()) {
                 continue;
             }
+            $source = $this->fileManager->findPsiFile($context->editor, new TextDocumentIdentifier($value->uri));
 
             // Найти определение функции
-            $definition = $this->findFunctionDefinition('');
+            $definition = $this->findFunctionDefinition($source, $value->value[1]);
 
             if (!$definition) {
                 continue;
@@ -77,7 +81,6 @@ final class FunctionSignatureContributor implements SignatureContributor
     }
 
 
-
     private function findFunctionCall(string $uri, $position): ?array
     {
         // Логика поиска вызова функции
@@ -87,16 +90,40 @@ final class FunctionSignatureContributor implements SignatureContributor
         ];
     }
 
-    private function findFunctionDefinition(string $name): ?array
+    private function findFunctionDefinition(PHPPsiFile $file, int $position): ?array
     {
-        // Поиск определения в AST
+        $nodes = $file->findAtPosition($position);
+
+        /**
+         * @var Function_|null $node
+         */
+        $node = array_find($nodes, fn($node) => match (true) {
+            $node instanceof Function_ => true,
+            default => false,
+        });
+        if ($node === null) {
+            return null;
+        }
+
+        $params = array_map(
+            fn($param) => sprintf('%s $%s', $param->getType(), $param->var->name),
+            $node->params,
+        );
+
+        $signature = sprintf('%s(%s): %s', $node->name->toString(), implode(', ', $params), $node->returnType->toString());
+
         return [
-            'signature' => 'myFunction(string $param1, int $param2): void',
-            'params' => [
-                ['name' => '$param1', 'doc' => 'First parameter'],
-                ['name' => '$param2', 'doc' => 'Second parameter'],
-            ],
-            'doc' => 'Function description'
+//            'signature' => 'myFunction(string $param1, int $param2): void',
+            'signature' => $signature,
+//            'params' => [
+//                ['name' => '$param1', 'doc' => 'First parameter'],
+//                ['name' => '$param2', 'doc' => 'Second parameter'],
+//            ],
+            'params' => array_map(
+                fn($param) => ['name' => $param->var->name, 'doc' => $param->type->toString()],
+                $params,
+            ),
+            'doc' => $node->getDocComment()->getReformattedText(),
         ];
     }
 }

@@ -26,7 +26,7 @@ final class FunctionCompletionContributor implements CompletionContributor
     {
         foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $key => $value) {
             $consumer(new CompletionItem(
-                label: $value->value,
+                label: $value->value[0],
                 kind: CompletionItemKind::FunctionKind,
                 detail: '[function]',
             ));

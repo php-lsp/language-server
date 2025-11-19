@@ -4,8 +4,12 @@ namespace App\Module\Indexing;
 
 use App\Core\Contracts\Indexing\IndexerInterface;
 use App\Module\Indexing\Storage\StorageInterface;
+use Lsp\Workspace\File\FileFactoryInterface;
+use Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface;
+use Lsp\Workspace\File\VirtualFile;
 use Lsp\Workspace\File\VirtualFileInterface;
 use Lsp\Workspace\Project\Project;
+use Lsp\Workspace\Uri\Uri;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
@@ -19,6 +23,8 @@ final class Indexer
         iterable $indexers,
         private StorageInterface $storage,
         private LoggerInterface $logger,
+        private FilesystemReaderFactoryInterface $filesystemReaderFactory,
+        private FileFactoryInterface $files,
     )
     {
         $this->indexers = iterator_to_array($indexers);
@@ -31,7 +37,11 @@ final class Indexer
             $this->walkFilesInternal($file, 0);
         }
 
-//        $this->walkFilesInternal($file, $level);
+        $realpath = realpath(__DIR__ . '/../../../resources/php-stubs');
+        $uri = Uri::createLocal('file://' . $realpath);
+        $stubs = $this->files->create($uri->path, $this->filesystemReaderFactory);
+
+        $this->walkFilesInternal($stubs, 0);
         $this->logger->info('Indexing finished');
     }
 

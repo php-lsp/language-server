@@ -10,7 +10,7 @@ use PhpParser\Node\Stmt\Function_;
 
 #[AsIndexer]
 /**
- * @implements AbstractPhpIndexer<string>
+ * @implements AbstractPhpIndexer<list<string, int>>
  */
 class FunctionIndexer extends AbstractPhpIndexer
 {
@@ -25,7 +25,7 @@ class FunctionIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($functions as $function) {
-            $results[] = $function->namespacedName->toString();
+            $results[] = [$function->namespacedName->toString(), $function->getStartFilePos()];
         }
 
         return $results;
