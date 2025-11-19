@@ -17,21 +17,6 @@ class PHPPsiFile
     {
     }
 
-    private function toColumn(Document $document, int $pos): int
-    {
-        $text = $document->getContents();
-        if ($pos > strlen($text)) {
-            throw new \RuntimeException('Invalid position information');
-        }
-
-        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
-        if (false === $lineStartPos) {
-            $lineStartPos = -1;
-        }
-
-        return $pos - $lineStartPos;
-    }
-
     /**
      * @return array<Node>
      */
@@ -62,5 +47,20 @@ class PHPPsiFile
     {
         $nodes = $this->findAtPosition($position);
         return end($nodes) ?: null;
+    }
+
+    private function toColumn(Document $document, int $pos): int
+    {
+        $text = $document->getContents();
+        if ($pos > strlen($text)) {
+            throw new \RuntimeException('Invalid position information');
+        }
+
+        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
+        if (false === $lineStartPos) {
+            $lineStartPos = -1;
+        }
+
+        return $pos - $lineStartPos;
     }
 }

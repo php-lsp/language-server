@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Module\PsiFile;
 
+use Lsp\Extension\DocumentManager\Editor\Document\Document;
+use Lsp\Protocol\Type\Position;
+use Lsp\Protocol\Type\Range;
 use PhpParser\Node;
 
 class Tree
@@ -61,7 +64,7 @@ class Tree
     /**
      * @return array<Node>
      */
-    private static function getNodeChildren(Node $node):array
+    private static function getNodeChildren(Node $node): array
     {
         return match (true) {
             $node instanceof Node\Stmt\ClassLike => $node->stmts,
@@ -70,5 +73,34 @@ class Tree
             $node instanceof Node\Stmt\ClassMethod => $node->stmts,
             default => [],
         };
+    }
+
+    public static function getRange(Node $node, PHPPsiFile $file): Range
+    {
+        return new Range(
+            start: new Position(
+                $node->getStartLine() - 1,
+                self::toColumn($file->ast->document, $node->getStartTokenPos() - 1),
+            ),
+            end: new Position(
+                $node->getEndLine() - 1,
+                self::toColumn($file->ast->document, $node->getEndTokenPos() - 1),
+            ),
+        );
+    }
+
+    private static function toColumn(Document $document, int $pos): int
+    {
+        $text = $document->getContents();
+        if ($pos > strlen($text)) {
+            throw new \RuntimeException('Invalid position information');
+        }
+
+        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
+        if (false === $lineStartPos) {
+            $lineStartPos = -1;
+        }
+
+        return $pos - $lineStartPos;
     }
 }

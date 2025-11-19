@@ -10,6 +10,7 @@ use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeLensOptions;
 use Lsp\Protocol\Type\CompletionOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
+use Lsp\Protocol\Type\DocumentSymbolOptions;
 use Lsp\Protocol\Type\FileOperationOptions;
 use Lsp\Protocol\Type\FileOperationRegistrationOptions;
 use Lsp\Protocol\Type\HoverOptions;
@@ -62,6 +63,7 @@ final class InitializeController
                 referencesProvider: new ReferenceOptions(
                     workDoneProgress: null,
                 ),
+                documentSymbolProvider: new DocumentSymbolOptions(),
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
