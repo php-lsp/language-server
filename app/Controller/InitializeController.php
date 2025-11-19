@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Module\Indexing\Indexer;
+use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeLensOptions;
 use Lsp\Protocol\Type\CompletionOptions;
@@ -34,6 +35,7 @@ final class InitializeController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly Indexer $indexer,
+        private readonly ProjectManager $projectManager,
     )
     {
     }
@@ -103,6 +105,7 @@ final class InitializeController
     {
         $projects = new ProjectFactory();
         $project = $projects->create($folder->uri, $folder->name);
+        $this->projectManager->setProject($project);
 
         $this->indexer->index($project);
     }
