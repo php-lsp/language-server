@@ -19,6 +19,7 @@ use Lsp\Protocol\Type\InitializeResult;
 use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
+use Lsp\Protocol\Type\SignatureHelpOptions;
 use Lsp\Protocol\Type\TextDocumentSyncKind;
 use Lsp\Protocol\Type\WorkspaceFolder;
 use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
@@ -60,6 +61,9 @@ final class InitializeController
 //                codeLensProvider: new CodeLensOptions(
 //                    resolveProvider: true,
 //                ),
+                signatureHelpProvider: new SignatureHelpOptions(
+                    triggerCharacters: ['(', ',', ':', ' '],
+                ),
                 referencesProvider: new ReferenceOptions(
                     workDoneProgress: null,
                 ),

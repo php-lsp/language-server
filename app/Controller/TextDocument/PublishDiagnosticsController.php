@@ -23,7 +23,7 @@ final class PublishDiagnosticsController
 
     public function __invoke(PublishDiagnosticsParams $message): void
     {
-        dump('textDocument/publishDiagnostics:', $message);
+//        dump('textDocument/publishDiagnostics:', $message);
 
         $parameters = $this->resultProvider->getResult($message);
 

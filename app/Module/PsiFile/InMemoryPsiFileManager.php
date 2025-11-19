@@ -46,7 +46,7 @@ class InMemoryPsiFileManager
         $root = $this->fileParser->parse($document);
         if ($root->errors) {
             // send diagnostics
-            dump($root->errors);
+//            dump($root->errors);
 //            $this->dispatcher->notify(new);
 
             $p = new PublishDiagnosticsParams(
@@ -65,7 +65,7 @@ class InMemoryPsiFileManager
             );
 
             $parameters = $this->resultProvider->getResult($p);
-            dump('PublishDiagnostics: ', $parameters);
+//            dump('PublishDiagnostics: ', $parameters);
 
             $notification = new Notification(
                 method: 'textDocument/publishDiagnostics',

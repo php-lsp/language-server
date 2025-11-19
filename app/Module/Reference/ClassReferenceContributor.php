@@ -32,19 +32,19 @@ final class ClassReferenceContributor implements ReferenceContributor
         $editor = $context->editor;
         $document = $editor->findByUriString($context->textDocumentIdentifier->uri);
         if ($document === null) {
-            dump('document is null', $context->textDocumentIdentifier);
+//            dump('document is null', $context->textDocumentIdentifier);
             return;
         }
 
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-            dump('file is null', $context->textDocumentIdentifier);
+//            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 
         $nodes = $file->findAtPosition($context->position);
 
-        dump('$nodes', $nodes);
+//        dump('$nodes', $nodes);
 
         /**
          * @var ClassConstFetch|null $node

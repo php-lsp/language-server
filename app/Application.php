@@ -8,6 +8,7 @@ use App\Core\Contracts\Completion\AsCompletionContributor;
 use App\Core\Contracts\Documentation\AsDocumentationContributor;
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\References\AsReferenceContributor;
+use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Infrastructure\Symfony\LSPCompilerPass;
 use Lsp\Extension\DocumentManager\DocumentManagerExtension;
 use Lsp\Kernel\LanguageServerKernel;
@@ -22,6 +23,7 @@ final class Application extends LanguageServerKernel
         AsCompletionContributor::class => 'lsp.completionContributors',
         AsReferenceContributor::class => 'lsp.referenceContributors',
         AsDocumentationContributor::class => 'lsp.documentationContributors',
+        AsSignatureContributor::class => 'lsp.signatureContributors',
     ];
 
     protected function build(ContainerBuilder $container): void

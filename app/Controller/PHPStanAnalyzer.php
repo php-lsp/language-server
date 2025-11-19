@@ -68,7 +68,7 @@ class PHPStanAnalyzer
                 if ($type !== null) {
                     $result = $type;
                 }
-                dump($type, $node);
+//                dump($type, $node);
             }
         }
         return $result;
