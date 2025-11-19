@@ -8,6 +8,7 @@ use App\Module\Indexing\Storage\InMemoryStorage;
 use App\Module\Indexing\Storage\StorageInterface;
 use App\Module\PsiFile\PHPPsiFileParser;
 use Lsp\Protocol\Type\WorkspaceFolder;
+use Lsp\Workspace\File\FileFactoryInterface;
 use Lsp\Workspace\File\VirtualFileInterface;
 use Lsp\Workspace\Project\Project;
 use Lsp\Workspace\Project\ProjectFactory;
@@ -36,20 +37,34 @@ final class Indexer
         foreach ($project as $file) {
             $this->walkFilesInternal($file, 0);
         }
+
+//        $this->walkFilesInternal($file, $level);
         $this->logger->info('Indexing finished');
     }
 
     private function walkFilesInternal(VirtualFileInterface $file, int $level): void
     {
-        if ($file->name === 'node_modules' || $file->name === '.git' || $file->name === '.idea' || $file->name === 'vendor') {
+        $ignored = [
+            'node_modules',
+            '.git',
+            '.idea',
+            'config',
+            'resources',
+            'runtime',
+            'vendor',
+        ];
+        if (in_array($file->name, $ignored)) {
 //            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";
             return;
         }
 
-//        echo str_repeat('  ', $level) . '- ' . $file . "\n";
+        $this->logger->info(str_repeat(' ', $level) . $file);
+
+        if ($file->count() === 0) {
+            $this->runIndexers($file);
+        }
 
         foreach ($file as $child) {
-            $this->runIndexers($child);
             $this->walkFilesInternal($child, $level + 1);
         }
     }

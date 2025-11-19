@@ -42,6 +42,10 @@ class Tree
         }
 
         $result = [];
+        if ($node instanceof $class) {
+            $result[] = $node;
+        }
+
         $children = self::getNodeChildren($node);
 
         foreach ($children as $child) {
@@ -62,6 +66,8 @@ class Tree
         return match (true) {
             $node instanceof Node\Stmt\ClassLike => $node->stmts,
             $node instanceof Node\Stmt\Namespace_ => $node->stmts,
+            $node instanceof Node\Stmt\Function_ => $node->stmts,
+            $node instanceof Node\Stmt\ClassMethod => $node->stmts,
             default => [],
         };
     }

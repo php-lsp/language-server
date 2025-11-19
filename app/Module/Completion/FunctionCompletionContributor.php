@@ -8,47 +8,28 @@ use App\Core\Contracts\Completion\AsCompletionContributor;
 use App\Core\Contracts\CompletionConsumer;
 use App\Core\Contracts\CompletionContext;
 use App\Core\Contracts\CompletionContributor;
+use App\Module\Indexing\Indexer\FunctionIndexer;
+use App\Module\Indexing\IndexLookup;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
-use Lsp\Protocol\Type\CompletionParams;
 
 #[AsCompletionContributor]
 final class FunctionCompletionContributor implements CompletionContributor
 {
+    public function __construct(
+        private readonly IndexLookup $indexLookup,
+    )
+    {
+    }
+
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
-        ['internal' => $internalFunctions, 'user' => $userFunctions] = $this->provide();
-        $internalFunctions = $this->filter($internalFunctions);
-
-        foreach ($internalFunctions as $functionName) {
+        foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $key => $value) {
             $consumer(new CompletionItem(
-                label: $functionName,
+                label: $value->value,
                 kind: CompletionItemKind::FunctionKind,
-                detail: '[internal function]',
+                detail: '[class]',
             ));
         }
-
-        $userFunctions = $this->filter($userFunctions);
-
-        foreach ($userFunctions as $functionName) {
-            $consumer(new CompletionItem(
-                label: $functionName,
-                kind: CompletionItemKind::FunctionKind,
-                detail: '[user function]',
-            ));
-        }
-    }
-
-    public function provide(): array
-    {
-        return get_defined_functions();
-    }
-
-    private function filter(array $functions): array
-    {
-        $result = [];
-
-        $result = array_splice($functions, 0, 50);
-        return $result;
     }
 }

@@ -8,7 +8,6 @@ use App\Core\Contracts\Completion\AsCompletionContributor;
 use App\Core\Contracts\CompletionConsumer;
 use App\Core\Contracts\CompletionContext;
 use App\Core\Contracts\CompletionContributor;
-use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\IndexLookup;
 use Lsp\Protocol\Type\CompletionItem;
@@ -33,18 +32,5 @@ final class ClassesCompletionContributor implements CompletionContributor
                 detail: '[class]',
             ));
         }
-    }
-
-    public function provide(): array
-    {
-        return get_defined_functions();
-    }
-
-    private function filter(array $functions): array
-    {
-        $result = [];
-
-        $result = array_splice($functions, 0, 50);
-        return $result;
     }
 }
