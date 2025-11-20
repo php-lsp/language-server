@@ -6,7 +6,6 @@ use App\Core\Contracts\Indexing\IndexerInterface;
 use App\Module\Indexing\Storage\StorageInterface;
 use Lsp\Workspace\File\FileFactoryInterface;
 use Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface;
-use Lsp\Workspace\File\VirtualFile;
 use Lsp\Workspace\File\VirtualFileInterface;
 use Lsp\Workspace\Project\Project;
 use Lsp\Workspace\Uri\Uri;
@@ -55,6 +54,13 @@ final class Indexer
             'resources',
             'runtime',
             'vendor',
+            'aerospike',
+            'tests',
+            'mongodb',
+            'meta',
+            'rdkafka',
+            'intl',
+            'swoole',
         ];
         if (in_array($file->name, $ignored)) {
 //            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";

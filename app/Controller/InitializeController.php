@@ -9,6 +9,7 @@ use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeLensOptions;
 use Lsp\Protocol\Type\CompletionOptions;
+use Lsp\Protocol\Type\DeclarationOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
 use Lsp\Protocol\Type\DocumentSymbolOptions;
 use Lsp\Protocol\Type\FileOperationOptions;
@@ -56,20 +57,21 @@ final class InitializeController
             capabilities: new ServerCapabilities(
                 textDocumentSync: TextDocumentSyncKind::Incremental,
                 completionProvider: new CompletionOptions(
-                    triggerCharacters: [],
-//                    triggerCharacters: ['.', ':', '<', '\'', '"', '`'],
+//                    triggerCharacters: [],
+                    triggerCharacters: ['.', ':', '<', '\'', '"', '`'],
                 ),
                 hoverProvider: true,
 //                codeLensProvider: new CodeLensOptions(
 //                    resolveProvider: true,
 //                ),
+                declarationProvider: new DeclarationOptions(),
                 signatureHelpProvider: new SignatureHelpOptions(
                     triggerCharacters: ['(', ',', ':', ' '],
                 ),
                 referencesProvider: new ReferenceOptions(
                     workDoneProgress: null,
                 ),
-                documentSymbolProvider: new DocumentSymbolOptions(),
+//                documentSymbolProvider: new DocumentSymbolOptions(),
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,

@@ -126,4 +126,20 @@ class Tree
 
         return [$line, $column];
     }
+
+    public static function getParentNodes(Node $node, int $limit = 100): iterable
+    {
+        $parent = $node->getAttribute('parent');
+        $count = 0;
+        while ($parent && $count++ < $limit) {
+            yield $parent;
+            $parent = $parent->getAttribute('parent');
+        }
+    }
+
+    public static function getParentNodesIncluding(Node $node, int $limit = 100): iterable
+    {
+        yield $node;
+        yield from self::getParentNodes($node, $limit);
+    }
 }

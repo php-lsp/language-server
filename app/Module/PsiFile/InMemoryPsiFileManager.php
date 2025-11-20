@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Module\PsiFile;
 
+use App\Module\Document\DocumentLoaderInterface;
 use Lsp\Contracts\Server\ConnectionInterface;
 use Lsp\Dispatcher\DispatcherInterface;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
+use Lsp\Extension\DocumentManager\Editor\Document\DocumentFactoryInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Extension\DocumentManager\Editor\MutableEditorInterface;
 use Lsp\Protocol\Type\Diagnostic;
@@ -27,6 +29,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 #[Autoconfigure]
 class InMemoryPsiFileManager
 {
+    /**
+     * @var array<string, PHPPsiFile>
+     */
     private array $models = [];
 
     public function __construct(
@@ -34,6 +39,7 @@ class InMemoryPsiFileManager
         private DispatcherInterface $dispatcher,
         private ResultProviderInterface $resultProvider,
         private LoggerInterface $logger,
+        private DocumentLoaderInterface $documentLoader,
 //        private ConnectionInterface $connection,
     )
     {
@@ -96,6 +102,12 @@ class InMemoryPsiFileManager
     public function findPsiFile(EditorInterface $editor, TextDocumentIdentifier $identifier): ?PHPPsiFile
     {
         $psiFile = $this->models[$identifier->uri] ?? null;
+        if ($psiFile !== null) {
+            $document = $editor->findByUriString($identifier->uri);
+            if ($psiFile->ast->document->version != $document->version) {
+                $psiFile = null;
+            }
+        }
         if ($psiFile === null) {
             $psiFile = $this->refreshFile($editor, $identifier);
         }
@@ -106,9 +118,10 @@ class InMemoryPsiFileManager
     private function getDocument(EditorInterface $editor, TextDocumentIdentifier $identifier): ?Document
     {
         $document = $editor->findByUriString($identifier->uri);
-//        if ($document === null) {
-//            $this->editor->open($document);
-//        }
+        if ($document === null) {
+            $document = $this->documentLoader->load($identifier);
+            $editor->open($document);
+        }
 
         return $document;
     }

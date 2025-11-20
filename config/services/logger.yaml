@@ -58,3 +58,11 @@ when@dev:
     Lsp\Workspace\File\FileFactory: ~
     Lsp\Workspace\File\FileFactoryInterface:
       class: Lsp\Workspace\File\FileFactory
+
+    App\Module\Document\InMemoryDocumentIdentifierFactory: ~
+    App\Module\Document\DocumentIdentifierFactoryInterface:
+      class: App\Module\Document\InMemoryDocumentIdentifierFactory
+
+    App\Module\Document\LocalFileDocumentLoader: ~
+    App\Module\Document\DocumentLoaderInterface:
+      class: App\Module\Document\LocalFileDocumentLoader

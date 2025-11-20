@@ -2,22 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Module\Reference;
+namespace App\Module\Declaration;
 
-use App\Core\Contracts\References\AsReferenceContributor;
-use App\Core\Contracts\References\ReferenceConsumer;
-use App\Core\Contracts\References\ReferenceContext;
-use App\Core\Contracts\References\ReferenceContributor;
+use App\Core\Contracts\Declaration\AsDeclarationContributor;
+use App\Core\Contracts\Declaration\DeclarationConsumer;
+use App\Core\Contracts\Declaration\DeclarationContext;
+use App\Core\Contracts\Declaration\DeclarationContributor;
 use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
 use PhpParser\Node;
 
-#[AsReferenceContributor]
-final class ClassMethodReferenceContributor implements ReferenceContributor
+#[AsDeclarationContributor]
+final class ClassMethodDeclarationContributor implements DeclarationContributor
 {
     public function __construct(
         private readonly IndexLookup $indexLookup,
@@ -26,36 +27,25 @@ final class ClassMethodReferenceContributor implements ReferenceContributor
     {
     }
 
-    public function contribute(ReferenceContext $context, ReferenceConsumer $consumer): void
+    public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
     {
         $editor = $context->editor;
-        $document = $editor->findByUriString($context->textDocumentIdentifier->uri);
-        if ($document === null) {
-//            dump('document is null', $context->textDocumentIdentifier);
-            return;
-        }
-
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
 //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 
-        $nodes = $file->findAtPosition($context->position);
+        $element = $file->findLastAtPosition($context->position);
+        if (!$element instanceof Node\Name\FullyQualified) {
+            return;
+        }
 
-//        dump('$nodes', $nodes);
-
-        /**
-         * @var Node\Expr\StaticCall|null $node
-         */
-        $node = array_find($nodes, fn(Node $node) => match (true) {
-            $node instanceof Node\Expr\StaticCall => true,
-//            $node instanceof Node\Expr\MethodCall => true,
-            default => false
-        });
+        $node = Tree::parentOfType($element, Node\Expr\StaticCall::class);
         if ($node === null) {
             return;
         }
+
         $className = $node->class->toString();
         $methodName = $node->name->toString();
 

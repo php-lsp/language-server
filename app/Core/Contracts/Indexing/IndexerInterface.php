@@ -16,5 +16,5 @@ interface IndexerInterface
     /**
      * @return list<TValue>
      */
-    public function index(VirtualFileInterface $file): array;
+    public function index(VirtualFileInterface $file): iterable;
 }

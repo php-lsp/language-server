@@ -9,6 +9,7 @@ use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Core\Contracts\Documentation\DocumentationContributor;
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\Tree;
 use PhpParser\Node;
 
 #[AsDocumentationContributor]
@@ -25,12 +26,17 @@ final class NodesTraceDocumentationContributor implements DocumentationContribut
         $psiFile = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);
 
         if ($psiFile !== null) {
-            $nodes = $psiFile->findAtPosition($context->position);
+            $node = $psiFile->findLastAtPosition($context->position);
 
-            $nodesClasses = implode(" => ", array_map(fn(Node $node) => $node::class, array_reverse($nodes)));
+            if ($node !== null) {
+                $nodesClasses = implode(' => ', array_map(
+                    fn(Node $node) => $node::class,
+                    iterator_to_array(Tree::getParentNodesIncluding($node)),
+                ));
 
-            if (!empty($nodesClasses)) {
-                $consumer(sprintf('Node classes %s', $nodesClasses));
+                if (!empty($nodesClasses)) {
+                    $consumer(sprintf('Node classes %s', $nodesClasses));
+                }
             }
         }
     }

@@ -1,22 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Core\Contracts\Completion;
+namespace App\Core\Contracts\Declaration;
 
-use Lsp\Protocol\Type\CompletionItem;
+use Lsp\Protocol\Type\Location;
 
-class CompletionConsumer
+class DeclarationConsumer
 {
     public function __construct(
         /**
-         * @var list<CompletionItem>
+         * @var list<Location>
          */
         public array $results = [],
     )
     {
     }
 
-    public function __invoke(CompletionItem ...$items): void
+    public function __invoke(Location ...$items): void
     {
         array_push($this->results, ...$items);
     }

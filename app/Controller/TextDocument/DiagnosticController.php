@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
 
+use App\Module\Document\DocumentLoaderInterface;
 use App\Module\PsiFile\PHPPsiFileParser;
 use Lsp\Contracts\Rpc\Message\MessageInterface;
 use Lsp\Contracts\Rpc\Message\NotificationInterface;
@@ -43,7 +44,7 @@ final class DiagnosticController
 {
     public function __construct(
         private PHPPsiFileParser $fileParser,
-//        private DocumentFactoryInterface $documentFactory,
+        private DocumentLoaderInterface $documentLoader,
     )
     {
     }
@@ -80,8 +81,7 @@ final class DiagnosticController
     {
         $document = $editor->findByUriString($identifier->uri);
         if ($document === null) {
-            $content = file_get_contents($identifier->uri);
-            $document = $this->documentFactory->create($identifier->uri, $content);
+            $document = $this->documentLoader->load($identifier);
             $editor->open($document);
         }
 
