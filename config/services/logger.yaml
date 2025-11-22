@@ -66,3 +66,6 @@ when@dev:
     App\Module\Document\LocalFileDocumentLoader: ~
     App\Module\Document\DocumentLoaderInterface:
       class: App\Module\Document\LocalFileDocumentLoader
+
+    React\Filesystem\AdapterInterface:
+      factory: [React\Filesystem\Factory, create]

@@ -3,16 +3,9 @@
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\IndexerInterface;
+use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\PHPPsiFile;
-use App\Module\PsiFile\PHPPsiFileParser;
-use Lsp\Extension\DocumentManager\Editor\Document\DocumentFactory;
-use Lsp\Extension\DocumentManager\Editor\Document\DocumentFactoryInterface;
-use Lsp\Extension\DocumentManager\Editor\Document\UriFactory;
-use Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface;
-use Lsp\Workspace\File\FilesystemReader\FilesystemReaderInterface;
 use Lsp\Workspace\File\VirtualFileInterface;
-use Throwable;
-use function React\Async\await;
 
 /**
  * @template TValue
@@ -21,8 +14,7 @@ use function React\Async\await;
 abstract class AbstractPhpIndexer implements IndexerInterface
 {
     public function __construct(
-        private PHPPsiFileParser $parser,
-        private DocumentFactoryInterface $documentFactory,
+        private InMemoryPsiFileManager $fileManager,
     )
     {
     }
@@ -37,17 +29,7 @@ abstract class AbstractPhpIndexer implements IndexerInterface
      */
     public function index(VirtualFileInterface $file): iterable
     {
-        try {
-            $content = file_get_contents($file->path);
-        } catch (Throwable $e) {
-            dump($e, $file);
-            return [];
-        }
-
-        $document = $this->documentFactory->create($file->uri, $content);
-
-        $root = $this->parser->parse($document);
-        $phpFile = new PHPPsiFile($root);
+        $phpFile = $this->fileManager->findPsiFileByUri($file->uri);
 
         return $this->indexInternal($phpFile);
     }

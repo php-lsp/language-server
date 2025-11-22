@@ -5,26 +5,24 @@ declare(strict_types=1);
 namespace App\Module\PsiFile;
 
 use App\Module\Document\DocumentLoaderInterface;
-use Lsp\Contracts\Server\ConnectionInterface;
 use Lsp\Dispatcher\DispatcherInterface;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Extension\DocumentManager\Editor\Document\DocumentFactoryInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
-use Lsp\Extension\DocumentManager\Editor\MutableEditorInterface;
 use Lsp\Protocol\Type\Diagnostic;
 use Lsp\Protocol\Type\DiagnosticSeverity;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\PublishDiagnosticsParams;
 use Lsp\Protocol\Type\Range;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
-use Lsp\Rpc\Codec\RequestEncoder;
 use Lsp\Rpc\Message\Notification;
-use Lsp\Rpc\Message\Request;
+use Lsp\Workspace\Uri\Uri;
 use PhpParser\Error;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
+use Throwable;
+use function React\Async\await;
 
 #[Autoconfigure]
 class InMemoryPsiFileManager
@@ -40,26 +38,28 @@ class InMemoryPsiFileManager
         private ResultProviderInterface $resultProvider,
         private LoggerInterface $logger,
         private DocumentLoaderInterface $documentLoader,
+        private \React\Filesystem\AdapterInterface $adapter,
+        private DocumentFactoryInterface $documentFactory,
 //        private ConnectionInterface $connection,
     )
     {
     }
 
-    public function refreshFile(EditorInterface $editor, TextDocumentIdentifier $identifier): PHPPsiFile
+    public function refreshFile(Document $document, Uri|TextDocumentIdentifier $identifier): PHPPsiFile
     {
-        $document = $this->getDocument($editor, $identifier);
+        $uri = match (true) {
+            $identifier instanceof TextDocumentIdentifier => $identifier->uri,
+            $identifier instanceof Uri => (string)$identifier,
+            default => throw new \InvalidArgumentException('Unsupported identifier ' . get_debug_type($identifier)),
+        };
         if ($document === null) {
-            throw new \RuntimeException('Document ' . $identifier->uri . ' not found');
+            throw new \RuntimeException('Document ' . $uri . ' not found');
         }
 
         $root = $this->fileParser->parse($document);
         if ($root->errors) {
-            // send diagnostics
-//            dump($root->errors);
-//            $this->dispatcher->notify(new);
-
             $p = new PublishDiagnosticsParams(
-                uri: $identifier->uri,
+                uri: $uri,
                 diagnostics: array_map(
                     fn(Error $error) => new Diagnostic(
                         range: new Range(
@@ -96,7 +96,7 @@ class InMemoryPsiFileManager
 //            );
         }
 
-        return $this->models[$identifier->uri] = new PHPPsiFile($root);
+        return $this->models[$uri] = new PHPPsiFile($root);
     }
 
     public function findPsiFile(EditorInterface $editor, TextDocumentIdentifier $identifier): ?PHPPsiFile
@@ -109,20 +109,40 @@ class InMemoryPsiFileManager
             }
         }
         if ($psiFile === null) {
-            $psiFile = $this->refreshFile($editor, $identifier);
+            $document = $editor->findByUriString($identifier->uri);
+
+            if ($document === null) {
+                $document = $this->documentLoader->load($identifier);
+                $editor->open($document);
+            }
+            $psiFile = $this->refreshFile($document, $identifier);
         }
 
         return $psiFile;
     }
 
-    private function getDocument(EditorInterface $editor, TextDocumentIdentifier $identifier): ?Document
+    public function findPsiFileByUri(Uri $uri): ?PHPPsiFile
     {
-        $document = $editor->findByUriString($identifier->uri);
-        if ($document === null) {
-            $document = $this->documentLoader->load($identifier);
-            $editor->open($document);
+        $psiFile = $this->models[(string)$uri] ?? null;
+        if ($psiFile !== null) {
+            try {
+                $content = await($this->adapter->file($uri->path)->getContents());
+            } catch (Throwable $e) {
+                dump($e, $uri);
+                return null;
+            }
+
+            $document = $this->documentFactory->create((string)$uri, $content);
+
+            if ($psiFile->ast->document->version != $document->version) {
+                $psiFile = null;
+            }
+        }
+        if ($psiFile === null) {
+            $document = $this->documentLoader->load($uri);;
+            $psiFile = $this->refreshFile($document, $uri);
         }
 
-        return $document;
+        return $psiFile;
     }
 }
