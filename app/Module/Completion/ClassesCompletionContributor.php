@@ -5,26 +5,39 @@ declare(strict_types=1);
 namespace App\Module\Completion;
 
 use App\Core\Contracts\Completion\AsCompletionContributor;
+use App\Core\Contracts\Completion\BaseCompletionContributor;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
-use App\Core\Contracts\Completion\CompletionContributor;
+use App\Core\Contracts\PrefixMatcher\StrContainsMatcher;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\IndexLookup;
+use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 
 #[AsCompletionContributor]
-final class ClassesCompletionContributor implements CompletionContributor
+final class ClassesCompletionContributor extends BaseCompletionContributor
 {
     public function __construct(
         private readonly IndexLookup $indexLookup,
+        private readonly InMemoryPsiFileManager $fileManager,
     )
     {
+        parent::__construct($fileManager);
     }
 
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
+        $element = $this->getElement($context);
+        $string = Tree::toString($element);
+        $matcher = new StrContainsMatcher($string);
+
         foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $key => $value) {
+            if (!$matcher->match($value->value)) {
+                continue;
+            }
+
             $consumer(new CompletionItem(
                 label: $value->value,
                 kind: CompletionItemKind::ClassKind,

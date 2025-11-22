@@ -11,7 +11,14 @@ use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionParams;
 use Lsp\Router\Attribute\Route;
+use Psr\Log\LoggerInterface;
+use React\Promise\PromiseInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Throwable;
+use function React\Async\async;
+use function React\Async\await;
+use function React\Promise\all;
+use function React\Promise\Timer\timeout;
 
 #[AsController, Route('textDocument/completion')]
 final class CompletionController
@@ -24,6 +31,7 @@ final class CompletionController
     public function __construct(
         #[AutowireIterator('lsp.completionContributors')]
         iterable $contributors,
+        private LoggerInterface $logger,
     )
     {
         $this->contributors = iterator_to_array($contributors);
@@ -31,15 +39,44 @@ final class CompletionController
 
     public function __invoke(EditorInterface $editor, CompletionParams $params)
     {
-//        dump('CompletionParams: ', $params);
-
         $context = new CompletionContext($params->textDocument, $params->position, $editor);
-        $consumer = new CompletionConsumer();
 
+        $promises = [];
         foreach ($this->contributors as $contributor) {
-            $contributor->contribute($context, $consumer);
+            $promises[] = $this->runContributor($contributor, $context);
         }
 
-        return $consumer->results;
+        $results = await(all($promises));
+
+        return array_merge(...$results);
+    }
+
+    /**
+     * @return PromiseInterface<array>
+     */
+    private function runContributor(
+        CompletionContributor $contributor,
+        CompletionContext $context
+    ): PromiseInterface
+    {
+        $consumer = new CompletionConsumer();
+
+        $onRejected = function (Throwable $e) use ($consumer) {
+            $this->logger->error($e);
+
+            return $consumer->results;
+        };
+
+        return timeout(
+            async(
+                function () use ($contributor, $context, $consumer) {
+                    $contributor->contribute($context, $consumer);
+
+                    return $consumer->results;
+                })()
+                ->catch($onRejected),
+            1.0,
+        )
+            ->catch($onRejected);
     }
 }

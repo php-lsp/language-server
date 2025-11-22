@@ -6,7 +6,6 @@ namespace App\Module\PsiFile;
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
-use Phplrt\Contracts\Source\SourceExceptionInterface;
 use PhpParser\Node;
 
 class Tree
@@ -141,5 +140,18 @@ class Tree
     {
         yield $node;
         yield from self::getParentNodes($node, $limit);
+    }
+
+    public static function toString(?Node $element): string
+    {
+        if ($element === null) {
+            return '';
+        }
+
+        if ($element instanceof \Stringable) {
+            return (string) $element;
+        }
+
+        return '-----'.var_export($element, true).'-----';
     }
 }

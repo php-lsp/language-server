@@ -23,7 +23,7 @@ final class SuperglobalsCompletionContributor implements CompletionContributor
         }
     }
 
-    public function provide(): array
+    private function provide(): array
     {
         return [
             '$GLOBALS',
