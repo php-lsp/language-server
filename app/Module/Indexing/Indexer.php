@@ -61,6 +61,13 @@ final class Indexer
             'rdkafka',
             'intl',
             'swoole',
+            'wincache',
+            'couchbase',
+            'couchbase_v2',
+            'relay',
+            'redis',
+            'imagick',
+            'tests',
         ];
         if (in_array($file->name, $ignored)) {
 //            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";
