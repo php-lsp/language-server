@@ -3,17 +3,27 @@ declare(strict_types=1);
 
 namespace App\Module\Document;
 
+use App\Module\PsiFile\FifoCache;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
 use Lsp\Workspace\Uri\Uri;
 
 class InMemoryDocumentIdentifierFactory implements DocumentIdentifierFactoryInterface
 {
-    private array $cache = [];
+    /**
+     * @var FifoCache<TextDocumentIdentifier>
+     */
+    private FifoCache $cache;
+
+    public function __construct()
+    {
+        $this->cache = new FifoCache(300);
+    }
 
     public function create(string $path): TextDocumentIdentifier
     {
-        if (isset($this->cache[$path])) {
-            return $this->cache[$path];
+        $value = $this->cache[$path];
+        if ($value !== null) {
+            return $value;
         }
 
         $uri = $path;
@@ -21,6 +31,9 @@ class InMemoryDocumentIdentifierFactory implements DocumentIdentifierFactoryInte
             $uri = (string)Uri::createLocal($path);
         }
 
-        return $this->cache[$path] ??= new TextDocumentIdentifier($uri);
+        $value = new TextDocumentIdentifier($uri);
+        $this->cache->set($path, $value);
+
+        return $value;
     }
 }

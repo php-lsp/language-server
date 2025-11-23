@@ -5,7 +5,6 @@ namespace App\Module\Indexing\Indexer;
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
-use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Function_;
 
 #[AsIndexer]
@@ -25,7 +24,9 @@ class FunctionIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($functions as $function) {
-            $results[] = [$function->namespacedName->toString(), $function->getStartFilePos()];
+            $functionName = $function->namespacedName->toString();
+            // todo: using name as a keys isn't correct, only debug purposes
+            $results[$functionName] = [$functionName, $function->getStartFilePos()];
         }
 
         return $results;

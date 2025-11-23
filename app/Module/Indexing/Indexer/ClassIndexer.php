@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Module\Indexing\Indexer;
 
@@ -24,7 +25,9 @@ class ClassIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($classes as $class) {
-            $results[] = $class->namespacedName->toString();
+            $className = $class->namespacedName->toString();
+            // todo: using name as a keys isn't correct, only debug purposes
+            $results[$className] = $className;
         }
 
         return $results;

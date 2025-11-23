@@ -7,14 +7,11 @@ namespace App\Controller;
 use App\Module\Indexing\Indexer;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
-use Lsp\Protocol\Type\CodeLensOptions;
 use Lsp\Protocol\Type\CompletionOptions;
 use Lsp\Protocol\Type\DeclarationOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
-use Lsp\Protocol\Type\DocumentSymbolOptions;
 use Lsp\Protocol\Type\FileOperationOptions;
 use Lsp\Protocol\Type\FileOperationRegistrationOptions;
-use Lsp\Protocol\Type\HoverOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
 use Lsp\Protocol\Type\ReferenceOptions;
@@ -26,12 +23,9 @@ use Lsp\Protocol\Type\WorkspaceFolder;
 use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
 use Lsp\Protocol\Type\WorkspaceOptions;
 use Lsp\Router\Attribute\Route;
-use Lsp\Workspace\File\VirtualFileInterface;
-use Lsp\Workspace\Project\ProjectFactory;
 use Lsp\Workspace\Project\ProjectFactoryInterface;
-use Lsp\Workspace\Project\ProjectInterface;
 use Psr\Log\LoggerInterface;
-use function str_repeat;
+use React\EventLoop\LoopInterface;
 
 #[AsController, Route('initialize')]
 final class InitializeController
@@ -41,6 +35,7 @@ final class InitializeController
         private readonly Indexer $indexer,
         private readonly ProjectFactoryInterface $projectFactory,
         private readonly ProjectManager $projectManager,
+        private LoopInterface $loop,
     )
     {
     }
@@ -117,6 +112,9 @@ final class InitializeController
         $project = $this->projectFactory->create($folder->uri, $folder->name);
         $this->projectManager->setProject($project);
 
+        $start = microtime(true);
+        $this->logger->info('Indexing project: ' . $start);
         $this->indexer->index($project);
+        $this->logger->info('Indexing finished in ' . (microtime(true) - $start) . ' seconds');
     }
 }

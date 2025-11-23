@@ -52,10 +52,52 @@ class Tree
         $children = self::getNodeChildren($node);
 
         foreach ($children as $child) {
-            if ($child instanceof $class) {
-                $result[] = $child;
-            }
             $result = array_merge($result, self::childrenOfType($child, $class));
+        }
+
+        return $result;
+    }
+
+    /**
+     * @template T of Node
+     * @param class-string<T> ...$classes
+     * @return T[]
+     */
+    public static function childrenOfTypes(Node|SourceFileRoot|null $node, string ...$classes): array
+    {
+        return self::childrenOfTypesInternal($node, $classes);
+    }
+
+    /**
+     * @template T of Node
+     * @param list<class-string<T>> $classes
+     * @return T[]
+     */
+    private static function childrenOfTypesInternal(Node|SourceFileRoot|null $node, array $classes): array
+    {
+        if ($node === null) {
+            return [];
+        }
+        if ($node instanceof SourceFileRoot) {
+            $result = [];
+            foreach ($node->children as $child) {
+                $result = array_merge($result, self::childrenOfTypesInternal($child, $classes));
+            }
+            return $result;
+        }
+
+        $result = [];
+        foreach ($classes as $class) {
+            if ($node instanceof $class) {
+                $result[] = $node;
+                break;
+            }
+        }
+
+        $children = self::getNodeChildren($node);
+
+        foreach ($children as $child) {
+            $result = array_merge($result, self::childrenOfTypesInternal($child, $classes));
         }
 
         return $result;

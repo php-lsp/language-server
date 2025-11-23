@@ -11,6 +11,8 @@ use Lsp\Workspace\Project\Project;
 use Lsp\Workspace\Uri\Uri;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use function React\Async\async;
+use function React\Async\await;
 
 final class Indexer
 {
@@ -53,7 +55,10 @@ final class Indexer
             'config',
             'resources',
             'runtime',
-            'vendor',
+//            'vendor',
+            'psalm',
+            'rector',
+            'thecodingmachine',
             'aerospike',
             'tests',
             'mongodb',
@@ -89,10 +94,12 @@ final class Indexer
     {
         foreach ($this->indexers as $indexer) {
             if ($indexer->supports($file)) {
-                $key = $indexer::getKey();
-                $map = $indexer->index($file);
+                await(async(function () use ($file, $indexer) {
+                    $key = $indexer::getKey();
+                    $map = $indexer->index($file);
 
-                $this->storage->write($key, $map, $file->uri);
+                    $this->storage->write($key, $map, $file->uri);
+                })());
             }
         }
     }
