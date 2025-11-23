@@ -56,6 +56,20 @@ final class ClassDeclarationContributor implements DeclarationContributor
             if ($node->returnType === $element) {
                 $className = $node->returnType->toString();
             }
+        } elseif ($node = Tree::parentOfType($element, Node\Stmt\Class_::class)) {
+            if ($node->extends === $element) {
+                $className = $node->extends->toString();
+            } elseif (in_array($element, $node->implements, true)) {
+                $className = $element->toString();
+            }
+        } elseif ($node = Tree::parentOfType($element, Node\Stmt\Interface_::class)) {
+            if (in_array($element, $node->extends, true)) {
+                $className = $element->toString();
+            }
+        } elseif ($node = Tree::parentOfType($element, Node\Stmt\TraitUse::class)) {
+            if (in_array($element, $node->traits, true)) {
+                $className = $element->toString();
+            }
         }
 
         if ($className === null) {
