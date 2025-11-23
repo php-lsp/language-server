@@ -69,3 +69,7 @@ when@dev:
 
     React\Filesystem\AdapterInterface:
       factory: [React\Filesystem\Factory, create]
+
+    Lsp\Server\ConnectionStore: ~
+    Lsp\Server\ConnectionProviderInterface:
+      class: Lsp\Server\ConnectionStore

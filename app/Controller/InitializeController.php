@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Module\Indexing\Indexer;
+use App\Module\Notification\ServerNotificationSender;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionOptions;
@@ -25,7 +26,6 @@ use Lsp\Protocol\Type\WorkspaceOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\Project\ProjectFactoryInterface;
 use Psr\Log\LoggerInterface;
-use React\EventLoop\LoopInterface;
 
 #[AsController, Route('initialize')]
 final class InitializeController
@@ -35,7 +35,7 @@ final class InitializeController
         private readonly Indexer $indexer,
         private readonly ProjectFactoryInterface $projectFactory,
         private readonly ProjectManager $projectManager,
-        private LoopInterface $loop,
+        private ServerNotificationSender $notificationSender,
     )
     {
     }
@@ -114,7 +114,12 @@ final class InitializeController
 
         $start = microtime(true);
         $this->logger->info('Indexing project: ' . $start);
+
         $this->indexer->index($project);
-        $this->logger->info('Indexing finished in ' . (microtime(true) - $start) . ' seconds');
+
+        $message = 'Indexing finished in ' . (microtime(true) - $start) . ' seconds';
+
+        $this->logger->info($message);
+        $this->notificationSender->showMessage($message);
     }
 }
