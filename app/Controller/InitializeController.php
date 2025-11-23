@@ -116,6 +116,7 @@ final class InitializeController
         $project = $this->projectFactory->create($folder->uri, $folder->name);
         $this->projectManager->setProject($project);
 
+        return;
         $start = microtime(true);
         $this->logger->info('Indexing project: ' . $start);
 

@@ -7,6 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
 use App\Core\Contracts\Completion\CompletionContributor;
+use App\Module\PsiFile\InMemoryPsiFileManager;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionParams;
@@ -32,6 +33,7 @@ final class CompletionController
         #[AutowireIterator('lsp.completionContributors')]
         iterable $contributors,
         private LoggerInterface $logger,
+        private InMemoryPsiFileManager $fileManager,
     )
     {
         $this->contributors = iterator_to_array($contributors);
@@ -39,7 +41,7 @@ final class CompletionController
 
     public function __invoke(EditorInterface $editor, CompletionParams $params)
     {
-        $context = new CompletionContext($params->textDocument, $params->position, $editor);
+        $context = new CompletionContext($params->textDocument, $params->position, $editor, $this->fileManager);
 
         $promises = [];
         foreach ($this->contributors as $contributor) {

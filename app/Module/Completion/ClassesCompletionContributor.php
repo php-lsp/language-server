@@ -5,31 +5,28 @@ declare(strict_types=1);
 namespace App\Module\Completion;
 
 use App\Core\Contracts\Completion\AsCompletionContributor;
-use App\Core\Contracts\Completion\BaseCompletionContributor;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
+use App\Core\Contracts\Completion\CompletionContributor;
 use App\Core\Contracts\PrefixMatcher\StrContainsMatcher;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\IndexLookup;
-use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 
 #[AsCompletionContributor]
-final class ClassesCompletionContributor extends BaseCompletionContributor
+final class ClassesCompletionContributor implements CompletionContributor
 {
     public function __construct(
         private readonly IndexLookup $indexLookup,
-        private readonly InMemoryPsiFileManager $fileManager,
     )
     {
-        parent::__construct($fileManager);
     }
 
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
-        $element = $this->getElement($context);
+        $element = $context->currentNode();
         $string = Tree::toString($element);
         $matcher = new StrContainsMatcher($string);
 

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Module\Completion;
 
 use App\Core\Contracts\Completion\AsCompletionContributor;
-use App\Core\Contracts\Completion\BaseCompletionContributor;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
+use App\Core\Contracts\Completion\CompletionContributor;
 use Lsp\Protocol\Type\CompletionItem;
 
 #[AsCompletionContributor]
-final class KeywordsCompletionContributor extends BaseCompletionContributor
+final class KeywordsCompletionContributor implements CompletionContributor
 {
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {

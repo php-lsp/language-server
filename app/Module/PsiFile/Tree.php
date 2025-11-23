@@ -26,6 +26,11 @@ class Tree
         return null;
     }
 
+    public static function parent(Node $node):?Node
+    {
+        return $node->getAttribute('parent');
+    }
+
     /**
      * @template T of Node
      * @param class-string<T> $class
