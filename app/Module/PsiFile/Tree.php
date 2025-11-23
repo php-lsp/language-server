@@ -126,7 +126,7 @@ class Tree
             ),
             end: new Position(
                 $node->getEndLine() - 1,
-                self::toColumn($file->ast->document, $node->getEndFilePos() - 1),
+                self::toColumn($file->ast->document, $node->getEndFilePos()),
             ),
         );
     }

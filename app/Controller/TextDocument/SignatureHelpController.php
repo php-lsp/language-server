@@ -1,19 +1,15 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
 
-use App\Core\Contracts\Completion\CompletionConsumer;
-use App\Core\Contracts\Completion\CompletionContext;
-use App\Core\Contracts\References\ReferenceContributor;
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
 use App\Core\Contracts\Signature\SignatureContributor;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
-use Lsp\Protocol\Type\ParameterInformation;
 use Lsp\Protocol\Type\SignatureHelp;
 use Lsp\Protocol\Type\SignatureHelpParams;
-use Lsp\Protocol\Type\SignatureInformation;
 use Lsp\Router\Attribute\Route;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 

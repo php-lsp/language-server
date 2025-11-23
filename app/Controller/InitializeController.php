@@ -16,6 +16,7 @@ use Lsp\Protocol\Type\FileOperationRegistrationOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
 use Lsp\Protocol\Type\ReferenceOptions;
+use Lsp\Protocol\Type\RenameOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
 use Lsp\Protocol\Type\SignatureHelpOptions;
@@ -59,12 +60,15 @@ final class InitializeController
 //                codeLensProvider: new CodeLensOptions(
 //                    resolveProvider: true,
 //                ),
-                declarationProvider: new DeclarationOptions(),
                 signatureHelpProvider: new SignatureHelpOptions(
                     triggerCharacters: ['(', ',', ':', ' '],
                 ),
+                declarationProvider: new DeclarationOptions(),
                 referencesProvider: new ReferenceOptions(
                     workDoneProgress: null,
+                ),
+                renameProvider: new RenameOptions(
+                    prepareProvider: true,
                 ),
 //                documentSymbolProvider: new DocumentSymbolOptions(),
                 diagnosticProvider: new DiagnosticOptions(

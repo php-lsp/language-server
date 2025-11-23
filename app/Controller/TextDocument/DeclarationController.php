@@ -7,15 +7,9 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
-use App\Core\Contracts\References\ReferenceConsumer;
-use App\Core\Contracts\References\ReferenceContext;
-use App\Core\Contracts\References\ReferenceContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\DeclarationParams;
-use Lsp\Protocol\Type\DefinitionParams;
-use Lsp\Protocol\Type\ReferenceParams;
 use Lsp\Router\Attribute\Route;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
