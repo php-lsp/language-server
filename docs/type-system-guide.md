@@ -751,7 +751,60 @@ assignments.
 
 ---
 
-## Part 5: Key Decisions Summary
+## Part 5: Lessons from Other PHP LSP Implementations
+
+Cross-cutting findings from analyzing Phpactor, Intelephense, Psalm LSP,
+PHPStan, Serenata, and felixfbecker/php-language-server:
+
+### The "unknown type" problem is fatal
+
+felixfbecker's LSP was essentially killed by not handling "type is unknown"
+robustly. `Definition->type` could be `null`, but the system assumed it was
+always set — causing cascading `TypeError` crashes. **Every expression must
+always resolve to SOME type.** When inference fails, return `mixed`, never
+`null`. This is non-negotiable.
+
+### Declared types should skip body scanning
+
+Intelephense explicitly does NOT scan function bodies when `@return`
+annotations exist. This is a deliberate performance optimization — the
+annotation is trusted. Our `ExpressionInferrer` should follow the same
+strategy: if a method has a declared/documented return type, use it directly
+without analyzing the body.
+
+### Union-of-Atomics is the convergent representation
+
+Psalm, PHPStan, and refactored Phpactor all converge on: all types are
+unions of atomic types. Intersections are modeled as an atomic type inside
+unions: `(A&B)|(C&D)` = `Union[Intersection[A,B], Intersection[C,D]]`.
+Typhoon Type follows this pattern too.
+
+### Frame/Scope is the universal pattern
+
+Every implementation tracks variable types in a scope-like structure —
+Phpactor's `Frame`, PHPStan's `MutatingScope`, Psalm's variable-type map.
+The differentiator is control flow sophistication. Psalm's CNF-based
+conditional tracking (multi-variable narrowing) is the most advanced but
+also the most complex. Start simple and evolve.
+
+### Dynamic PHP is the universal weakness
+
+Every implementation handles `__call`/`__get` through PHPDoc annotations
+(`@method`, `@property`), NOT by analyzing magic method bodies. PHPStan's
+extension system is most flexible. PhpStorm meta files (supported by
+Serenata, Intelephense) are a pragmatic alternative. Plan for an extension
+point from the start.
+
+### Indexing strategy: in-memory + lazy
+
+In-memory only (felixfbecker) has painful cold starts. Database-backed
+(Serenata/SQLite) persists but adds complexity. Best approach for us:
+in-memory index built at project open (Architecture A: Map-Reduce), with
+lazy type resolution per-request.
+
+---
+
+## Part 6: Key Decisions Summary
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
@@ -781,3 +834,12 @@ assignments.
 - [phpstan/phpdoc-parser (GitHub)](https://github.com/phpstan/phpdoc-parser)
 - [type-lang/parser (Packagist)](https://packagist.org/packages/type-lang/parser)
 - [TypeScript Narrowing (Official docs)](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)
+- [Psalm Type System (Plugin docs)](https://psalm.dev/docs/running_psalm/plugins/plugins_type_system/)
+- [Psalm: The Truth Matters (flow-sensitive analysis)](https://psalm.dev/articles/the-truth-matters)
+- [Intelephense Type System wiki](https://github.com/bmewburn/vscode-intelephense/wiki/Type-System)
+- [Intelephense Documentation](https://intelephense.com/docs)
+- [felixfbecker/php-language-server](https://github.com/felixfbecker/php-language-server)
+- [PHPStan Type System docs](https://phpstan.org/developing-extensions/type-system)
+- [PHPStan Class Reflection Extensions](https://phpstan.org/developing-extensions/class-reflection-extensions)
+- [Serenata PHP Language Server](https://serenata.gitlab.io/)
+- [Scaling gopls for the growing Go ecosystem](https://go.dev/blog/gopls-scalability)
