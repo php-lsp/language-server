@@ -35,7 +35,6 @@
         "behat/behat": "^3.16",
         "buggregator/trap": "^1.13",
         "carthage-software/mago": "^1.14",
-        "friendsofphp/php-cs-fixer": "^3.64",
         "php-lsp/protocol-generator": "^1.0",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
@@ -54,7 +53,7 @@
         "mago:analyze": ["mago-analyze"],
         "mago:fix": ["mago-fix"],
         "mago:baseline": ["mago-baseline"],
-        "phpcs:fix": ["phpcs", "per2", "per", "percs", "codestyle", "cs"],
+        "mago:format": ["format", "fmt", "phpcs", "per2", "per", "percs", "codestyle", "cs"],
         "test:unit": ["phpunit", "unit"],
         "build:prod": ["build"],
         "build:run": ["run"]
@@ -69,8 +68,8 @@
         "mago:analyze": "Runs Mago analyzer with baseline",
         "mago:fix": "Applies Mago auto-fixes to source code",
         "mago:baseline": "Regenerates Mago baselines for lint and analysis",
-        "phpcs:check": "Checks source code for codestyle errors",
-        "phpcs:fix": "Corrects codestyle in source code",
+        "mago:format": "Formats source code with Mago formatter",
+        "mago:format:check": "Checks source code formatting (dry-run)",
         "build:prod": "Compiles PHAR and binary assembly of the LSP Server",
         "build:run": "Runs the compiled assembly",
         "build:run:local": "Runs the compiled PHAR (using local interpreter)",
@@ -89,8 +88,8 @@
             "mago lint --generate-baseline --baseline mago-lint-baseline.toml",
             "mago analyze --generate-baseline --baseline mago-analysis-baseline.toml"
         ],
-        "phpcs:check": "php-cs-fixer fix --config=.php-cs-fixer.php --allow-risky=yes --dry-run --verbose --diff",
-        "phpcs:fix": "php-cs-fixer fix --config=.php-cs-fixer.php --allow-risky=yes --verbose --diff",
+        "mago:format": "mago format",
+        "mago:format:check": "mago format --check",
         "build:prod": "./bin/build",
         "build:prepare": [
             "Composer\\Config::disableProcessTimeout",

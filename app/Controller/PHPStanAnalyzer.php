@@ -29,8 +29,11 @@ class PHPStanAnalyzer
         private ProjectManager $projectManager,
     ) {}
 
-    public function getTypeAtPosition(EditorInterface $editor, TextDocumentIdentifier $textDocumentIdentifier, Position $position): ?Type
-    {
+    public function getTypeAtPosition(
+        EditorInterface $editor,
+        TextDocumentIdentifier $textDocumentIdentifier,
+        Position $position,
+    ): ?Type {
         $project = $this->projectManager->getProject();
         if ($this->phpstanContainer === null) {
             $containerFactory = new ContainerFactory($project->path);
@@ -53,7 +56,7 @@ class PHPStanAnalyzer
         $nodes = $psiFile->findAtPosition($position);
 
         $scope = $this->scopeFactory->create(
-            ScopeContext::create($this->uriToPath($textDocumentIdentifier->uri))
+            ScopeContext::create($this->uriToPath($textDocumentIdentifier->uri)),
         );
 
         $result = null;
@@ -63,6 +66,7 @@ class PHPStanAnalyzer
                 if ($type !== null) {
                     $result = $type;
                 }
+
                 //                dump($type, $node);
             }
         }

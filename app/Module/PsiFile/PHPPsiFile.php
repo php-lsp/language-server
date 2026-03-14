@@ -33,9 +33,7 @@ class PHPPsiFile
             $visitor = new NodeFinder();
 
             return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
-                if (
-                    $node->getStartLine() <= $line && $line <= $node->getEndLine()
-                ) {
+                if ($node->getStartLine() <= $line && $line <= $node->getEndLine()) {
                     //                $length = $node->getEndFilePos() - $node->getStartFilePos();
                     $startColumn = $this->toColumn($this->ast->document, $node->getStartFilePos());
                     $endColumn = $this->toColumn($this->ast->document, $node->getEndFilePos());

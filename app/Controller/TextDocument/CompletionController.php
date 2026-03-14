@@ -57,7 +57,7 @@ final class CompletionController
      */
     private function runContributor(
         CompletionContributor $contributor,
-        CompletionContext $context
+        CompletionContext $context,
     ): PromiseInterface {
         $consumer = new CompletionConsumer();
 
@@ -73,11 +73,9 @@ final class CompletionController
                     $contributor->contribute($context, $consumer);
 
                     return $consumer->results;
-                }
-            )()
-                ->catch($onRejected),
+                },
+            )()->catch($onRejected),
             1.0,
-        )
-            ->catch($onRejected);
+        )->catch($onRejected);
     }
 }

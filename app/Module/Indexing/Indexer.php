@@ -94,12 +94,14 @@ final class Indexer
     {
         foreach ($this->indexers as $indexer) {
             if ($indexer->supports($file)) {
-                await(async(function () use ($file, $indexer) {
-                    $key = $indexer::getKey();
-                    $map = $indexer->index($file);
+                await(
+                    async(function () use ($file, $indexer) {
+                        $key = $indexer::getKey();
+                        $map = $indexer->index($file);
 
-                    $this->storage->write($key, $map, $file->uri);
-                })());
+                        $this->storage->write($key, $map, $file->uri);
+                    })(),
+                );
             }
         }
     }

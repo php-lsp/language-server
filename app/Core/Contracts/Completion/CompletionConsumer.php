@@ -62,7 +62,7 @@ class CompletionConsumer
      */
     private function shouldYield(): bool
     {
-        if ($this->itemCount % self::YIELD_EVERY === 0) {
+        if (($this->itemCount % self::YIELD_EVERY) === 0) {
             return true;
         }
 
