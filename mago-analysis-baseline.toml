@@ -1135,9 +1135,147 @@ message = "This default arm is unreachable."
 count = 1
 
 [[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "impossible-condition"
+message = "This condition (type `null`) will always evaluate to false."
+count = 2
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "invalid-operand"
+message = "Invalid type `never` for right operand in string concatenation."
+count = 2
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\ClassDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 11
+
+[[issues]]
+file = "app/Module/Documentation/ConstantDocumentationContributor.php"
+code = "invalid-operand"
+message = "Invalid type `never` for right operand in string concatenation."
+count = 3
+
+[[issues]]
+file = "app/Module/Documentation/ConstantDocumentationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\ConstantDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ConstantDocumentationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 6
+
+[[issues]]
 file = "app/Module/Documentation/DocblockDocumentationContributor.php"
 code = "missing-override-attribute"
 message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\DocblockDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/FunctionDocumentationContributor.php"
+code = "invalid-operand"
+message = "Invalid type `never` for right operand in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/FunctionDocumentationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\FunctionDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/FunctionDocumentationContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/FunctionDocumentationContributor.php"
+code = "mixed-operand"
+message = "Invalid middle operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/FunctionDocumentationContributor.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/FunctionDocumentationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 6
+
+[[issues]]
+file = "app/Module/Documentation/FunctionDocumentationContributor.php"
+code = "null-iterator"
+message = "Iterating over `null` in `foreach`."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "impossible-condition"
+message = "Redundant ternary operator: condition is always falsy."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "invalid-operand"
+message = "Invalid type `never` for right operand in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\MethodDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "mixed-operand"
+message = "Invalid middle operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 9
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "null-iterator"
+message = "Iterating over `null` in `foreach`."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "null-operand"
+message = "Implicit conversion of `null` to empty string for left operand in string concatenation."
 count = 1
 
 [[issues]]
@@ -1151,6 +1289,24 @@ file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
 code = "missing-return-type"
 message = "Function `arrow function` is missing a return type hint."
 count = 1
+
+[[issues]]
+file = "app/Module/Documentation/PropertyDocumentationContributor.php"
+code = "impossible-condition"
+message = "This condition (type `null`) will always evaluate to false."
+count = 2
+
+[[issues]]
+file = "app/Module/Documentation/PropertyDocumentationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\PropertyDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/PropertyDocumentationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 6
 
 [[issues]]
 file = "app/Module/Indexing/IndexLookup.php"
