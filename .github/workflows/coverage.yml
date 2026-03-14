@@ -56,26 +56,50 @@ jobs:
           echo "percentage=${COVERAGE:-0}" >> "$GITHUB_OUTPUT"
           echo "Coverage: ${COVERAGE:-0}%"
 
+      - name: Setup Mago
+        uses: nhedger/setup-mago@v1
+
+      - name: Run Mago Lint
+        id: mago-lint
+        run: |
+          mago lint --baseline mago-lint-baseline.toml 2>&1 | tee mago-lint-output.txt || true
+          echo "output<<EOF_MAGO_LINT" >> "$GITHUB_OUTPUT"
+          cat mago-lint-output.txt >> "$GITHUB_OUTPUT"
+          echo "EOF_MAGO_LINT" >> "$GITHUB_OUTPUT"
+
+      - name: Run Mago Analyze
+        id: mago-analyze
+        run: |
+          mago analyze --baseline mago-analysis-baseline.toml 2>&1 | tee mago-analyze-output.txt || true
+          echo "output<<EOF_MAGO_ANALYZE" >> "$GITHUB_OUTPUT"
+          cat mago-analyze-output.txt >> "$GITHUB_OUTPUT"
+          echo "EOF_MAGO_ANALYZE" >> "$GITHUB_OUTPUT"
+
       - name: Add Coverage PR Comment
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           recreate: true
           message: |
-            ## Code Coverage Report
+            ## Code Quality Report
+
+            ### Coverage
 
             | Metric | Value |
             |--------|-------|
             | **Lines** | ${{ steps.coverage.outputs.percentage }}% |
 
-            <details>
-            <summary>Full report</summary>
+            ### Mago Lint
 
             ```
-            ${{ steps.coverage.outputs.percentage }}% line coverage
+            ${{ steps.mago-lint.outputs.output }}
             ```
 
-            </details>
+            ### Mago Analyze
+
+            ```
+            ${{ steps.mago-analyze.outputs.output }}
+            ```
 
       - name: Generate Coverage Badge
         if: github.ref == 'refs/heads/master'

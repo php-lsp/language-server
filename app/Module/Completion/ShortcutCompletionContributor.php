@@ -47,11 +47,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'public function',
             insertText: <<<'TEXT'
-            public function ${1:name}(${2}): ${3:void}
-            {
-                ${0}
-            }
-            TEXT,
+                public function ${1:name}(${2}): ${3:void}
+                {
+                    ${0}
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
         yield 'pubsf' => new CompletionItem(
@@ -59,11 +59,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'public static function',
             insertText: <<<'TEXT'
-            public static function ${1:name}(${2}): ${3:void}
-            {
-                ${0}
-            }
-            TEXT,
+                public static function ${1:name}(${2}): ${3:void}
+                {
+                    ${0}
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
 
@@ -72,11 +72,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'protected function',
             insertText: <<<'TEXT'
-            protected function ${1:name}(${2}): ${3:void}
-            {
-                ${0}
-            }
-            TEXT,
+                protected function ${1:name}(${2}): ${3:void}
+                {
+                    ${0}
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
         yield 'prosf' => new CompletionItem(
@@ -84,11 +84,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'protected static function',
             insertText: <<<'TEXT'
-            protected static function ${1:name}(${2}): ${3:void}
-            {
-                ${0}
-            }
-            TEXT,
+                protected static function ${1:name}(${2}): ${3:void}
+                {
+                    ${0}
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
 
@@ -97,11 +97,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'private function',
             insertText: <<<'TEXT'
-            private function ${1:name}(${2}): ${3:void}
-            {
-                ${0}
-            }
-            TEXT,
+                private function ${1:name}(${2}): ${3:void}
+                {
+                    ${0}
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
         yield 'prisf' => new CompletionItem(
@@ -109,11 +109,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'private static function',
             insertText: <<<'TEXT'
-            private static function ${1:name}(${2}): ${3:void}
-            {
-                ${0}
-            }
-            TEXT,
+                private static function ${1:name}(${2}): ${3:void}
+                {
+                    ${0}
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
 
@@ -122,11 +122,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'public function __construct() {}',
             insertText: <<<'TEXT'
-            public function __construct($1)
-            {
-                ${0}
-            }
-            TEXT,
+                public function __construct($1)
+                {
+                    ${0}
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
     }
@@ -134,10 +134,7 @@ final class ShortcutCompletionContributor implements CompletionContributor
     private function globalEntities(Node $node): iterable
     {
         $parent = Tree::parent($node);
-        if (
-            !$parent instanceof Node\Stmt\Namespace_
-            || !$parent instanceof Node\Stmt\Declare_
-        ) {
+        if (!$parent instanceof Node\Stmt\Namespace_ || !$parent instanceof Node\Stmt\Declare_) {
             return;
         }
 
@@ -146,11 +143,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'class {}',
             insertText: <<<'TEXT'
-            class ${1:Name}
-            {
-                $0
-            }
-            TEXT,
+                class ${1:Name}
+                {
+                    $0
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
         yield 'cle' => new CompletionItem(
@@ -158,11 +155,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'class extends',
             insertText: <<<'TEXT'
-            class ${1:Name} extends ${2:Parent}
-            {
-                $0
-            }
-            TEXT,
+                class ${1:Name} extends ${2:Parent}
+                {
+                    $0
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
         yield 'cli' => new CompletionItem(
@@ -170,11 +167,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'class implements',
             insertText: <<<'TEXT'
-            class ${1:Name} implements ${2:Parent}
-            {
-                $0
-            }
-            TEXT,
+                class ${1:Name} implements ${2:Parent}
+                {
+                    $0
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
 
@@ -183,11 +180,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'interface {}',
             insertText: <<<'TEXT'
-            interface ${1:Name}
-            {
-                $0
-            }
-            TEXT,
+                interface ${1:Name}
+                {
+                    $0
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
 
@@ -196,11 +193,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'enum {}',
             insertText: <<<'TEXT'
-            enum ${1:Name}
-            {
-                $0
-            }
-            TEXT,
+                enum ${1:Name}
+                {
+                    $0
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
 
@@ -209,11 +206,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'trait {}',
             insertText: <<<'TEXT'
-            trait ${1:Name}
-            {
-                $0
-            }
-            TEXT,
+                trait ${1:Name}
+                {
+                    $0
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
 
@@ -222,11 +219,11 @@ final class ShortcutCompletionContributor implements CompletionContributor
             kind: CompletionItemKind::SnippetKind,
             detail: 'function {}',
             insertText: <<<'TEXT'
-            function ${1:name}(${2}): ${3:void}
-            {
-                $0
-            }
-            TEXT,
+                function ${1:name}(${2}): ${3:void}
+                {
+                    $0
+                }
+                TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
     }

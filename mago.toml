@@ -15,6 +15,16 @@ no-redundant-readonly = { enabled = true }
 sensitive-parameter = { enabled = true }
 no-redundant-use = { enabled = true }
 
+[formatter]
+preset = "default"
+trailing-comma = true
+empty-line-before-return = true
+preserve-breaking-argument-list = true
+preserve-breaking-parameter-list = true
+preserve-breaking-array-like = true
+inline-empty-method-braces = true
+inline-empty-constructor-braces = true
+
 [analyzer]
 baseline = "mago-analysis-baseline.toml"
 find-unused-expressions = true

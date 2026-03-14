@@ -9,36 +9,70 @@ use Lsp\Protocol\Type\CompletionItemKind;
 final class KeywordDefinitions
 {
     public const CONTROL_FLOW = [
-        'if', 'else', 'elseif', 'endif',
-        'switch', 'endswitch', 'case', 'default',
-        'while', 'endwhile', 'do',
-        'for', 'endfor', 'foreach', 'endforeach',
-        'break', 'continue', 'return',
-        'goto', 'declare', 'enddeclare',
-        'try', 'catch', 'finally', 'throw',
-        'yield', 'yield from',
+        'if',
+        'else',
+        'elseif',
+        'endif',
+        'switch',
+        'endswitch',
+        'case',
+        'default',
+        'while',
+        'endwhile',
+        'do',
+        'for',
+        'endfor',
+        'foreach',
+        'endforeach',
+        'break',
+        'continue',
+        'return',
+        'goto',
+        'declare',
+        'enddeclare',
+        'try',
+        'catch',
+        'finally',
+        'throw',
+        'yield',
+        'yield from',
         'match', // PHP 8.0+
     ];
 
     public const DECLARATION = [
-        'class', 'interface', 'trait', 'enum', // PHP 8.1+
-        'function', 'fn', // PHP 7.4+
-        'namespace', 'use',
+        'class',
+        'interface',
+        'trait',
+        'enum', // PHP 8.1+
+        'function',
+        'fn', // PHP 7.4+
+        'namespace',
+        'use',
         'const',
     ];
 
     public const MODIFIER = [
-        'public', 'protected', 'private',
-        'static', 'final', 'abstract',
+        'public',
+        'protected',
+        'private',
+        'static',
+        'final',
+        'abstract',
         'readonly', // PHP 8.1+
         'var',
     ];
 
     public const TYPE = [
-        'extends', 'implements', 'instanceof', 'insteadof',
-        'new', 'clone',
-        'array', 'callable',
-        'as', 'global',
+        'extends',
+        'implements',
+        'instanceof',
+        'insteadof',
+        'new',
+        'clone',
+        'array',
+        'callable',
+        'as',
+        'global',
     ];
 
     public const LANGUAGE_CONSTRUCT = [
@@ -55,9 +89,13 @@ final class KeywordDefinitions
     ];
 
     public const OPERATOR = [
-        'and', 'or', 'xor',
-        'include', 'include_once',
-        'require', 'require_once',
+        'and',
+        'or',
+        'xor',
+        'include',
+        'include_once',
+        'require',
+        'require_once',
     ];
 
     public const MAGIC_CONSTANT = [

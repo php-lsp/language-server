@@ -38,8 +38,8 @@ final class RenameController
         foreach ($this->contributors as $contributor) {
             $contributor->contribute($context, $consumer);
         }
-        //        $consumer->results;
 
+        //        $consumer->results;
         //        return Tree::getRange($element, $file);
     }
 }

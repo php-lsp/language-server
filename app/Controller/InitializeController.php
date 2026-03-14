@@ -73,7 +73,7 @@ final class InitializeController
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
                     identifier: null,
-                    workDoneProgress: null
+                    workDoneProgress: null,
                 ),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(

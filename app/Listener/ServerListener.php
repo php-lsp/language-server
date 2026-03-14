@@ -18,7 +18,7 @@ final class ServerListener extends LoggerListener
 {
     public function __invoke(ServerStarted $event): void
     {
-        $shortName = (new \ReflectionClass($event))->getShortName();
+        $shortName = new \ReflectionClass($event)->getShortName();
 
         $this->logger->debug('[{address}] {name}', [
             'address' => $event->server->getAddress(),

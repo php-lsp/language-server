@@ -16,7 +16,7 @@ class CompletionContext
         public TextDocumentIdentifier $textDocumentIdentifier,
         public Position $position,
         public EditorInterface $editor,
-        public InMemoryPsiFileManager $fileManager
+        public InMemoryPsiFileManager $fileManager,
     ) {}
 
     public function currentNode(): ?Node

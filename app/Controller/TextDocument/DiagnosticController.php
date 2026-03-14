@@ -28,8 +28,10 @@ final class DiagnosticController
         private DocumentLoaderInterface $documentLoader,
     ) {}
 
-    public function __invoke(EditorInterface $editor, DocumentDiagnosticParams $params): RelatedFullDocumentDiagnosticReport
-    {
+    public function __invoke(
+        EditorInterface $editor,
+        DocumentDiagnosticParams $params,
+    ): RelatedFullDocumentDiagnosticReport {
         //        dump('textDocument/diagnostic:', $params);
 
         $identifier = $params->textDocument;

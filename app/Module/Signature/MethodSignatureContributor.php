@@ -167,7 +167,13 @@ final class MethodSignatureContributor implements SignatureContributor
 
         $returnType = FunctionSignatureContributor::typeToString($method->returnType);
         $returnSuffix = $returnType !== '' ? ': ' . $returnType : '';
-        $label = sprintf('%s::%s(%s)%s', $className, $method->name->toString(), implode(', ', $paramLabels), $returnSuffix);
+        $label = sprintf(
+            '%s::%s(%s)%s',
+            $className,
+            $method->name->toString(),
+            implode(', ', $paramLabels),
+            $returnSuffix,
+        );
 
         $doc = '';
         $docComment = $method->getDocComment();

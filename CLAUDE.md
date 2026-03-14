@@ -24,12 +24,12 @@ composer test:unit         # PHPUnit only
 composer test:feature      # Behat only
 
 # Code quality
-composer linter:check      # PHPStan (level max)
 composer mago:lint         # Mago linter (with baseline)
 composer mago:analyze      # Mago analyzer (with baseline)
+composer mago:fix          # Mago auto-fix (safe + potentially-unsafe)
 composer mago:baseline     # Regenerate Mago baselines
-composer phpcs:check       # PHP-CS-Fixer dry-run
-composer phpcs:fix         # PHP-CS-Fixer auto-fix
+composer mago:format       # Mago formatter (auto-fix)
+composer mago:format:check # Mago formatter (dry-run check)
 
 # Build
 composer build:prod        # Compile PHAR → var/prod/build.phar
@@ -106,20 +106,13 @@ Available contributor types and their DI tags:
 
 ## Code Style
 
-- **Standard:** PER-CS 2.0 with risky rules
-- **Config:** `.php-cs-fixer.php`
-- Single quotes, short array syntax, no Yoda style
-- Imports ordered alphabetically (class, function, const)
-- Always run `composer phpcs:fix` before committing
+- **Formatter:** Mago (PER-CS 2.0 — default preset)
+- **Config:** `mago.toml` `[formatter]` section
+- Single quotes, trailing commas, imports sorted alphabetically
+- Always run `composer mago:format` before committing
 
 ## Static Analysis
 
-### PHPStan
-- **PHPStan level max** with bleeding edge, strict rules, and deprecation rules
-- Config: `phpstan.neon`
-- Analyzes: `app/` directory only
-
-### Mago
 - **Mago** — fast PHP linter and analyzer (written in Rust)
 - Config: `mago.toml`
 - Baselines: `mago-lint-baseline.toml`, `mago-analysis-baseline.toml`
@@ -134,7 +127,7 @@ Available contributor types and their DI tags:
 - `php-lsp/bridge-server-react` — Async I/O via ReactPHP
 - `php-lsp/ext-document-manager` — Document lifecycle management
 - `monolog/monolog` — Logging
-- `carthage-software/mago` — Mago PHP linter and analyzer
+- `carthage-software/mago` — Mago PHP linter, analyzer, and formatter
 
 ## Guidelines
 
@@ -151,9 +144,7 @@ Available contributor types and their DI tags:
   architecture and design documentation.
 - See [config/services.yaml](config/services.yaml) and subdirectories for
   service registration details.
-- See [phpstan.neon](phpstan.neon) for PHPStan static analysis configuration.
-- See [mago.toml](mago.toml) for Mago linter and analyzer configuration.
-- See [.php-cs-fixer.php](.php-cs-fixer.php) for code style rules.
+- See [mago.toml](mago.toml) for Mago linter, analyzer, and formatter configuration.
 - See [phpunit.xml](phpunit.xml) and [behat.yaml](behat.yaml) for test
   configuration.
 - See [docs/codespaces.md](docs/codespaces.md) for GitHub Codespaces setup

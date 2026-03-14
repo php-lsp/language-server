@@ -124,13 +124,15 @@ class Tree
      */
     private static function getNodeChildren(Node $node): array
     {
-        return match (true) {
-            $node instanceof Node\Stmt\ClassLike => $node->stmts,
-            $node instanceof Node\Stmt\Namespace_ => $node->stmts,
-            $node instanceof Node\Stmt\Function_ => $node->stmts,
-            $node instanceof Node\Stmt\ClassMethod => $node->stmts,
-            default => [],
-        } ?? [];
+        return (
+            match (true) {
+                $node instanceof Node\Stmt\ClassLike => $node->stmts,
+                $node instanceof Node\Stmt\Namespace_ => $node->stmts,
+                $node instanceof Node\Stmt\Function_ => $node->stmts,
+                $node instanceof Node\Stmt\ClassMethod => $node->stmts,
+                default => [],
+            } ?? []
+        );
     }
 
     public static function getRange(Node $node, PHPPsiFile $file): Range

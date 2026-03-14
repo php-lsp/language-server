@@ -43,11 +43,11 @@ final class DocblockDocumentationContributor implements DocumentationContributor
     {
         return sprintf(
             <<<MARKDOWN
-            PHPStan Type:
-            %s (%s)
-            MARKDOWN,
+                PHPStan Type:
+                %s (%s)
+                MARKDOWN,
             $type->describe(VerbosityLevel::precise()),
-            $type->describe(VerbosityLevel::typeOnly())
+            $type->describe(VerbosityLevel::typeOnly()),
         );
     }
 }
