@@ -16,13 +16,14 @@ use PHPUnit\Framework\Attributes\TestDox;
 #[Group('unit')]
 final class MessageListenerTest extends TestCase
 {
-    #[TestDox('logs received message')]
+    #[TestDox('logs debug message on event')]
     public function testLogsMessage(): void
     {
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())->method('debug');
 
         $listener = new MessageListener($logger);
+
         $message = $this->createMock(MessageInterface::class);
         $connection = $this->createMock(ConnectionInterface::class);
         $event = new MessageReceived($message, $connection);

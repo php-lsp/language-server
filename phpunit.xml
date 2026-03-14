@@ -5,7 +5,7 @@
          backupGlobals="true"
          stopOnFailure="false"
          processIsolation="false"
-         bootstrap="vendor/autoload.php"
+         bootstrap="tests/bootstrap.php"
          cacheDirectory="vendor/.cache.phpunit"
          backupStaticProperties="false"
          failOnWarning="true"

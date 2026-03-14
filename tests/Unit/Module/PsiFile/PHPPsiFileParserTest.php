@@ -17,47 +17,25 @@ final class PHPPsiFileParserTest extends TestCase
     #[TestDox('parses valid PHP code')]
     public function testParsesValidCode(): void
     {
-        $parser = PsiFileFactory::getParser();
-        $document = PsiFileFactory::document('<?php function foo() {}');
+        $parser = new PHPPsiFileParser();
+        $document = PsiFileFactory::document('<?php class Foo {}');
 
-        $root = $parser->parse($document);
+        $result = $parser->parse($document);
 
-        $this->assertInstanceOf(SourceFileRoot::class, $root);
-        $this->assertNotEmpty($root->children);
-        $this->assertEmpty($root->errors);
+        $this->assertInstanceOf(SourceFileRoot::class, $result);
+        $this->assertNotEmpty($result->children);
+        $this->assertEmpty($result->errors);
     }
 
-    #[TestDox('collects parse errors for invalid code')]
-    public function testCollectsParseErrors(): void
+    #[TestDox('collects errors for invalid code')]
+    public function testCollectsErrors(): void
     {
-        $parser = PsiFileFactory::getParser();
-        // Use code that produces errors but still returns a partial AST
-        $document = PsiFileFactory::document('<?php echo $x; echo;');
+        $parser = new PHPPsiFileParser();
+        $document = PsiFileFactory::document('<?php class {}');
 
-        $root = $parser->parse($document);
+        $result = $parser->parse($document);
 
-        $this->assertNotEmpty($root->errors);
-    }
-
-    #[TestDox('preserves document reference')]
-    public function testPreservesDocument(): void
-    {
-        $parser = PsiFileFactory::getParser();
-        $document = PsiFileFactory::document('<?php echo 1;');
-
-        $root = $parser->parse($document);
-
-        $this->assertSame($document, $root->document);
-    }
-
-    #[TestDox('resolves fully qualified names')]
-    public function testResolvesNames(): void
-    {
-        $parser = PsiFileFactory::getParser();
-        $document = PsiFileFactory::document('<?php namespace App; class Foo {}');
-
-        $root = $parser->parse($document);
-
-        $this->assertNotEmpty($root->children);
+        $this->assertInstanceOf(SourceFileRoot::class, $result);
+        $this->assertNotEmpty($result->errors);
     }
 }

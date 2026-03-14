@@ -34,4 +34,27 @@ final class ReferencesControllerTest extends TestCase
 
         $this->assertSame([], $result);
     }
+
+    #[TestDox('aggregates results from contributors')]
+    public function testAggregatesContributors(): void
+    {
+        $contributor = new class implements ReferenceContributor {
+            public function contribute(\App\Core\Contracts\References\ReferenceContext $context, ReferenceConsumer $consumer): void
+            {
+                $consumer(new \Lsp\Protocol\Type\Location(uri: 'file:///foo.php', range: ProtocolFactory::range()));
+            }
+        };
+
+        $controller = new ReferencesController([$contributor]);
+        $editor = $this->createMock(EditorInterface::class);
+        $params = new ReferenceParams(
+            context: new LspReferenceContext(includeDeclaration: false),
+            textDocument: ProtocolFactory::textDocumentIdentifier(),
+            position: ProtocolFactory::position(),
+        );
+
+        $result = $controller($editor, $params);
+
+        $this->assertCount(1, $result);
+    }
 }

@@ -106,10 +106,50 @@ final class TreeTest extends TestCase
         $this->assertIsInt($col);
     }
 
-    #[TestDox('toString returns string for stringable nodes')]
-    public function testToString(): void
+    #[TestDox('toString returns empty for null')]
+    public function testToStringNull(): void
     {
         $this->assertSame('', Tree::toString(null));
+    }
+
+    #[TestDox('toString returns string for stringable node')]
+    public function testToStringStringable(): void
+    {
+        $psiFile = PsiFileFactory::fromCode('<?php class Foo {}');
+        $classes = Tree::childrenOfType($psiFile->ast, Node\Stmt\Class_::class);
+        $result = Tree::toString($classes[0]->name);
+        $this->assertSame('Foo', $result);
+    }
+
+    #[TestDox('toString returns var_export for non-stringable node')]
+    public function testToStringNonStringable(): void
+    {
+        // Create a minimal node without parent links to avoid circular references
+        $node = new Node\Scalar\Int_(42);
+        $result = Tree::toString($node);
+        $this->assertStringContainsString('-----', $result);
+    }
+
+    #[TestDox('childrenOfType traverses into namespaces')]
+    public function testChildrenOfTypeInNamespace(): void
+    {
+        $psiFile = PsiFileFactory::fromCode('<?php namespace App; class Foo {}');
+        $classes = Tree::childrenOfType($psiFile->ast, Node\Stmt\Class_::class);
+        $this->assertCount(1, $classes);
+    }
+
+    #[TestDox('childrenOfTypes returns empty for null')]
+    public function testChildrenOfTypesNull(): void
+    {
+        $this->assertSame([], Tree::childrenOfTypes(null, Node\Stmt\Class_::class));
+    }
+
+    #[TestDox('getNodeChildren handles function stmts')]
+    public function testGetNodeChildrenFunction(): void
+    {
+        $psiFile = PsiFileFactory::fromCode('<?php function foo() { class Bar {} }');
+        $classes = Tree::childrenOfType($psiFile->ast, Node\Stmt\Class_::class);
+        $this->assertCount(1, $classes);
     }
 
     #[TestDox('getParentNodes yields parent chain')]

@@ -12,7 +12,6 @@ use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\PrepareRenameParams;
 use Lsp\Protocol\Type\Range;
-use Lsp\Protocol\Type\TextDocumentIdentifier;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -28,8 +27,8 @@ final class PrepareRenameControllerTest extends TestCase
         $controller = new PrepareRenameController($fileManager);
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new PrepareRenameParams(
-            textDocument: new TextDocumentIdentifier('file:///test.php'),
-            position: ProtocolFactory::position(0, 0),
+            textDocument: ProtocolFactory::textDocumentIdentifier(),
+            position: ProtocolFactory::position(),
         );
 
         $result = $controller($editor, $params);
@@ -37,19 +36,18 @@ final class PrepareRenameControllerTest extends TestCase
         $this->assertNull($result);
     }
 
-    #[TestDox('returns range when file is found')]
-    public function testReturnsRangeForElement(): void
+    #[TestDox('returns range for node at position')]
+    public function testReturnsRangeForNode(): void
     {
         $psiFile = PsiFileFactory::fromCode('<?php class Foo {}');
-
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
 
         $controller = new PrepareRenameController($fileManager);
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new PrepareRenameParams(
-            textDocument: new TextDocumentIdentifier('file:///test.php'),
-            position: ProtocolFactory::position(0, 14),
+            textDocument: ProtocolFactory::textDocumentIdentifier(),
+            position: ProtocolFactory::position(0, 10),
         );
 
         $result = $controller($editor, $params);

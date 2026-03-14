@@ -15,7 +15,7 @@ final class VirtualFileStub implements VirtualFileInterface, \IteratorAggregate
     public readonly ?string $nameWithoutExtension;
     public readonly Uri $uri;
 
-    private function __construct(string $name, string $extension)
+    private function __construct(string $name, ?string $extension)
     {
         $this->name = $name;
         $this->path = '/tmp/' . $name;

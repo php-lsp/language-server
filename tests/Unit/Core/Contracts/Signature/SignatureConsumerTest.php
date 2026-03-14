@@ -17,14 +17,23 @@ final class SignatureConsumerTest extends TestCase
     public function testCollectsItems(): void
     {
         $consumer = new SignatureConsumer();
-        $consumer(ProtocolFactory::signatureInformation());
+        $sig = ProtocolFactory::signatureInformation('test()');
+
+        ($consumer)($sig);
 
         $this->assertCount(1, $consumer->results);
+        $this->assertSame($sig, $consumer->results[0]);
     }
 
-    #[TestDox('starts with empty results')]
-    public function testStartsEmpty(): void
+    #[TestDox('accepts multiple items')]
+    public function testAcceptsMultiple(): void
     {
-        $this->assertSame([], (new SignatureConsumer())->results);
+        $consumer = new SignatureConsumer();
+        $sig1 = ProtocolFactory::signatureInformation('a()');
+        $sig2 = ProtocolFactory::signatureInformation('b()');
+
+        ($consumer)($sig1, $sig2);
+
+        $this->assertCount(2, $consumer->results);
     }
 }

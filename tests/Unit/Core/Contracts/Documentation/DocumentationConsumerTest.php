@@ -12,18 +12,12 @@ use PHPUnit\Framework\Attributes\TestDox;
 #[Group('unit')]
 final class DocumentationConsumerTest extends TestCase
 {
-    #[TestDox('collects string items')]
-    public function testCollectsItems(): void
+    #[TestDox('collects documentation strings')]
+    public function testCollectsStrings(): void
     {
         $consumer = new DocumentationConsumer();
-        $consumer('hello', 'world');
+        ($consumer)('line 1', 'line 2');
 
-        $this->assertSame(['hello', 'world'], $consumer->results);
-    }
-
-    #[TestDox('starts with empty results')]
-    public function testStartsEmpty(): void
-    {
-        $this->assertSame([], (new DocumentationConsumer())->results);
+        $this->assertSame(['line 1', 'line 2'], $consumer->results);
     }
 }

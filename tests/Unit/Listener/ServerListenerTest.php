@@ -6,7 +6,6 @@ namespace App\Tests\Unit\Listener;
 
 use App\Listener\ServerListener;
 use App\Tests\TestCase;
-use Lsp\Contracts\Server\AddressInterface;
 use Lsp\Contracts\Server\ServerInterface;
 use Lsp\Server\Event\Server\ServerStarted;
 use Psr\Log\LoggerInterface;
@@ -16,18 +15,17 @@ use PHPUnit\Framework\Attributes\TestDox;
 #[Group('unit')]
 final class ServerListenerTest extends TestCase
 {
-    #[TestDox('logs server started event')]
-    public function testLogsServerStarted(): void
+    #[TestDox('logs server address and event name')]
+    public function testLogsServerEvent(): void
     {
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())->method('debug');
 
-        $address = $this->createMock(AddressInterface::class);
+        $listener = new ServerListener($logger);
 
+        $address = $this->createMock(\Lsp\Contracts\Server\AddressInterface::class);
         $server = $this->createMock(ServerInterface::class);
         $server->method('getAddress')->willReturn($address);
-
-        $listener = new ServerListener($logger);
         $event = new ServerStarted($server);
 
         $listener($event);

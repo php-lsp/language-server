@@ -31,4 +31,27 @@ final class RenameControllerTest extends TestCase
 
         $this->assertNull($result);
     }
+
+    #[TestDox('aggregates results from contributors')]
+    public function testAggregatesContributors(): void
+    {
+        $contributor = new class implements \App\Core\Contracts\References\ReferenceContributor {
+            public function contribute(\App\Core\Contracts\References\ReferenceContext $context, \App\Core\Contracts\References\ReferenceConsumer $consumer): void
+            {
+                $consumer(new \Lsp\Protocol\Type\Location(uri: 'file:///foo.php', range: ProtocolFactory::range()));
+            }
+        };
+
+        $fileManager = $this->createMock(InMemoryPsiFileManager::class);
+        $controller = new RenameController([$contributor], $fileManager);
+        $editor = $this->createMock(EditorInterface::class);
+        $params = new PrepareRenameParams(
+            textDocument: ProtocolFactory::textDocumentIdentifier(),
+            position: ProtocolFactory::position(),
+        );
+
+        $result = $controller($editor, $params);
+
+        $this->assertNull($result);
+    }
 }

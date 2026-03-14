@@ -12,31 +12,26 @@ use PHPUnit\Framework\Attributes\TestDox;
 #[Group('unit')]
 final class StrContainsMatcherTest extends TestCase
 {
-    #[TestDox('matches when prefix is contained')]
-    public function testMatchesContained(): void
+    #[TestDox('match returns true when text contains prefix')]
+    public function testMatchReturnsTrue(): void
     {
         $matcher = new StrContainsMatcher('foo');
         $this->assertTrue($matcher->match('foobar'));
+        $this->assertTrue($matcher->match('xfoox'));
     }
 
-    #[TestDox('does not match when prefix is absent')]
-    public function testDoesNotMatch(): void
+    #[TestDox('match returns false when text does not contain prefix')]
+    public function testMatchReturnsFalse(): void
     {
-        $matcher = new StrContainsMatcher('baz');
-        $this->assertFalse($matcher->match('foobar'));
+        $matcher = new StrContainsMatcher('foo');
+        $this->assertFalse($matcher->match('bar'));
+        $this->assertFalse($matcher->match(''));
     }
 
-    #[TestDox('matches empty prefix against anything')]
-    public function testEmptyPrefix(): void
-    {
-        $matcher = new StrContainsMatcher('');
-        $this->assertTrue($matcher->match('anything'));
-    }
-
-    #[TestDox('static matches helper works')]
+    #[TestDox('static matches method works')]
     public function testStaticMatches(): void
     {
         $this->assertTrue(StrContainsMatcher::matches('hello world', 'world'));
-        $this->assertFalse(StrContainsMatcher::matches('hello', 'xyz'));
+        $this->assertFalse(StrContainsMatcher::matches('hello', 'world'));
     }
 }

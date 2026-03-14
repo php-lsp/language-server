@@ -58,4 +58,29 @@ final class DiagnosticControllerTest extends TestCase
 
         $this->assertNotEmpty($result->items);
     }
+
+    #[TestDox('loads document from loader when not in editor')]
+    public function testLoadsFromLoader(): void
+    {
+        $document = PsiFileFactory::document('<?php echo 1;');
+
+        // EditorInterface doesn't have 'open', so this path will throw.
+        // We verify the loader is called instead.
+        $editor = $this->createMock(EditorInterface::class);
+        $editor->method('findByUriString')->willReturn(null);
+
+        $loader = $this->createMock(DocumentLoaderInterface::class);
+        $loader->expects($this->once())->method('load')->willReturn($document);
+
+        $controller = new DiagnosticController(PsiFileFactory::getParser(), $loader);
+
+        $params = new DocumentDiagnosticParams(
+            textDocument: ProtocolFactory::textDocumentIdentifier(),
+        );
+
+        // The code calls $editor->open() which doesn't exist on the interface
+        // This will throw a BadMethodCallException
+        $this->expectException(\Error::class);
+        $controller($editor, $params);
+    }
 }

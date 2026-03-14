@@ -31,4 +31,26 @@ final class SignatureHelpControllerTest extends TestCase
         $this->assertInstanceOf(SignatureHelp::class, $result);
         $this->assertSame([], $result->signatures);
     }
+
+    #[TestDox('aggregates results from contributors')]
+    public function testAggregatesContributors(): void
+    {
+        $contributor = new class implements \App\Core\Contracts\Signature\SignatureContributor {
+            public function contribute(\App\Core\Contracts\Signature\SignatureContext $context, \App\Core\Contracts\Signature\SignatureConsumer $consumer): void
+            {
+                $consumer(ProtocolFactory::signatureInformation());
+            }
+        };
+
+        $controller = new SignatureHelpController([$contributor]);
+        $editor = $this->createMock(EditorInterface::class);
+        $params = new SignatureHelpParams(
+            textDocument: ProtocolFactory::textDocumentIdentifier(),
+            position: ProtocolFactory::position(),
+        );
+
+        $result = $controller($editor, $params);
+
+        $this->assertCount(1, $result->signatures);
+    }
 }
