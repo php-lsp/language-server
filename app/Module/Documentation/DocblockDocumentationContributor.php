@@ -9,7 +9,6 @@ use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Core\Contracts\Documentation\DocumentationContributor;
 use App\Module\TypeSystem\TypeResolverInterface;
-use App\Module\TypeSystem\TypeResult;
 
 #[AsDocumentationContributor]
 final class DocblockDocumentationContributor implements DocumentationContributor
