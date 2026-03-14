@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\TypeSystem;
 
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\SourceFileRoot;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
@@ -13,7 +14,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Type\Type;
 use Psr\Log\LoggerInterface;
 
-class TypeResolver
+final class TypeResolver implements TypeResolverInterface
 {
     public function __construct(
         private readonly PHPStanBootstrap $phpstan,
@@ -36,18 +37,12 @@ class TypeResolver
             return null;
         }
 
-        $filePath = $this->uriToPath($textDocumentIdentifier->uri);
+        $filePath = UriHelper::toFilePath($textDocumentIdentifier->uri);
 
-        /** @var array<Node\Stmt> $stmts */
-        $stmts = $psiFile->ast->children;
-
-        return $this->resolveNodeInFile($targetNode, $stmts, $filePath);
+        return $this->resolveNodeInFile($targetNode, $psiFile->ast, $filePath);
     }
 
-    /**
-     * @param array<Node\Stmt> $stmts
-     */
-    public function resolveNodeInFile(Node $targetNode, array $stmts, string $filePath): ?TypeResult
+    public function resolveNodeInFile(Node $targetNode, SourceFileRoot $ast, string $filePath): ?TypeResult
     {
         $targetStartPos = $targetNode->getStartFilePos();
         $targetEndPos = $targetNode->getEndFilePos();
@@ -55,6 +50,9 @@ class TypeResolver
         $foundType = null;
         $foundScope = null;
         $foundNode = null;
+
+        /** @var array<Node\Stmt> $stmts */
+        $stmts = $ast->children;
 
         try {
             $nodeScopeResolver = $this->phpstan->getNodeScopeResolver();
@@ -118,19 +116,19 @@ class TypeResolver
             return null;
         }
 
-        $filePath = $this->uriToPath($textDocumentIdentifier->uri);
+        $filePath = UriHelper::toFilePath($textDocumentIdentifier->uri);
 
         $targetLine = $position->line + 1;
         $foundType = null;
+
+        /** @var array<Node\Stmt> $stmts */
+        $stmts = $psiFile->ast->children;
 
         try {
             $nodeScopeResolver = $this->phpstan->getNodeScopeResolver();
             $scope = $this->phpstan->createScopeForFile($filePath);
 
             $nodeScopeResolver->setAnalysedFiles([$filePath]);
-
-            /** @var array<Node\Stmt> $stmts */
-            $stmts = $psiFile->ast->children;
 
             $nodeScopeResolver->processNodes(
                 $stmts,
@@ -150,10 +148,5 @@ class TypeResolver
         }
 
         return $foundType;
-    }
-
-    private function uriToPath(string $uri): string
-    {
-        return str_replace('file://', '', $uri);
     }
 }

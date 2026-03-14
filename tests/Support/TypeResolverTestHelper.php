@@ -8,13 +8,16 @@ use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\TypeSystem\PHPStanBootstrap;
 use App\Module\TypeSystem\TypeResolver;
 use App\Module\TypeSystem\TypeResult;
+use App\Module\Workspace\ProjectManager;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
+use Lsp\Workspace\File\FilesystemReader\FilesystemReaderInterface;
+use Lsp\Workspace\Project\Project;
+use Lsp\Workspace\Uri\Uri;
 use Psr\Log\NullLogger;
 
 final class TypeResolverTestHelper
 {
     private static ?PHPStanBootstrap $bootstrap = null;
-    private static int $counter = 0;
 
     public static function bootstrap(): PHPStanBootstrap
     {
@@ -22,16 +25,16 @@ final class TypeResolverTestHelper
             return self::$bootstrap;
         }
 
-        $fs = MockHelper::mock(\Lsp\Workspace\File\FilesystemReader\FilesystemReaderInterface::class);
+        $fs = MockHelper::mock(FilesystemReaderInterface::class);
         $fs->method('count')->willReturn(0);
 
-        $project = new \Lsp\Workspace\Project\Project(
+        $project = new Project(
             name: 'test',
-            uri: new \Lsp\Workspace\Uri\Uri(sys_get_temp_dir(), null),
+            uri: new Uri(sys_get_temp_dir(), null),
             filesystem: $fs,
         );
 
-        $projectManager = new \App\Module\Workspace\ProjectManager();
+        $projectManager = new ProjectManager();
         $projectManager->setProject($project);
 
         self::$bootstrap = new PHPStanBootstrap($projectManager);
@@ -39,34 +42,31 @@ final class TypeResolverTestHelper
         return self::$bootstrap;
     }
 
-    public static function resolve(string $code, int $line, int $char): ?TypeResult
+    public static function createResolver(?InMemoryPsiFileManager $fileManager = null): TypeResolver
     {
-        $filePath = sys_get_temp_dir() . '/phpstan_lsp_test_' . (++self::$counter) . '.php';
+        return new TypeResolver(
+            self::bootstrap(),
+            $fileManager ?? MockHelper::mock(InMemoryPsiFileManager::class),
+            new NullLogger(),
+        );
+    }
+
+    public static function resolveInCode(string $code, int $line, int $char, string $filePath): ?TypeResult
+    {
         file_put_contents($filePath, $code);
 
-        try {
-            $uri = 'file://' . $filePath;
+        $uri = 'file://' . $filePath;
 
-            self::bootstrap()->setAnalysedPaths([$filePath]);
+        self::bootstrap()->setAnalysedPaths([$filePath]);
 
-            $psiFile = PsiFileFactory::fromCode($code, $uri);
+        $psiFile = PsiFileFactory::fromCode($code, $uri);
+        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager->method('findPsiFile')->willReturn($psiFile);
 
-            $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
-            $fileManager->method('findPsiFile')->willReturn($psiFile);
-
-            $resolver = new TypeResolver(
-                self::bootstrap(),
-                $fileManager,
-                new NullLogger(),
-            );
-
-            return $resolver->resolveAtPosition(
-                MockHelper::mock(EditorInterface::class),
-                ProtocolFactory::textDocumentIdentifier($uri),
-                ProtocolFactory::position($line, $char),
-            );
-        } finally {
-            @unlink($filePath);
-        }
+        return self::createResolver($fileManager)->resolveAtPosition(
+            MockHelper::mock(EditorInterface::class),
+            ProtocolFactory::textDocumentIdentifier($uri),
+            ProtocolFactory::position($line, $char),
+        );
     }
 }

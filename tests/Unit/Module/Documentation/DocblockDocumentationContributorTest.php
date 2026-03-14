@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Module\Documentation;
 use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Module\Documentation\DocblockDocumentationContributor;
-use App\Module\TypeSystem\TypeResolver;
+use App\Module\TypeSystem\TypeResolverInterface;
 use App\Module\TypeSystem\TypeResult;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -26,7 +26,7 @@ final class DocblockDocumentationContributorTest extends TestCase
     {
         $typeResult = new TypeResult(new StringType(), $this->createMock(Scope::class));
 
-        $typeResolver = MockHelper::mock(TypeResolver::class);
+        $typeResolver = MockHelper::mock(TypeResolverInterface::class);
         $typeResolver->method('resolveAtPosition')->willReturn($typeResult);
 
         $context = new DocumentationContext(
@@ -46,7 +46,7 @@ final class DocblockDocumentationContributorTest extends TestCase
     #[TestDox('does nothing when type not resolved')]
     public function testDoesNothingWhenNoType(): void
     {
-        $typeResolver = MockHelper::mock(TypeResolver::class);
+        $typeResolver = MockHelper::mock(TypeResolverInterface::class);
         $typeResolver->method('resolveAtPosition')->willReturn(null);
 
         $context = new DocumentationContext(
@@ -67,7 +67,7 @@ final class DocblockDocumentationContributorTest extends TestCase
     {
         $typeResult = new TypeResult(new StringType(), $this->createMock(Scope::class));
 
-        $typeResolver = MockHelper::mock(TypeResolver::class);
+        $typeResolver = MockHelper::mock(TypeResolverInterface::class);
         $typeResolver->method('resolveAtPosition')->willReturn($typeResult);
 
         $context = new DocumentationContext(
