@@ -1,0 +1,409 @@
+variant = "loose"
+
+[[issues]]
+file = "app/Application.php"
+code = "no-redundant-use"
+message = "Unused import: `LoggerInterface`."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "literal-named-argument"
+message = "Literal argument `''` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "literal-named-argument"
+message = "Literal argument `1.0` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "no-redundant-use"
+message = "Unused import: `AsController`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "no-redundant-use"
+message = "Unused import: `Route`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/Indexing/IndexerInterface.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/Signature/SignatureContext.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Infrastructure/Symfony/LSPCompilerPass.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.61)."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 3
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "no-assign-in-condition"
+message = "Avoid assignments in conditions."
+count = 8
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 8
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "no-redundant-use"
+message = "Unused import: `ClassIndexer`."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
+code = "no-empty"
+message = "Use of the `empty` construct."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/IndexLookup.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "tagged-todo"
+message = "TODO should be tagged with (@username) or (#issue)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "tagged-todo"
+message = "TODO should be tagged with (@username) or (#issue)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/Entry.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/SerializerInterface.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/StorageInterface.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
+code = "literal-named-argument"
+message = "Literal argument `0` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "identity-comparison"
+message = "Use identity inequality `!==` instead of inequality comparison `!=`."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "prefer-static-closure"
+message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "inline-variable-return"
+message = "Variable assignment can be inlined into the return statement."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "literal-named-argument"
+message = 'Literal argument `"\n"` should be passed as a named argument for clarity.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "no-shorthand-ternary"
+message = "Use of the shorthand ternary operator."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "prefer-static-closure"
+message = "This closure does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.89)."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "literal-named-argument"
+message = 'Literal argument `"\n"` should be passed as a named argument for clarity.'
+count = 3
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "literal-named-argument"
+message = "Literal argument `0` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "no-assign-in-condition"
+message = "Avoid assignments in conditions."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "app/Module/References/VariableReferenceContributor.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/ConstructorSignatureContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/ConstructorSignatureContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.7000000000000002)."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/FunctionSignatureContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/FunctionSignatureContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.7400000000000002)."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.49)."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/Workspace/ProjectManager.php"
+code = "strict-types"
+message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1

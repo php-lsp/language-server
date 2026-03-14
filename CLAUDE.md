@@ -25,6 +25,9 @@ composer test:feature      # Behat only
 
 # Code quality
 composer linter:check      # PHPStan (level max)
+composer mago:lint         # Mago linter (with baseline)
+composer mago:analyze      # Mago analyzer (with baseline)
+composer mago:baseline     # Regenerate Mago baselines
 composer phpcs:check       # PHP-CS-Fixer dry-run
 composer phpcs:fix         # PHP-CS-Fixer auto-fix
 
@@ -111,9 +114,17 @@ Available contributor types and their DI tags:
 
 ## Static Analysis
 
+### PHPStan
 - **PHPStan level max** with bleeding edge, strict rules, and deprecation rules
 - Config: `phpstan.neon`
 - Analyzes: `app/` directory only
+
+### Mago
+- **Mago** — fast PHP linter and analyzer (written in Rust)
+- Config: `mago.toml`
+- Baselines: `mago-lint-baseline.toml`, `mago-analysis-baseline.toml`
+- Analyzes: `app/` directory only
+- Run `composer mago:baseline` to regenerate baselines after fixing existing issues
 
 ## Key Dependencies
 
@@ -123,6 +134,7 @@ Available contributor types and their DI tags:
 - `php-lsp/bridge-server-react` — Async I/O via ReactPHP
 - `php-lsp/ext-document-manager` — Document lifecycle management
 - `monolog/monolog` — Logging
+- `carthage-software/mago` — Mago PHP linter and analyzer
 
 ## Guidelines
 
@@ -139,7 +151,8 @@ Available contributor types and their DI tags:
   architecture and design documentation.
 - See [config/services.yaml](config/services.yaml) and subdirectories for
   service registration details.
-- See [phpstan.neon](phpstan.neon) for static analysis configuration.
+- See [phpstan.neon](phpstan.neon) for PHPStan static analysis configuration.
+- See [mago.toml](mago.toml) for Mago linter and analyzer configuration.
 - See [.php-cs-fixer.php](.php-cs-fixer.php) for code style rules.
 - See [phpunit.xml](phpunit.xml) and [behat.yaml](behat.yaml) for test
   configuration.

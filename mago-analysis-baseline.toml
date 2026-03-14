@@ -1,0 +1,1939 @@
+variant = "loose"
+
+[[issues]]
+file = "app/Application.php"
+code = "missing-constant-type"
+message = "Class constant `ATTRIBUTES` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Application.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Application::build`.'
+count = 1
+
+[[issues]]
+file = "app/Application.php"
+code = "possibly-invalid-argument"
+message = '''Possible argument type mismatch for argument #1 of `Symfony\Component\DependencyInjection\ContainerBuilder::registerattributeforautoconfiguration`: expected `class-string<'T.symfony\component\dependencyinjection\containerbuilder::registerattributeforautoconfiguration() extends mixed>`, but possibly received `array-key`.'''
+count = 1
+
+[[issues]]
+file = "app/Controller/InitializeController.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Indexing\Indexer::index`: expected `Lsp\Workspace\Project\Project`, but provided type `Lsp\Workspace\Project\ProjectInterface` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Controller/InitializeController.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Workspace\ProjectManager::setproject`: expected `Lsp\Workspace\Project\Project|null`, but provided type `Lsp\Workspace\Project\ProjectInterface` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Controller/InitializeController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `Lsp\Workspace\Project\ProjectFactoryInterface::create`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/InitializeController.php"
+code = "unevaluated-code"
+message = "Unreachable code detected."
+count = 6
+
+[[issues]]
+file = "app/Controller/InitializedController.php"
+code = "unused-parameter"
+message = "Parameter `$initialized` is never used."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "impossible-assignment"
+message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Analyser\ScopeFactory)`).'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\DependencyInjection\Container)`).'
+count = 3
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-property-type-coercion"
+message = 'A value with a less specific type `mixed` is being assigned to property `$$nodeScopeResolver` (unknown-ref(PHPStan\Analyser\NodeScopeResolver)).'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-property-type-coercion"
+message = 'A value with a less specific type `mixed` is being assigned to property `$$phpstanContainer` (null|unknown-ref(PHPStan\DependencyInjection\Container)).'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-property-type-coercion"
+message = 'A value with a less specific type `mixed` is being assigned to property `$$scopeFactory` (unknown-ref(PHPStan\Analyser\ScopeFactory)).'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-property-type-coercion"
+message = 'A value with a less specific type `mixed` is being assigned to property `$$typeNodeResolver` (unknown-ref(PHPStan\PhpDoc\TypeNodeResolver)).'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\controller\phpstananalyzer::gettypeatposition`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-class"
+message = 'Class `PHPStan\DependencyInjection\ContainerFactory` not found.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\NodeScopeResolver`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\ScopeFactory`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\DependencyInjection\Container`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\PhpDoc\TypeNodeResolver`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\Type`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-method"
+message = 'Method `create` does not exist on type `PHPStan\Analyser\ScopeContext`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\NodeScopeResolver` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\ScopeContext` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\ScopeFactory` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\DependencyInjection\ContainerFactory` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\DependencyInjection\Container` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\PhpDoc\TypeNodeResolver` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Type\Type` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "write-only-property"
+message = "Property `$nodeScopeResolver` is written to but never read."
+count = 1
+
+[[issues]]
+file = "app/Controller/PHPStanAnalyzer.php"
+code = "write-only-property"
+message = "Property `$typeNodeResolver` is written to but never read."
+count = 1
+
+[[issues]]
+file = "app/Controller/SetTraceController.php"
+code = "unused-parameter"
+message = "Parameter `$editor` is never used."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "imprecise-type"
+message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\Completion\CompletionContributor>`, but got `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "missing-return-type"
+message = "Function `__invoke` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "missing-return-type"
+message = "Function `closure` is missing a return type hint."
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "mixed-argument"
+message = "Cannot unpack argument of type `mixed` because it is not guaranteed to be iterable."
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `array_merge`: expected `array<array-key, mixed>`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\controller\textdocument\completioncontroller::runcontributor`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "non-existent-function"
+message = 'Could not find definition for function `React\Async\async` (also tried as `async` in a broader scope).'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "non-existent-function"
+message = 'Could not find definition for function `React\Async\await` (also tried as `await` in a broader scope).'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "non-existent-function"
+message = 'Could not find definition for function `React\Promise\Timer\timeout` (also tried as `timeout` in a broader scope).'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "non-existent-use-import"
+message = 'Imported function `React\Async\async` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "non-existent-use-import"
+message = 'Imported function `React\Async\await` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "non-existent-use-import"
+message = 'Imported function `React\Promise\Timer\timeout` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DeclarationController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DeclarationController.php"
+code = "imprecise-type"
+message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DeclarationController.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\Declaration\DeclarationContributor>`, but got `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PhpParser\Error::getendcolumn`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PhpParser\Error::getstartcolumn`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "non-existent-method"
+message = 'Method `open` does not exist on type `Lsp\Extension\DocumentManager\Editor\EditorInterface`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int(-2)|non-negative-int`.'
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\relatedfulldocumentdiagnosticreport::__construct`: expected `list<Lsp\Protocol\Type\Diagnostic>`, but possibly received `array<array-key, Lsp\Protocol\Type\Diagnostic>|list<Lsp\Protocol\Type\Diagnostic>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `App\Module\PsiFile\PHPPsiFileParser::parse` is possibly `null`, but parameter type `Lsp\Extension\DocumentManager\Editor\Document\Document` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `getClassMembers` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\documentsymbol::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #5 of `lsp\protocol\type\documentsymbol::__construct`: expected `list<Lsp\Protocol\Type\DocumentSymbol>|null`, but possibly received `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `PhpParser\Node` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `App\Controller\TextDocument\DocumentSymbolController::getclassmembers` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
+count = 4
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "possibly-null-iterator"
+message = 'Expression being iterated (type `array<array-key, PhpParser\Node>|null`) might be `null` at runtime.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "possibly-null-property-access"
+message = "Attempting to access a property on a possibly `null` value."
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/HoverController.php"
+code = "imprecise-type"
+message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/HoverController.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\Documentation\DocumentationContributor>`, but got `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/HoverController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\hover::__construct`: expected `Lsp\Protocol\Type\MarkedStringWithLanguage|Lsp\Protocol\Type\MarkupContent|list<Lsp\Protocol\Type\MarkedStringWithLanguage|string>|string`, but possibly received `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/PrepareRenameController.php"
+code = "missing-return-type"
+message = "Function `__invoke` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/PrepareRenameController.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `PhpParser\Node` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/ReferencesController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/ReferencesController.php"
+code = "imprecise-type"
+message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/ReferencesController.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\References\ReferenceContributor>`, but got `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/RenameController.php"
+code = "imprecise-type"
+message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/RenameController.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\References\ReferenceContributor>`, but got `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/RenameController.php"
+code = "missing-return-type"
+message = "Function `__invoke` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/RenameController.php"
+code = "unused-property"
+message = "Property `$fileManager` is never used."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/SignatureHelpController.php"
+code = "imprecise-type"
+message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/SignatureHelpController.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\Signature\SignatureContributor>`, but got `array<array-key, mixed>`.'
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/Completion/CompletionConsumer.php"
+code = "missing-constant-type"
+message = "Class constant `YIELD_EVERY` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/Completion/CompletionConsumer.php"
+code = "missing-constant-type"
+message = "Class constant `YIELD_INTERVAL_MS` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/Completion/CompletionConsumer.php"
+code = "non-existent-function"
+message = 'Could not find definition for function `React\Async\delay` (also tried as `delay` in a broader scope).'
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/Completion/CompletionConsumer.php"
+code = "non-existent-use-import"
+message = 'Imported function `React\Async\delay` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/Documentation/DocumentationConsumer.php"
+code = "imprecise-type"
+message = "Type `array` in parameter `$results` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Core/Contracts/PrefixMatcher/StrContainsMatcher.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`.'
+count = 1
+
+[[issues]]
+file = "app/Infrastructure/Symfony/LSPCompilerPass.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\LSPCompilerPass::process`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassesCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ClassesCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassesCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassesCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\completionitem::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassesCompletionContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/FunctionCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\FunctionCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/FunctionCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/FunctionCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\completionitem::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/FunctionCompletionContributor.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/FunctionCompletionContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordDefinitions.php"
+code = "missing-constant-type"
+message = "Class constant `CONTROL_FLOW` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordDefinitions.php"
+code = "missing-constant-type"
+message = "Class constant `DECLARATION` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordDefinitions.php"
+code = "missing-constant-type"
+message = "Class constant `LANGUAGE_CONSTRUCT` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordDefinitions.php"
+code = "missing-constant-type"
+message = "Class constant `MAGIC_CONSTANT` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordDefinitions.php"
+code = "missing-constant-type"
+message = "Class constant `MODIFIER` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordDefinitions.php"
+code = "missing-constant-type"
+message = "Class constant `OPERATOR` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordDefinitions.php"
+code = "missing-constant-type"
+message = "Class constant `TYPE` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordsCompletionContributor.php"
+code = "invalid-iterator"
+message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordsCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\KeywordsCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordsCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\completionitem::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/KeywordsCompletionContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/Completion/KeywordsCompletionContributor.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "impossible-type-comparison"
+message = 'Impossible condition: variable `$parent` (type `PhpParser\Node\Stmt\Namespace_`) can never be `PhpParser\Node\Stmt\Declare_`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "imprecise-type"
+message = "Type `iterable` in return type of `getAll` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "imprecise-type"
+message = "Type `iterable` in return type of `globalEntities` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ShortcutCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `app\core\contracts\completion\completionconsumer::__invoke`: expected `Lsp\Protocol\Type\CompletionItem`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "redundant-condition"
+message = "This condition (type `true`) will always evaluate to true."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "redundant-logical-operation"
+message = "Redundant `||` operation: left operand is evaluated and right operand is always truthy."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `provide` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\SuperglobalsCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\completionitem::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\ClassDeclarationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 4
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "non-existent-method"
+message = 'Method `tostring` does not exist on type `PhpParser\Node\ComplexType`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "non-existent-method"
+message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
+count = 2
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "non-existent-method"
+message = 'Method `tostring` does not exist on type `PhpParser\Node\Stmt\Class_`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 3
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 3
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of function `in_array` is possibly `null`, but parameter type `array<array-key, PhpParser\Node\Name|PhpParser\Node\Name\FullyQualified>` does not accept it.'
+count = 3
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "possibly-null-property-access"
+message = "Attempting to access a property on a possibly `null` value."
+count = 8
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\ClassMethodDeclarationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "non-existent-method"
+message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
+count = 2
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\FunctionDeclarationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `app\module\psifile\tree::tolinecolumn`: expected `int`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 2
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "non-existent-method"
+message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `app\module\psifile\tree::tolinecolumn` is possibly `null`, but parameter type `Lsp\Extension\DocumentManager\Editor\Document\Document` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "possibly-null-property-access"
+message = "Attempting to access a property on a possibly `null` value."
+count = 2
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "impossible-assignment"
+message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "invalid-array-access"
+message = 'Cannot access array index on object `App\Module\PsiFile\FifoCache<Lsp\Protocol\Type\TextDocumentIdentifier>` that does not implement `ArrayAccess`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "invalid-array-index"
+message = 'Invalid index type `string` used for array access on `App\Module\PsiFile\FifoCache<Lsp\Protocol\Type\TextDocumentIdentifier>`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Document\InMemoryDocumentIdentifierFactory::create`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "never-return"
+message = "Cannot return value with type 'never' from this function."
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\textdocumentidentifier::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\workspace\uri\uri::createlocal`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "redundant-comparison"
+message = "Redundant `!==` comparison: left-hand side is always not identical to right-hand side."
+count = 1
+
+[[issues]]
+file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
+code = "redundant-condition"
+message = "This condition (type `true`) will always evaluate to true."
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(React\Filesystem\AdapterInterface)`).'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "match-arm-always-true"
+message = "This match arm is always true, making subsequent arms unreachable."
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Document\LocalFileDocumentLoader::load`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `Lsp\Extension\DocumentManager\Editor\Document\DocumentFactoryInterface::create`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `React\Filesystem\AdapterInterface`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "non-existent-function"
+message = 'Could not find definition for function `React\Async\await` (also tried as `await` in a broader scope).'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "non-existent-use-import"
+message = 'Imported function `React\Async\await` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "unreachable-match-default-arm"
+message = "This default arm is unreachable."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Type\Type)`).'
+count = 2
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\DocblockDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #3 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\Type`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "non-existent-method"
+message = 'Method `precise` does not exist on type `PHPStan\Type\VerbosityLevel`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "non-existent-method"
+message = 'Method `typeOnly` does not exist on type `PHPStan\Type\VerbosityLevel`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Type\Type` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Type\VerbosityLevel` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/DocblockDocumentationContributor.php"
+code = "unused-property"
+message = "Property `$indexLookup` is never used."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\NodesTraceDocumentationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
+code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/IndexLookup.php"
+code = "possibly-static-access-on-interface"
+message = 'Potential static method call on interface `App\Core\Contracts\Indexing\IndexerInterface` via `class-string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "implicit-to-string-cast"
+message = 'Implicit conversion to `string` for right operand via `Lsp\Workspace\File\VirtualFileInterface::__toString()`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "implicit-to-string-cast"
+message = 'Implicit conversion to `string` for right operand via `Lsp\Workspace\Uri\Uri::__toString()`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "imprecise-type"
+message = "Type `iterable` in parameter `$indexers` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "invalid-argument"
+message = 'Invalid argument type for argument #3 of `App\Module\Indexing\Storage\StorageInterface::write`: expected `string`, but found `Lsp\Workspace\Uri\Uri`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "missing-return-type"
+message = "Function `closure` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "mixed-property-type-coercion"
+message = 'A value with a less specific type `array<array-key, mixed>` is being assigned to property `$$indexers` (array<array-key, App\Core\Contracts\Indexing\IndexerInterface<mixed>>).'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "non-existent-function"
+message = 'Could not find definition for function `React\Async\async` (also tried as `async` in a broader scope).'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "non-existent-function"
+message = 'Could not find definition for function `React\Async\await` (also tried as `await` in a broader scope).'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "non-existent-use-import"
+message = 'Imported function `React\Async\async` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "non-existent-use-import"
+message = 'Imported function `React\Async\await` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "possibly-false-operand"
+message = "Possibly false right operand used in string concatenation (type `false|string`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\AbstractPhpIndexer::index`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\AbstractPhpIndexer::supports`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `App\Module\Indexing\Indexer\AbstractPhpIndexer::indexinternal` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassConstantUsageIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassConstantUsageIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$fetches`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "mixed-array-index"
+message = "Invalid index type `mixed` used for array access on `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassIndexer.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassMethodIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassMethodIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "mixed-array-index"
+message = "Invalid index type `mixed` used for array access on `array<array-key, non-empty-list<non-empty-string>>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassUsageIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassUsageIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$names`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionCallUsageIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionCallUsageIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$calls`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "mixed-array-index"
+message = "Invalid index type `mixed` used for array access on `array<array-key, list{mixed, int}>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\InterfaceIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\InterfaceIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\MethodCallUsageIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\MethodCallUsageIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$instanceCalls`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$staticCalls`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\PropertyAccessUsageIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\PropertyAccessUsageIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$instanceAccesses`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$staticAccesses`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/TraitIndexer.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/TraitIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\TraitIndexer::getKey`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/TraitIndexer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\TraitIndexer::indexInternal`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/TraitIndexer.php"
+code = "missing-template-parameter"
+message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/TraitIndexer.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "hidden-generator-return"
+message = 'The value returned by generator function `app\module\indexing\storage\inmemorystorage::read` may be inaccessible to callers.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "imprecise-type"
+message = "Type `array` in parameter `$values` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "invalid-argument"
+message = 'Invalid argument type for argument #1 of `app\module\indexing\storage\entry::__construct`: expected `string`, but found `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::read`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::write`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "falsable-return-statement"
+message = '''Function `app\module\indexing\storage\jsonserializer::serialize` is declared to return `string` but possibly returns 'false' (inferred as `false|string`).'''
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `app\module\indexing\storage\jsonserializer::serialize`: expected `string`, but found `false|string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\JsonSerializer::deserialize`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\JsonSerializer::serialize`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `app\module\indexing\storage\entry::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #3 of `app\module\indexing\storage\entry::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 3
+
+[[issues]]
+file = "app/Module/Indexing/Storage/JsonSerializer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/StorageInterface.php"
+code = "imprecise-type"
+message = "Type `array` in parameter `$values` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Notification/ServerNotificationSender.php"
+code = "imprecise-type"
+message = "Type `array` in parameter `$parameters` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Notification/ServerNotificationSender.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `lsp\rpc\message\notification::__construct`: expected `array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Notification/ServerNotificationSender.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Notification/ServerNotificationSender.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\rpc\message\notification::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "match-arm-always-true"
+message = "This match arm is always true, making subsequent arms unreachable."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `lsp\rpc\message\notification::__construct`: expected `array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "non-existent-method"
+message = 'Method `open` does not exist on type `Lsp\Extension\DocumentManager\Editor\EditorInterface`.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int(-2)|non-negative-int`.'
+count = 2
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 2
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\publishdiagnosticsparams::__construct`: expected `list<Lsp\Protocol\Type\Diagnostic>`, but possibly received `list<Lsp\Protocol\Type\Diagnostic>|non-empty-array<array-key, Lsp\Protocol\Type\Diagnostic>`.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "possibly-null-operand"
+message = "Right operand in `!=` comparison might be `null` (type `int|null`)."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "possibly-null-property-access"
+message = "Attempting to access a property on a possibly `null` value."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "unreachable-match-default-arm"
+message = "This default arm is unreachable."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "missing-return-type"
+message = "Function `closure` is missing a return type hint."
+count = 2
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "redundant-condition"
+message = "This condition (type `true`) will always evaluate to true."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFileParser.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `PhpParser\NodeTraverser::traverse` is possibly `null`, but parameter type `array<array-key, PhpParser\Node>` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "imprecise-type"
+message = "Type `iterable` in return type of `getParentNodesIncluding` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "imprecise-type"
+message = "Type `iterable` in return type of `getParentNodes` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`nonnull`)."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`truthy-mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "mixed-operand"
+message = "Left operand in `&&` operation has `mixed` type."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\psifile\tree::parent`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int(-2)|non-negative-int`.'
+count = 2
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "possibly-invalid-argument"
+message = '''Possible argument type mismatch for argument #2 of `app\module\psifile\tree::childrenoftypesinternal`: expected `list<class-string<'T.app\module\psifile\tree::childrenoftypes() extends PhpParser\Node>>`, but possibly received `array<array-key, class-string<'T.app\module\psifile\tree::childrenoftypes() extends PhpParser\Node>>`.'''
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 2
+
+[[issues]]
+file = "app/Module/References/ClassConstantReferenceContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\ClassConstantReferenceContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/References/ClassConstantReferenceContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "app/Module/References/ClassReferenceContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\ClassReferenceContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/References/ClassReferenceContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/References/FunctionReferenceContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\FunctionReferenceContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/References/FunctionReferenceContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/References/InterfaceReferenceContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\InterfaceReferenceContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/References/InterfaceReferenceContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/References/MethodReferenceContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\MethodReferenceContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/References/MethodReferenceContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/References/PropertyReferenceContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\PropertyReferenceContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/References/PropertyReferenceContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/References/VariableReferenceContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\VariableReferenceContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/References/VariableReferenceContributor.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$variables`."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/ConstructorSignatureContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Signature\ConstructorSignatureContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/ConstructorSignatureContributor.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$classes`."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/FunctionSignatureContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Signature\FunctionSignatureContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/FunctionSignatureContributor.php"
+code = "missing-parameter-type"
+message = "Parameter `$node` is missing a type hint."
+count = 2
+
+[[issues]]
+file = "app/Module/Signature/FunctionSignatureContributor.php"
+code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 2
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `list{string, mixed}` is less specific than the declared return type `array{0: string, 1: string}|null` for function `app\module\signature\methodsignaturecontributor::findmethodcall` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Signature\MethodSignatureContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "non-existent-method"
+message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "redundant-docblock-type"
+message = "Redundant docblock type for variable `$classes`."
+count = 1
+
+[[issues]]
+file = "app/Module/Workspace/ProjectManager.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `app\module\workspace\projectmanager::getproject`: expected `Lsp\Workspace\Project\Project`, but found `Lsp\Workspace\Project\Project|null`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Workspace/ProjectManager.php"
+code = "nullable-return-statement"
+message = 'Function `app\module\workspace\projectmanager::getproject` is declared to return `Lsp\Workspace\Project\Project` but possibly returns a nullable value (inferred as `Lsp\Workspace\Project\Project|null`).'
+count = 1
