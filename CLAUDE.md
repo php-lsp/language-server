@@ -52,16 +52,19 @@ app/
 │   ├── Documentation/         # DocumentationContributor, AsDocumentationContributor
 │   ├── Indexing/              # IndexerInterface, AsIndexer
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
-│   └── Signature/             # SignatureContributor, AsSignatureContributor
+│   ├── Signature/             # SignatureContributor, AsSignatureContributor
+│   └── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
 ├── Module/                    # Feature implementations
-│   ├── Completion/            # Keyword, class, function, superglobal contributors
-│   ├── Declaration/           # Class, method, function declaration contributors
-│   ├── Documentation/         # Docblock and node-trace contributors
-│   ├── Signature/             # Function signature contributor
-│   ├── Indexing/              # Indexers (class, interface, trait, function, method) + storage
+│   ├── Completion/            # Keyword, class, function, superglobal, shortcut contributors (5)
+│   ├── Declaration/           # Class, method, function declaration contributors (3)
+│   ├── Documentation/         # Docblock and node-trace contributors (2)
+│   ├── References/            # Class, function, method, property, variable, interface, constant reference contributors (7)
+│   ├── Signature/             # Function, method, constructor signature contributors (3)
+│   ├── Indexing/              # Declaration indexers (5) + usage indexers (5) + storage
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── Document/              # Document loading and identification
-│   └── Workspace/             # Workspace/project management
+│   ├── Workspace/             # Workspace/project management
+│   └── Notification/          # Server notification sender
 ├── Infrastructure/Symfony/    # LSPCompilerPass for DI
 └── Listener/                  # Server, logger, message event listeners
 config/
