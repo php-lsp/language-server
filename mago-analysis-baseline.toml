@@ -397,6 +397,84 @@ message = 'Missing `#[Override]` attribute on overriding method `App\Infrastruct
 count = 1
 
 [[issues]]
+file = "app/Module/Completion/ClassConstantCompletionContributor.php"
+code = "invalid-operand"
+message = "Invalid type `never` for right operand in string concatenation."
+count = 2
+
+[[issues]]
+file = "app/Module/Completion/ClassConstantCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ClassConstantCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassConstantCompletionContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 4
+
+[[issues]]
+file = "app/Module/Completion/ClassConstantCompletionContributor.php"
+code = "null-argument"
+message = 'Argument #1 of method `lsp\protocol\type\completionitem::__construct` is `null`, but parameter type `string` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "invalid-operand"
+message = "Invalid type `never` for right operand in string concatenation."
+count = 2
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ClassMemberCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "mixed-operand"
+message = "Invalid middle operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 11
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "null-argument"
+message = 'Argument #1 of method `lsp\protocol\type\completionitem::__construct` is `null`, but parameter type `string` does not accept it.'
+count = 2
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "null-iterator"
+message = "Iterating over `null` in `foreach`."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "null-operand"
+message = "Implicit conversion of `null` to empty string for left operand in string concatenation."
+count = 2
+
+[[issues]]
 file = "app/Module/Completion/ClassesCompletionContributor.php"
 code = "missing-override-attribute"
 message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ClassesCompletionContributor::contribute`.'
@@ -454,6 +532,24 @@ count = 2
 file = "app/Module/Completion/ConstantCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/EnumCaseCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\EnumCaseCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/EnumCaseCompletionContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 3
+
+[[issues]]
+file = "app/Module/Completion/EnumCaseCompletionContributor.php"
+code = "null-argument"
+message = 'Argument #1 of method `lsp\protocol\type\completionitem::__construct` is `null`, but parameter type `string` does not accept it.'
 count = 1
 
 [[issues]]
@@ -619,6 +715,30 @@ message = "Invalid left operand: type `mixed` cannot be reliably used in string 
 count = 1
 
 [[issues]]
+file = "app/Module/Completion/NamespaceCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\NamespaceCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/NamespaceCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/NamespaceCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\completionitem::__construct`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/NamespaceCompletionContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
 file = "app/Module/Completion/ShortcutCompletionContributor.php"
 code = "impossible-type-comparison"
 message = 'Impossible condition: variable `$parent` (type `PhpParser\Node\Stmt\Namespace_`) can never be `PhpParser\Node\Stmt\Declare_`.'
@@ -718,6 +838,36 @@ count = 2
 file = "app/Module/Completion/TraitCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/UseStatementCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\UseStatementCompletionContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/UseStatementCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
+count = 4
+
+[[issues]]
+file = "app/Module/Completion/UseStatementCompletionContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\completionitem::__construct`: expected `string`, but found `mixed`.'
+count = 4
+
+[[issues]]
+file = "app/Module/Completion/UseStatementCompletionContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 4
+
+[[issues]]
+file = "app/Module/Completion/VariableCompletionContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\VariableCompletionContributor::contribute`.'
 count = 1
 
 [[issues]]
