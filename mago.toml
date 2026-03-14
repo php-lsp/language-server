@@ -1,0 +1,27 @@
+php-version = "8.4"
+
+[source]
+paths = ["app"]
+includes = ["vendor"]
+excludes = ["var/**"]
+
+[linter]
+baseline = "mago-lint-baseline.toml"
+
+[linter.rules]
+no-variable-variable = { enabled = true }
+no-redundant-readonly = { enabled = true }
+sensitive-parameter = { enabled = true }
+no-redundant-use = { enabled = true }
+
+[analyzer]
+baseline = "mago-analysis-baseline.toml"
+find-unused-expressions = true
+find-unused-definitions = true
+analyze-dead-code = true
+check-missing-override = true
+find-unused-parameters = true
+check-missing-type-hints = true
+check-closure-missing-type-hints = true
+check-arrow-function-missing-type-hints = true
+check-use-statements = true
