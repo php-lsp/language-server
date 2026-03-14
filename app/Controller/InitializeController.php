@@ -25,6 +25,7 @@ use Lsp\Protocol\Type\TextDocumentSyncKind;
 use Lsp\Protocol\Type\WorkspaceFolder;
 use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
 use Lsp\Protocol\Type\WorkspaceOptions;
+use Lsp\Protocol\Type\WorkspaceSymbolOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\Project\ProjectFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -76,6 +77,7 @@ final class InitializeController
                     identifier: null,
                     workDoneProgress: null,
                 ),
+                workspaceSymbolProvider: new WorkspaceSymbolOptions(),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(
                         supported: true,

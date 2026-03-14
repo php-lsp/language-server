@@ -331,6 +331,42 @@ message = 'Invalid type for property `$contributors`: expected `list<App\Core\Co
 count = 1
 
 [[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
+count = 8
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #2 of `lsp\protocol\type\symbolinformation::__construct`: expected `string`, but found `mixed`.'
+count = 7
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #4 of `lsp\protocol\type\symbolinformation::__construct`: expected `null|string`, but found `mixed`.'
+count = 2
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 18
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 8
+
+[[issues]]
 file = "app/Core/Contracts/Completion/CompletionConsumer.php"
 code = "missing-constant-type"
 message = "Class constant `YIELD_EVERY` is missing a type hint."
