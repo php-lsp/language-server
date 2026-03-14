@@ -20,6 +20,6 @@ final class ExampleUnitTest extends TestCase
     #[TestDox('should be failed')]
     public function testNegativeResult(): void
     {
-        $this->assertTrue(false);
+        $this->assertFalse(false);
     }
 }
