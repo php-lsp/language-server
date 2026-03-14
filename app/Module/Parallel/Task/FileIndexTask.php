@@ -34,7 +34,7 @@ final class FileIndexTask implements Task
      */
     public function run(Channel $channel, Cancellation $cancellation): array
     {
-        $parser = (new ParserFactory())->createForNewestSupportedVersion();
+        $parser = new ParserFactory()->createForNewestSupportedVersion();
         $errorHandler = new Collecting();
 
         try {

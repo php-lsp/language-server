@@ -128,29 +128,33 @@ final class ParallelIndexer
 
     private function isIgnored(string $name): bool
     {
-        return in_array($name, [
-            'node_modules',
-            '.git',
-            '.idea',
-            'config',
-            'resources',
-            'runtime',
-            'psalm',
-            'rector',
-            'thecodingmachine',
-            'aerospike',
-            'tests',
-            'mongodb',
-            'meta',
-            'rdkafka',
-            'intl',
-            'swoole',
-            'wincache',
-            'couchbase',
-            'couchbase_v2',
-            'relay',
-            'redis',
-            'imagick',
-        ], true);
+        return in_array(
+            $name,
+            [
+                'node_modules',
+                '.git',
+                '.idea',
+                'config',
+                'resources',
+                'runtime',
+                'psalm',
+                'rector',
+                'thecodingmachine',
+                'aerospike',
+                'tests',
+                'mongodb',
+                'meta',
+                'rdkafka',
+                'intl',
+                'swoole',
+                'wincache',
+                'couchbase',
+                'couchbase_v2',
+                'relay',
+                'redis',
+                'imagick',
+            ],
+            true,
+        );
     }
 }
