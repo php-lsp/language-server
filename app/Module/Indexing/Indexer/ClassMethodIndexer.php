@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Interface_;
+use PhpParser\Node\Stmt\Trait_;
 
-#[AsIndexer]
 /**
- * @implements AbstractPhpIndexer<array<string, list<string>>
+ * @extends AbstractPhpIndexer<list<MethodData>>
  */
+#[AsIndexer]
 class ClassMethodIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
@@ -23,15 +27,34 @@ class ClassMethodIndexer extends AbstractPhpIndexer
 
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
-        $classes = Tree::childrenOfType($phpFile->ast, Class_::class);
+        $classLikes = Tree::childrenOfTypes($phpFile->ast, Class_::class, Interface_::class, Trait_::class);
 
         $results = [];
-        foreach ($classes as $class) {
-            $methods = Tree::childrenOfType($class, ClassMethod::class);
+        foreach ($classLikes as $classLike) {
+            if ($classLike->name === null) {
+                continue;
+            }
 
-            $className = $class->namespacedName->toString();
+            $className = $classLike->namespacedName?->toString() ?? $classLike->name->toString();
+            $methods = Tree::childrenOfType($classLike, ClassMethod::class);
+
+            $methodDataList = [];
             foreach ($methods as $method) {
-                $results[$className][] = $method->name->toString();
+                $methodDataList[] = new MethodData(
+                    name: $method->name->toString(),
+                    className: $className,
+                    startPosition: $method->getStartFilePos(),
+                    endPosition: $method->getEndFilePos(),
+                    visibility: NodeTypeExtractor::extractVisibility($method),
+                    isStatic: $method->isStatic(),
+                    isAbstract: $method->isAbstract(),
+                    returnType: NodeTypeExtractor::typeToString($method->returnType),
+                    parameters: NodeTypeExtractor::extractParameters($method),
+                );
+            }
+
+            if ($methodDataList !== []) {
+                $results[$className] = $methodDataList;
             }
         }
 

@@ -8,6 +8,9 @@ use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
+use App\Module\Indexing\Data\ClassData;
+use App\Module\Indexing\Data\InterfaceData;
+use App\Module\Indexing\Data\TraitData;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\Indexer\InterfaceIndexer;
 use App\Module\Indexing\Indexer\TraitIndexer;
@@ -32,7 +35,6 @@ final class ClassDeclarationContributor implements DeclarationContributor
         $editor = $context->editor;
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-            //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 
@@ -75,35 +77,41 @@ final class ClassDeclarationContributor implements DeclarationContributor
         }
 
         $zeroPosition = new Position(0, 0);
-        $startRange = new Range($zeroPosition, $zeroPosition);
+        $defaultRange = new Range($zeroPosition, $zeroPosition);
 
         foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $value) {
-            if ($value->value !== $className) {
+            /** @var ClassData $data */
+            $data = $value->value;
+            if ($data->fqn !== $className) {
                 continue;
             }
             $consumer(new Location(
                 uri: $value->uri,
-                range: $startRange,
+                range: $defaultRange,
             ));
         }
 
         foreach ($this->indexLookup->findByKey(InterfaceIndexer::class) as $value) {
-            if ($value->value !== $className) {
+            /** @var InterfaceData $data */
+            $data = $value->value;
+            if ($data->fqn !== $className) {
                 continue;
             }
             $consumer(new Location(
                 uri: $value->uri,
-                range: $startRange,
+                range: $defaultRange,
             ));
         }
 
         foreach ($this->indexLookup->findByKey(TraitIndexer::class) as $value) {
-            if ($value->value !== $className) {
+            /** @var TraitData $data */
+            $data = $value->value;
+            if ($data->fqn !== $className) {
                 continue;
             }
             $consumer(new Location(
                 uri: $value->uri,
-                range: $startRange,
+                range: $defaultRange,
             ));
         }
     }

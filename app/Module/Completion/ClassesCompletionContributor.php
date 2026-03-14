@@ -9,6 +9,7 @@ use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
 use App\Core\Contracts\Completion\CompletionContributor;
 use App\Core\Contracts\PrefixMatcher\StrContainsMatcher;
+use App\Module\Indexing\Data\ClassData;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\Tree;
@@ -28,13 +29,16 @@ final class ClassesCompletionContributor implements CompletionContributor
         $string = Tree::toString($element);
         $matcher = new StrContainsMatcher($string);
 
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $key => $value) {
-            if (!$matcher->match($value->value)) {
+        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $value) {
+            /** @var ClassData $data */
+            $data = $value->value;
+
+            if (!$matcher->match($data->fqn)) {
                 continue;
             }
 
             $consumer(new CompletionItem(
-                label: $value->value,
+                label: $data->fqn,
                 kind: CompletionItemKind::ClassKind,
                 detail: '[class]',
             ));
