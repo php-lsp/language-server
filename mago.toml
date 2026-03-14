@@ -7,6 +7,7 @@ excludes = ["var/**"]
 
 [linter]
 baseline = "mago-lint-baseline.toml"
+integrations = ["symfony", "phpunit"]
 
 [linter.rules]
 no-variable-variable = { enabled = true }

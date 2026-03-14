@@ -44,6 +44,6 @@ jobs:
       - name: Setup Mago
         uses: nhedger/setup-mago@v1
       - name: Mago Lint
-        run: composer mago:lint
+        run: mago lint --baseline mago-lint-baseline.toml --reporting-format=github
       - name: Mago Analyze
-        run: composer mago:analyze
+        run: mago analyze --baseline mago-analysis-baseline.toml --reporting-format=github
