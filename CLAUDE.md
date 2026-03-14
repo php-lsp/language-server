@@ -27,6 +27,7 @@ composer test:feature      # Behat only
 composer linter:check      # PHPStan (level max)
 composer mago:lint         # Mago linter (with baseline)
 composer mago:analyze      # Mago analyzer (with baseline)
+composer mago:fix          # Mago auto-fix (safe + potentially-unsafe)
 composer mago:baseline     # Regenerate Mago baselines
 composer phpcs:check       # PHP-CS-Fixer dry-run
 composer phpcs:fix         # PHP-CS-Fixer auto-fix

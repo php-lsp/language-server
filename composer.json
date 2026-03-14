@@ -52,6 +52,7 @@
         "linter:check": ["linter", "stan", "analyze", "phpstan"],
         "mago:lint": ["mago-lint"],
         "mago:analyze": ["mago-analyze"],
+        "mago:fix": ["mago-fix"],
         "mago:baseline": ["mago-baseline"],
         "phpcs:fix": ["phpcs", "per2", "per", "percs", "codestyle", "cs"],
         "test:unit": ["phpunit", "unit"],
@@ -66,6 +67,7 @@
         "linter:baseline": "Generates a baseline for current PHPStan errors",
         "mago:lint": "Runs Mago linter with baseline",
         "mago:analyze": "Runs Mago analyzer with baseline",
+        "mago:fix": "Applies Mago auto-fixes to source code",
         "mago:baseline": "Regenerates Mago baselines for lint and analysis",
         "phpcs:check": "Checks source code for codestyle errors",
         "phpcs:fix": "Corrects codestyle in source code",
@@ -82,6 +84,7 @@
         "linter:baseline": "phpstan analyse --configuration phpstan.neon --generate-baseline",
         "mago:lint": "mago lint --baseline mago-lint-baseline.toml",
         "mago:analyze": "mago analyze --baseline mago-analysis-baseline.toml",
+        "mago:fix": "mago lint --fix --potentially-unsafe --format-after-fix",
         "mago:baseline": [
             "mago lint --generate-baseline --baseline mago-lint-baseline.toml",
             "mago analyze --generate-baseline --baseline mago-analysis-baseline.toml"
