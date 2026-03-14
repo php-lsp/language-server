@@ -4,6 +4,10 @@
     </a>
 </p>
 
+<p align="center">
+    <a href="https://github.com/php-lsp/language-server/actions/workflows/coverage.yml"><img src="https://github.com/php-lsp/language-server/raw/master/.github/coverage-badge.svg" alt="Code Coverage"></a>
+</p>
+
 ## About Language Server Protocol
 
 > [ALARM] This is not the final version!
