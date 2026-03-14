@@ -47,9 +47,7 @@ final class FunctionSignatureContributor implements SignatureContributor
         $funcName = $node->name->toString();
 
         foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $value) {
-            /** @var array{string, int} $entryValue */
-            $entryValue = $value->value;
-            if ($entryValue[0] !== $funcName) {
+            if ($value->value->fqn !== $funcName) {
                 continue;
             }
 
@@ -60,7 +58,7 @@ final class FunctionSignatureContributor implements SignatureContributor
                 continue;
             }
 
-            $definition = $this->findFunctionDefinition($source, $entryValue[1]);
+            $definition = $this->findFunctionDefinition($source, $value->value->startPosition);
             if ($definition === null) {
                 continue;
             }

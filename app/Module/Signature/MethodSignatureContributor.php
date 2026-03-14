@@ -43,12 +43,10 @@ final class MethodSignatureContributor implements SignatureContributor
         [$className, $methodName] = $call;
 
         foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($entry->key !== $className) {
+            if ($entry->value->className !== $className) {
                 continue;
             }
-            /** @var list<string> $methods */
-            $methods = $entry->value;
-            if (!in_array($methodName, $methods, true)) {
+            if ($entry->value->name !== $methodName) {
                 continue;
             }
 

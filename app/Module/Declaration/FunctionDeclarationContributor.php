@@ -55,12 +55,12 @@ final class FunctionDeclarationContributor implements DeclarationContributor
         $functionName = $node->name->toString();
 
         foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $value) {
-            if ($value->value[0] !== $functionName) {
+            if ($value->value->fqn !== $functionName) {
                 continue;
             }
             $textDocumentIdentifier = $this->documentIdentifierFactory->create($value->uri);
             $source = $this->fileManager->findPsiFile($context->editor, $textDocumentIdentifier);
-            $position = $value->value[1];
+            $position = $value->value->startPosition;
 
             [$line, $column] = Tree::toLineColumn($source->ast->document, $position);
 

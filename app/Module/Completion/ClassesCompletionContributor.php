@@ -29,12 +29,13 @@ final class ClassesCompletionContributor implements CompletionContributor
         $matcher = new StrContainsMatcher($string);
 
         foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $key => $value) {
-            if (!$matcher->match($value->value)) {
+            $fqn = $value->value->fqn;
+            if (!$matcher->match($fqn)) {
                 continue;
             }
 
             $consumer(new CompletionItem(
-                label: $value->value,
+                label: $fqn,
                 kind: CompletionItemKind::ClassKind,
                 detail: '[class]',
             ));

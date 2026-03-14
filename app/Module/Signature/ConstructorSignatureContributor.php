@@ -40,7 +40,7 @@ final class ConstructorSignatureContributor implements SignatureContributor
         }
 
         foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
-            if ($entry->value !== $className) {
+            if ($entry->value->fqn !== $className) {
                 continue;
             }
 
