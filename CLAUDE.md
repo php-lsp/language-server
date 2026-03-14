@@ -131,6 +131,22 @@ Available contributor types and their DI tags:
 - `phpstan/phpstan` — PHPStan for type resolution (used by TypeSystem module)
 - `carthage-software/mago` — Mago PHP linter, analyzer, and formatter
 
+## Pre-commit Checklist
+
+Before every commit you **must** run the following commands and ensure they
+pass without errors:
+
+```shell
+composer mago:format       # Auto-fix code formatting
+composer mago:lint         # Run Mago linter (must pass)
+composer mago:analyze      # Run Mago analyzer (must pass)
+```
+
+If linter or analyzer report new issues that are not in the baseline, fix
+them before committing. Do **not** regenerate baselines to hide new issues —
+only run `composer mago:baseline` when intentionally resolving existing
+baseline entries.
+
 ## Guidelines
 
 - When you modify code that is described in this file or any documentation

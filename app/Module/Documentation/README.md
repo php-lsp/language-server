@@ -7,7 +7,7 @@ Contributors run **sequentially** and accumulate documentation strings.
 
 | Class | Description |
 |-------|-------------|
-| `DocblockDocumentationContributor` | Extracts PHPDoc comments from the AST node at cursor position |
+| `DocblockDocumentationContributor` | Resolves and displays type information at cursor position via `TypeResolverInterface` (PHPStan) |
 | `NodesTraceDocumentationContributor` | Builds a trace of AST nodes at the cursor for debugging/info display |
 
 ## Contract

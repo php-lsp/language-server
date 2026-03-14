@@ -209,32 +209,32 @@ New controller `workspace/symbol` — search symbols across the entire project:
 
 ---
 
-## Phase 8: Type Resolution System (Long-term)
+## Phase 8: Type Resolution System — PARTIALLY DONE
 
-Many features above are limited without type inference. A type resolver would power:
+The foundation has been implemented in `Module/TypeSystem/` using PHPStan
+as the type inference engine:
+
+### Implemented
+
+```
+Module/TypeSystem/
+├── TypeResolverInterface.php     # Contract: resolveAtPosition, resolveVariableAtPosition
+├── TypeResolver.php              # Implementation using PHPStan's NodeScopeResolver
+├── TypeResult.php                # Value object wrapping PHPStan Type + Scope + Node
+├── PHPStanBootstrap.php          # Boots PHPStan DI container, provides ScopeFactory/NodeScopeResolver
+└── UriHelper.php                 # Converts file:// URIs to filesystem paths
+```
+
+- `DocblockDocumentationContributor` uses `TypeResolverInterface` for hover type display
+- PHPStan is booted lazily on first type resolution request
+- Type results include both short (`typeOnly`) and detailed (`precise`) descriptions
+
+### Remaining Work
+
+Many features are still limited without deeper integration:
 - `$obj->▏` completion (need to know type of `$obj`)
 - Method signature on `$obj->method(▏)`
-- Hover showing inferred types
-
-### Components Needed
-
-```
-Module/TypeResolution/
-├── TypeResolver.php              # Main entry: Node → Type
-├── Type/
-│   ├── Type.php                  # Base: class, union, intersection, nullable
-│   ├── ClassType.php
-│   ├── PrimitiveType.php         # int, string, bool, float, array, etc.
-│   ├── UnionType.php
-│   ├── IntersectionType.php
-│   └── NullableType.php
-├── Strategy/
-│   ├── ExplicitTypeStrategy.php  # From type hints
-│   ├── DocblockTypeStrategy.php  # From @var, @param, @return
-│   ├── AssignmentStrategy.php    # $x = new Foo() → Foo
-│   ├── ReturnTypeStrategy.php    # $x = foo() → return type of foo()
-│   └── ChainStrategy.php        # Composite: try each strategy in order
-```
+- Variable type tracking across control flow
 
 ---
 
