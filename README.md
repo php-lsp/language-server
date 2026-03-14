@@ -39,6 +39,24 @@ The protocol is supported by many clients, such as:
 This project gives you the opportunity to write your own plugins for any
 editor or IDE using the PHP language!
 
+## GitHub Codespaces
+
+You can start the project instantly in a browser — no local installation
+required.
+
+1. Click **Code → Codespaces → Create codespace on main** on the GitHub
+   repository page.
+2. Wait for the container to build (PHP 8.4, Composer, and npm dependencies
+   install automatically).
+3. Start the server in the terminal:
+   ```shell
+   php ./bin/lsp serve 'App\Application' --port=5007
+   ```
+4. The bundled VS Code extension connects to the running server automatically.
+
+See [docs/codespaces.md](docs/codespaces.md) for detailed setup instructions,
+troubleshooting, and manual connection steps.
+
 ## Installation
 
 ```shell

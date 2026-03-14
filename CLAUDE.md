@@ -140,3 +140,5 @@ Available contributor types and their DI tags:
 - See [.php-cs-fixer.php](.php-cs-fixer.php) for code style rules.
 - See [phpunit.xml](phpunit.xml) and [behat.yaml](behat.yaml) for test
   configuration.
+- See [docs/codespaces.md](docs/codespaces.md) for GitHub Codespaces setup
+  and troubleshooting guide.
