@@ -75,10 +75,12 @@ final class FileIndexTask implements Task
         $results = [];
 
         foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Class_::class) as $class) {
-            if ($class->namespacedName !== null) {
-                $name = $class->namespacedName->toString();
-                $results[$name] = $name;
+            if ($class->namespacedName === null) {
+                continue;
             }
+
+            $name = $class->namespacedName->toString();
+            $results[$name] = $name;
         }
 
         return $results;
@@ -94,9 +96,11 @@ final class FileIndexTask implements Task
         $results = [];
 
         foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Interface_::class) as $interface) {
-            if ($interface->namespacedName !== null) {
-                $results[] = $interface->namespacedName->toString();
+            if ($interface->namespacedName === null) {
+                continue;
             }
+
+            $results[] = $interface->namespacedName->toString();
         }
 
         return $results;
@@ -112,9 +116,11 @@ final class FileIndexTask implements Task
         $results = [];
 
         foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Trait_::class) as $trait) {
-            if ($trait->namespacedName !== null) {
-                $results[] = $trait->namespacedName->toString();
+            if ($trait->namespacedName === null) {
+                continue;
             }
+
+            $results[] = $trait->namespacedName->toString();
         }
 
         return $results;
@@ -130,10 +136,12 @@ final class FileIndexTask implements Task
         $results = [];
 
         foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Function_::class) as $function) {
-            if ($function->namespacedName !== null) {
-                $name = $function->namespacedName->toString();
-                $results[$name] = [$name, $function->getStartFilePos()];
+            if ($function->namespacedName === null) {
+                continue;
             }
+
+            $name = $function->namespacedName->toString();
+            $results[$name] = [$name, $function->getStartFilePos()];
         }
 
         return $results;
@@ -156,9 +164,11 @@ final class FileIndexTask implements Task
             $className = $class->namespacedName->toString();
 
             foreach ($class->stmts as $stmt) {
-                if ($stmt instanceof \PhpParser\Node\Stmt\ClassMethod) {
-                    $results[$className][] = $stmt->name->toString();
+                if (!$stmt instanceof \PhpParser\Node\Stmt\ClassMethod) {
+                    continue;
                 }
+
+                $results[$className][] = $stmt->name->toString();
             }
         }
 
@@ -186,9 +196,11 @@ final class FileIndexTask implements Task
 
             if ($node instanceof \PhpParser\Node\Stmt\Namespace_) {
                 foreach ($node->stmts as $stmt) {
-                    if ($stmt instanceof $type) {
-                        $results[] = $stmt;
+                    if (!$stmt instanceof $type) {
+                        continue;
                     }
+
+                    $results[] = $stmt;
                 }
             }
         }

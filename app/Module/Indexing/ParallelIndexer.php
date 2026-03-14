@@ -100,9 +100,11 @@ final class ParallelIndexer
 
             foreach ($results as $uri => $indexData) {
                 foreach ($indexData as $indexKey => $entries) {
-                    if ($entries !== []) {
-                        $this->storage->write($indexKey, $entries, $uri);
+                    if ($entries === []) {
+                        continue;
                     }
+
+                    $this->storage->write($indexKey, $entries, $uri);
                 }
             }
         }

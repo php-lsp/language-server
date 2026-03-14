@@ -30,13 +30,15 @@ final class IndexSearchTask implements Task
         $results = [];
 
         foreach ($this->index as $entry) {
-            if (stripos($entry, $this->query) !== false) {
-                $results[] = [
-                    'label' => $entry,
-                    'kind' => 6,
-                    'detail' => '[class]',
-                ];
+            if (stripos($entry, $this->query) === false) {
+                continue;
             }
+
+            $results[] = [
+                'label' => $entry,
+                'kind' => 6,
+                'detail' => '[class]',
+            ];
         }
 
         return $results;
