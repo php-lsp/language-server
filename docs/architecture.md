@@ -102,16 +102,17 @@ Each controller:
 |------------|-----------|-------------|
 | `InitializeController` | `initialize` | Initialization, capability declaration, indexing trigger |
 | `InitializedController` | `initialized` | Initialization confirmation |
+| `SetTraceController` | `$/setTrace` | Trace level configuration |
 | `CompletionController` | `textDocument/completion` | Code completion |
 | `HoverController` | `textDocument/hover` | Hover documentation |
 | `DeclarationController` | `textDocument/declaration` | Go to definition |
 | `ReferencesController` | `textDocument/references` | Find usages |
-| `RenameController` | `textDocument/rename` | Symbol rename |
+| `RenameController` | `textDocument/rename` | Symbol rename (stub, incomplete) |
 | `PrepareRenameController` | `textDocument/prepareRename` | Rename preparation |
 | `SignatureHelpController` | `textDocument/signatureHelp` | Function signatures |
 | `DiagnosticController` | `textDocument/diagnostic` | Pull diagnostics |
-| `PublishDiagnosticsController` | Push diagnostics | Push diagnostics to client |
-| `DocumentSymbolController` | `textDocument/documentSymbol` | Document symbols |
+| `PublishDiagnosticsController` | `textDocument/publishDiagnostics` | Push diagnostics to client |
+| `DocumentSymbolController` | `textDocument/documentSymbol` | Document symbols (disabled) |
 
 ### 3. PsiFile — the AST Layer
 
@@ -164,11 +165,19 @@ Indexer (orchestrator)
     ▼
 IndexerInterface[] (individual indexers)
     │
-    ├── ClassIndexer       → key "php.classes.fqn"
-    ├── InterfaceIndexer   → key "php.interfaces.fqn"
-    ├── TraitIndexer       → key "php.traits.fqn"
-    ├── FunctionIndexer    → key "php.functions.fqn"
-    └── ClassMethodIndexer → key "php.methods.fqn"
+    │  Declaration indexers:
+    ├── ClassIndexer              → key "php.classes.fqn"
+    ├── InterfaceIndexer          → key "php.interfaces.fqn"
+    ├── TraitIndexer              → key "php.traits.fqn"
+    ├── FunctionIndexer           → key "php.functions.fqn"
+    ├── ClassMethodIndexer        → key "php.methods.fqn"
+    │
+    │  Usage indexers:
+    ├── ClassUsageIndexer         → key "php.usages.classes"
+    ├── MethodCallUsageIndexer    → key "php.usages.methodCalls"
+    ├── FunctionCallUsageIndexer  → key "php.usages.functionCalls"
+    ├── PropertyAccessUsageIndexer→ key "php.usages.propertyAccess"
+    └── ClassConstantUsageIndexer → key "php.usages.classConstants"
          │
          ▼
     StorageInterface (InMemoryStorage)
@@ -328,21 +337,25 @@ app/
 │   ├── Documentation/
 │   ├── References/
 │   ├── Signature/
-│   └── Indexing/
+│   ├── Indexing/
+│   └── PrefixMatcher/
 │
 ├── Module/                       # IMPLEMENTATIONS — concrete logic
-│   ├── Completion/               #   Completion contributors
+│   ├── Completion/               #   Completion contributors (5)
 │   │   ├── ClassesCompletionContributor.php
 │   │   ├── FunctionCompletionContributor.php
 │   │   ├── KeywordsCompletionContributor.php
+│   │   ├── ShortcutCompletionContributor.php
 │   │   └── SuperglobalsCompletionContributor.php
-│   ├── Declaration/              #   Navigation contributors
-│   ├── Documentation/            #   Hover documentation contributors
-│   ├── Signature/                #   Function signature contributors
-│   ├── Indexing/                 #   Indexers + storage
+│   ├── Declaration/              #   Go-to-definition contributors (3)
+│   ├── Documentation/            #   Hover documentation contributors (2)
+│   ├── References/               #   Find usages contributors (7)
+│   ├── Signature/                #   Function signature contributors (3)
+│   ├── Indexing/                 #   Indexers (10) + storage
 │   ├── PsiFile/                  #   AST parsing and navigation
 │   ├── Document/                 #   Document loading
-│   └── Workspace/                #   Project management
+│   ├── Workspace/                #   Project management
+│   └── Notification/             #   Server notifications
 │
 ├── Infrastructure/Symfony/       # INFRASTRUCTURE — DI compiler passes
 │

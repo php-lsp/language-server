@@ -2,7 +2,9 @@
 
 ## Current State Analysis
 
-### Existing Indexers (5)
+### Existing Indexers (10)
+
+**Declaration indexers (5):**
 
 | Indexer | Key | Indexed Data |
 |---------|-----|-------------|
@@ -12,13 +14,23 @@
 | `FunctionIndexer` | `php.functions.fqn` | FQN → [name, startPos] |
 | `ClassMethodIndexer` | `php.classMethods.fqn` | ClassName → list of method names |
 
-### Existing Contributors (11)
+**Usage indexers (5):**
 
-**Completion (5):** Classes, Functions, Keywords, Superglobals, Snippets
+| Indexer | Key | Indexed Data |
+|---------|-----|-------------|
+| `ClassUsageIndexer` | `php.usages.classes` | Class usage locations |
+| `MethodCallUsageIndexer` | `php.usages.methodCalls` | Method call locations |
+| `FunctionCallUsageIndexer` | `php.usages.functionCalls` | Function call locations |
+| `PropertyAccessUsageIndexer` | `php.usages.propertyAccess` | Property access locations |
+| `ClassConstantUsageIndexer` | `php.usages.classConstants` | Class constant usage locations |
+
+### Existing Contributors (20)
+
+**Completion (5):** Classes, Functions, Keywords, Superglobals, Shortcuts
 **Declaration (3):** Class, ClassMethod, Function
 **Documentation (2):** Docblock, NodesTrace
-**Signature (1):** Function
-**References (0):** Controller exists, no contributors
+**Signature (3):** Function, Method, Constructor
+**References (7):** Class, Function, Method, Property, Variable, Interface, ClassConstant
 **Rename (0):** Controller exists, reuses reference contributors, incomplete
 
 ### Key Gaps
@@ -127,29 +139,23 @@ Also fix existing: `ClassDeclarationContributor` currently returns `Range(0,0)` 
 
 ---
 
-## Phase 4: Reference Contributors (Find All Usages)
+## Phase 4: Reference Contributors (Find All Usages) — DONE
 
-Currently zero implementations. The `ReferencesController` is wired, needs contributors:
+All 7 reference contributors have been implemented:
 
-| Contributor | Finds Usages Of | Strategy |
-|-------------|----------------|----------|
-| `ClassReferenceContributor` | Classes | Scan `new X`, `X::`, type hints, `extends X`, `implements X`, `use X` |
-| `FunctionReferenceContributor` | Functions | Scan `funcName()` calls |
-| `MethodReferenceContributor` | Methods | Scan `->method()` and `::method()` calls |
-| `PropertyReferenceContributor` | Properties | Scan `->prop` and `::$prop` access |
-| `ConstantReferenceContributor` | Constants | Scan `X::CONST` and global `CONST` |
-| `InterfaceReferenceContributor` | Interfaces | Scan `implements X`, type hints |
-| `VariableReferenceContributor` | Variables | Scan all `$var` in scope |
+| Contributor | Finds Usages Of | Status |
+|-------------|----------------|--------|
+| `ClassReferenceContributor` | Classes | Implemented |
+| `FunctionReferenceContributor` | Functions | Implemented |
+| `MethodReferenceContributor` | Methods | Implemented |
+| `PropertyReferenceContributor` | Properties | Implemented |
+| `ClassConstantReferenceContributor` | Class constants | Implemented |
+| `InterfaceReferenceContributor` | Interfaces | Implemented |
+| `VariableReferenceContributor` | Variables | Implemented |
 
-### Architecture for References
-
-References require scanning ALL indexed files (not just lookup by name). Two approaches:
-
-**Option A — Brute-force AST scan:** For each file in the project, parse and walk the AST searching for usages. Slow but accurate.
-
-**Option B — Reverse index:** During indexing, also build a reverse map `symbol → list<Location>`. Fast lookups, but requires re-index on every file change.
-
-**Recommendation:** Start with Option A (correctness first), add reverse index optimization later.
+Usage indexers were also added to support reference lookups (ClassUsageIndexer,
+MethodCallUsageIndexer, FunctionCallUsageIndexer, PropertyAccessUsageIndexer,
+ClassConstantUsageIndexer).
 
 ---
 
@@ -167,15 +173,15 @@ References require scanning ALL indexed files (not just lookup by name). Two app
 
 ---
 
-## Phase 6: Signature Contributors
+## Phase 6: Signature Contributors — DONE
 
-| Contributor | Trigger | Shows |
-|-------------|---------|-------|
-| `MethodSignatureContributor` | `$obj->method(▏)` | Method params + types |
-| `ConstructorSignatureContributor` | `new Foo(▏)` | Constructor params |
-| `StaticMethodSignatureContributor` | `Foo::bar(▏)` | Static method params |
+All 3 signature contributors have been implemented:
 
-Currently only `FunctionSignatureContributor` exists — it handles global functions. Methods require type resolution.
+| Contributor | Trigger | Status |
+|-------------|---------|--------|
+| `FunctionSignatureContributor` | `func(▏)` | Implemented |
+| `MethodSignatureContributor` | `$obj->method(▏)` | Implemented |
+| `ConstructorSignatureContributor` | `new Foo(▏)` | Implemented |
 
 ---
 

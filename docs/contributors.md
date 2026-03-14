@@ -232,5 +232,6 @@ In `CompletionController`, contributors run **in parallel** via React promises
 with a 1-second timeout. If a contributor does not finish in time, its partial
 results are still included in the response.
 
-In `HoverController` and `DeclarationController`, contributors run
-**sequentially** — each one adds to a shared consumer.
+In `HoverController`, `DeclarationController`, `ReferencesController`, and
+`SignatureHelpController`, contributors run **sequentially** — each one adds
+to a shared consumer.
