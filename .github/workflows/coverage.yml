@@ -47,30 +47,59 @@ jobs:
           command: composer update --prefer-dist --no-interaction --no-progress
 
       - name: Run Tests with Coverage
-        run: php -dpcov.enabled=1 vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-text
+        run: php -dpcov.enabled=1 vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-text | tee coverage-output.txt
 
-      - name: Coverage Summary
-        if: github.event_name == 'pull_request'
-        uses: irongut/CodeCoverageSummary@v1.3.0
-        with:
-          filename: coverage.xml
-          format: markdown
-          output: both
-          badge: true
-          hide_complexity: true
+      - name: Extract Coverage Percentage
+        id: coverage
+        run: |
+          COVERAGE=$(grep -oP 'Lines:\s+\K[\d.]+' coverage-output.txt | head -1)
+          echo "percentage=${COVERAGE:-0}" >> "$GITHUB_OUTPUT"
+          echo "Coverage: ${COVERAGE:-0}%"
 
       - name: Add Coverage PR Comment
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           recreate: true
-          path: code-coverage-results.md
+          message: |
+            ## Code Coverage Report
+
+            | Metric | Value |
+            |--------|-------|
+            | **Lines** | ${{ steps.coverage.outputs.percentage }}% |
+
+            <details>
+            <summary>Full report</summary>
+
+            ```
+            ${{ steps.coverage.outputs.percentage }}% line coverage
+            ```
+
+            </details>
 
       - name: Generate Coverage Badge
         if: github.ref == 'refs/heads/master'
-        uses: timkrase/phpunit-coverage-badge@v1.2.1
-        with:
-          coverage_badge_path: .github/coverage-badge.svg
-          clover_report: coverage.xml
-          push_badge: true
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COVERAGE=${{ steps.coverage.outputs.percentage }}
+          # Determine color based on coverage
+          if (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+            COLOR="brightgreen"
+          elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
+            COLOR="yellow"
+          elif (( $(echo "$COVERAGE >= 40" | bc -l) )); then
+            COLOR="orange"
+          else
+            COLOR="red"
+          fi
+          # Download badge SVG from shields.io
+          curl -s "https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}" -o .github/coverage-badge.svg
+
+      - name: Commit Coverage Badge
+        if: github.ref == 'refs/heads/master'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/coverage-badge.svg
+          git diff --staged --quiet && exit 0
+          git commit -m "Update coverage badge [skip ci]"
+          git push
