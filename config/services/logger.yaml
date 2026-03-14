@@ -2,6 +2,10 @@ parameters:
   env(APP_LOGGER_NAME): 'php-lsp'
   app.logger.name: '%env(APP_LOGGER_NAME)%'
 
+  # Buggregator connection (host:port for trap server)
+  env(BUGGREGATOR_HOST): '127.0.0.1:9913'
+  app.buggregator.host: '%env(BUGGREGATOR_HOST)%'
+
 services:
   _defaults:
     autowire: true
@@ -16,12 +20,27 @@ services:
       $stream: '%kernel.logs_dir%/%kernel.environment%.log'
       $level: !php/enum Monolog\Level::Debug
 
+  # Buggregator Monolog handler — sends JSON logs via TCP socket
+  app.logger.formatter.json:
+    class: Monolog\Formatter\JsonFormatter
+    arguments:
+      $appendNewline: true
+
+  app.logger.handler.buggregator:
+    class: Monolog\Handler\SocketHandler
+    arguments:
+      $connectionString: '%app.buggregator.host%'
+      $level: !php/enum Monolog\Level::Debug
+    calls:
+      - [ 'setFormatter', [ '@app.logger.formatter.json' ] ]
+
   Psr\Log\LoggerInterface:
     class: Monolog\Logger
     arguments:
       $name: '%app.logger.name%'
     calls:
       - [ 'pushHandler', [ '@app.logger.handler.prod' ] ]
+      - [ 'pushHandler', [ '@app.logger.handler.buggregator' ] ]
       - [ 'pushProcessor', [ '@app.logger.processor.psr' ] ]
 
 when@dev:
@@ -43,6 +62,7 @@ when@dev:
       calls:
         - [ 'pushHandler', [ '@app.logger.handler.dev' ] ]
         - [ 'pushHandler', [ '@app.logger.handler.prod' ] ]
+        - [ 'pushHandler', [ '@app.logger.handler.buggregator' ] ]
         - [ 'pushProcessor', [ '@app.logger.processor.psr' ] ]
 
 
