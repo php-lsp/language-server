@@ -747,6 +747,12 @@ count = 1
 [[issues]]
 file = "app/Module/Completion/ShortcutCompletionContributor.php"
 code = "imprecise-type"
+message = "Type `iterable` in return type of `controlFlowSnippets` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "imprecise-type"
 message = "Type `iterable` in return type of `getAll` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
 
@@ -784,6 +790,12 @@ count = 1
 file = "app/Module/Completion/ShortcutCompletionContributor.php"
 code = "redundant-logical-operation"
 message = "Redundant `||` operation: left operand is evaluated and right operand is always truthy."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ShortcutCompletionContributor.php"
+code = "unused-parameter"
+message = "Parameter `$node` is never used."
 count = 1
 
 [[issues]]
