@@ -65,7 +65,7 @@ class TypeResolver
             $nodeScopeResolver->processNodes(
                 $stmts,
                 $scope,
-                function (Node $node, Scope $scope) use (
+                static function (Node $node, Scope $scope) use (
                     $targetStartPos,
                     $targetEndPos,
                     &$foundType,
@@ -135,7 +135,7 @@ class TypeResolver
             $nodeScopeResolver->processNodes(
                 $stmts,
                 $scope,
-                function (Node $node, Scope $scope) use ($targetLine, $variableName, &$foundType): void {
+                static function (Node $node, Scope $scope) use ($targetLine, $variableName, &$foundType): void {
                     if ($node->getStartLine() <= $targetLine && $scope->hasVariableType($variableName)->yes()) {
                         $foundType = $scope->getVariableType($variableName);
                     }
