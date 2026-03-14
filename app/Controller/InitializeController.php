@@ -11,6 +11,7 @@ use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionOptions;
 use Lsp\Protocol\Type\DeclarationOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
+use Lsp\Protocol\Type\DocumentSymbolOptions;
 use Lsp\Protocol\Type\FileOperationOptions;
 use Lsp\Protocol\Type\FileOperationRegistrationOptions;
 use Lsp\Protocol\Type\InitializeParams;
@@ -68,7 +69,7 @@ final class InitializeController
                 renameProvider: new RenameOptions(
                     prepareProvider: true,
                 ),
-                //                documentSymbolProvider: new DocumentSymbolOptions(),
+                documentSymbolProvider: new DocumentSymbolOptions(),
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,

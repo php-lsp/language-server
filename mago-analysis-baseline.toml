@@ -224,45 +224,33 @@ count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `getClassMembers` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\documentsymbol::__construct`: expected `string`, but found `mixed`.'
+count = 3
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `lsp\protocol\type\documentsymbol::__construct`: expected `string`, but found `mixed`.'
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #5 of `lsp\protocol\type\documentsymbol::__construct`: expected `list<Lsp\Protocol\Type\DocumentSymbol>|null`, but possibly received `array<array-key, mixed>`.'
-count = 1
+count = 3
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
 code = "possibly-null-argument"
 message = 'Argument #1 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `PhpParser\Node` does not accept it.'
-count = 1
+count = 3
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
 code = "possibly-null-argument"
-message = 'Argument #2 of method `App\Controller\TextDocument\DocumentSymbolController::getclassmembers` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
-count = 4
+message = 'Argument #2 of method `App\Controller\TextDocument\DocumentSymbolController::processstatement` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
+count = 2
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
@@ -275,6 +263,12 @@ file = "app/Controller/TextDocument/DocumentSymbolController.php"
 code = "possibly-null-property-access"
 message = "Attempting to access a property on a possibly `null` value."
 count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "redundant-null-coalesce"
+message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
+count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/HoverController.php"
