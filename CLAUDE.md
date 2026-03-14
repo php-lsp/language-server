@@ -1,0 +1,136 @@
+# CLAUDE.md
+
+## Project Overview
+
+PHP Language Server Protocol (LSP) implementation — a modular server providing
+code intelligence (completion, declarations, hover, references, rename,
+diagnostics) to IDEs and editors via the LSP standard.
+
+- **Language:** PHP 8.4+
+- **Framework:** php-lsp/kernel + Symfony DependencyInjection
+- **Entry point:** `bin/lsp` (CLI), `app/Application.php` (kernel)
+- **Autoload:** PSR-4 — `App\` → `app/`, `App\Tests\` → `tests/`
+- **Status:** Pre-release
+
+## Common Commands
+
+```shell
+# Run the server
+php ./bin/lsp serve App\\Application --port=5007
+
+# Tests
+composer test              # Run all tests (unit + feature)
+composer test:unit         # PHPUnit only
+composer test:feature      # Behat only
+
+# Code quality
+composer linter:check      # PHPStan (level max)
+composer phpcs:check       # PHP-CS-Fixer dry-run
+composer phpcs:fix         # PHP-CS-Fixer auto-fix
+
+# Build
+composer build:prod        # Compile PHAR → var/prod/build.phar
+composer build:run:local   # Run compiled PHAR
+```
+
+## Project Structure
+
+```
+app/
+├── Application.php            # Kernel — extends LanguageServerKernel
+├── Controller/                # LSP request handlers (routes via #[Route] attributes)
+│   ├── InitializeController.php
+│   └── TextDocument/          # textDocument/* method handlers
+│       ├── CompletionController.php
+│       ├── DeclarationController.php
+│       ├── HoverController.php
+│       ├── DiagnosticController.php
+│       └── ...
+├── Core/Contracts/            # Plugin interfaces and attributes
+│   ├── Completion/            # CompletionContributor, AsCompletionContributor
+│   ├── Declaration/           # DeclarationContributor, AsDeclarationContributor
+│   ├── Documentation/         # DocumentationContributor, AsDocumentationContributor
+│   ├── Indexing/              # IndexerInterface, AsIndexer
+│   ├── References/            # ReferenceContributor, AsReferenceContributor
+│   └── Signature/             # SignatureContributor, AsSignatureContributor
+├── Module/                    # Feature implementations
+│   ├── Completion/            # Keyword, class, function, superglobal contributors
+│   ├── Declaration/           # Class, method, function declaration contributors
+│   ├── Documentation/         # Docblock and node-trace contributors
+│   ├── Signature/             # Function signature contributor
+│   ├── Indexing/              # Indexers (class, interface, trait, function, method) + storage
+│   ├── PsiFile/               # AST parsing via nikic/php-parser
+│   ├── Document/              # Document loading and identification
+│   └── Workspace/             # Workspace/project management
+├── Infrastructure/Symfony/    # LSPCompilerPass for DI
+└── Listener/                  # Server, logger, message event listeners
+config/
+├── services.yaml              # Main DI config (imports services/*.yaml)
+└── services/                  # controllers.yaml, listeners.yaml, logger.yaml
+tests/
+├── Unit/                      # PHPUnit tests
+├── Feature/                   # Behat feature files
+└── Context/                   # Behat contexts (Assert/, Provider/, Support/)
+```
+
+## Architecture
+
+The server uses a **contributor/plugin pattern**. Controllers receive LSP
+requests, create a context object, and fan out to multiple contributors that
+run in parallel (via React promises with timeouts).
+
+**Request flow:** LSP Client → Controller → Context → Contributors (parallel) → Consumer → Response
+
+### Adding a new contributor
+
+1. Create a class implementing the contributor interface (e.g., `CompletionContributor`)
+2. Add the registration attribute (e.g., `#[AsCompletionContributor]`)
+3. Place it under `app/Module/` — Symfony DI auto-discovers it
+
+Available contributor types and their DI tags:
+
+| Attribute                    | Tag                            |
+|------------------------------|--------------------------------|
+| `#[AsCompletionContributor]` | `lsp.completionContributors`   |
+| `#[AsDeclarationContributor]`| `lsp.declarationContributors`  |
+| `#[AsDocumentationContributor]`| `lsp.documentationContributors`|
+| `#[AsReferenceContributor]`  | `lsp.referenceContributors`    |
+| `#[AsSignatureContributor]`  | `lsp.signatureContributors`    |
+| `#[AsIndexer]`               | `lsp.indexers`                 |
+
+## Code Style
+
+- **Standard:** PER-CS 2.0 with risky rules
+- **Config:** `.php-cs-fixer.php`
+- Single quotes, short array syntax, no Yoda style
+- Imports ordered alphabetically (class, function, const)
+- Always run `composer phpcs:fix` before committing
+
+## Static Analysis
+
+- **PHPStan level max** with bleeding edge, strict rules, and deprecation rules
+- Config: `phpstan.neon`
+- Analyzes: `app/` directory only
+
+## Key Dependencies
+
+- `php-lsp/kernel` — LSP server framework
+- `php-lsp/protocol` — LSP protocol type definitions
+- `nikic/php-parser` — PHP AST parsing
+- `php-lsp/bridge-server-react` — Async I/O via ReactPHP
+- `php-lsp/ext-document-manager` — Document lifecycle management
+- `monolog/monolog` — Logging
+
+## Guidelines
+
+- When you modify code that is described in this file or any documentation
+  file (README.md, docs/, etc.), you **must** update the relevant
+  documentation to reflect those changes. Keep docs in sync with code.
+- See [README.md](README.md) for installation, running, building, and
+  client setup instructions.
+- See [config/services.yaml](config/services.yaml) and subdirectories for
+  service registration details.
+- See [phpstan.neon](phpstan.neon) for static analysis configuration.
+- See [.php-cs-fixer.php](.php-cs-fixer.php) for code style rules.
+- See [phpunit.xml](phpunit.xml) and [behat.yaml](behat.yaml) for test
+  configuration.
