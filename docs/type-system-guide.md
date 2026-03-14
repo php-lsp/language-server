@@ -1,5 +1,69 @@
 # Guide: Type System Implementation for PHP LSP
 
+## Current Implementation
+
+The type system is implemented using **PHPStan's internal API** as the inference
+engine. This provides full type resolution including PHPDoc annotations, generics,
+control flow narrowing, and expression-level inference out of the box.
+
+### Architecture
+
+```
+app/Module/TypeSystem/
+├── PHPStanBootstrap.php    # Lazy PHPStan container initialization and caching
+├── TypeResolver.php        # Main API — resolves types at LSP positions
+└── TypeResult.php          # Result DTO: type + scope + node
+```
+
+### How It Works
+
+1. **PHPStanBootstrap** lazily creates a PHPStan DI container for the project.
+   The container is cached for the lifetime of the LSP session.
+
+2. **TypeResolver::resolveAtPosition()** is the main entry point:
+   - Finds the AST node at the cursor position (via `InMemoryPsiFileManager`)
+   - Creates a `Scope` for the file via `ScopeFactory`
+   - Runs `NodeScopeResolver::processNodes()` which walks the entire AST,
+     building up scope information (variable types, class context, etc.)
+   - A callback captures the `Scope` at the target node position
+   - Returns a `TypeResult` with the resolved `PHPStan\Type\Type`
+
+3. **TypeResult** wraps the resolved type with convenience methods:
+   - `describe()` — precise type description (e.g., `array<string, int>`)
+   - `describeShort()` — type-only description (e.g., `array`)
+   - `scope` — the full PHPStan scope at that position
+
+### Key PHPStan Services Used
+
+| Service | Purpose |
+|---------|---------|
+| `NodeScopeResolver` | Walks AST, resolves types at each node |
+| `ScopeFactory` | Creates scope contexts for files |
+| `Scope::getType(Expr)` | Returns type of any expression |
+| `Scope::getVariableType(string)` | Returns type of a variable |
+| `ReflectionProvider` | Class/function/constant reflection |
+
+### Trade-offs
+
+**Advantages:**
+- Complete type inference (PHPDoc, generics, narrowing, stubs)
+- Battle-tested on millions of PHP projects
+- No need to implement our own inference engine
+
+**Limitations:**
+- PHPStan's internal API is not stable across major versions
+- `processNodes()` walks the entire file (not lazy per-position)
+- Blocking/synchronous — not designed for ReactPHP event loop
+- Heavy container bootstrap on first use (~100-500ms)
+
+### Future Improvements
+
+- Cache scope results per-file (invalidate on document change)
+- Run type resolution in a separate process/fiber to avoid blocking
+- Consider extracting a lightweight resolver for hot paths
+
+---
+
 ## Part 1: How Type Systems Work in Language Servers
 
 ### 1.1 Core Problem

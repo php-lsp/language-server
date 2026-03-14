@@ -7,24 +7,6 @@ message = "Unused import: `LoggerInterface`."
 count = 1
 
 [[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "literal-named-argument"
-message = "Literal argument `''` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "literal-named-argument"
 message = "Literal argument `1.0` should be passed as a named argument for clarity."
@@ -130,12 +112,6 @@ count = 8
 file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
 code = "no-isset"
 message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "no-redundant-use"
-message = "Unused import: `ClassIndexer`."
 count = 1
 
 [[issues]]

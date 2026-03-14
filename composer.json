@@ -24,7 +24,8 @@
         "php-lsp/ext-document-manager": "^1.0",
         "php-lsp/kernel": "^1.0",
         "php-lsp/protocol": "^1.0",
-        "php-lsp/workspace": "^1.0"
+        "php-lsp/workspace": "^1.0",
+        "phpstan/phpstan": "^2.1"
     },
     "autoload": {
         "psr-4": {

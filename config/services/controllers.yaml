@@ -9,3 +9,6 @@ services:
 
   App\Module\:
     resource: '%kernel.project_dir%/app/Module'
+
+  App\Module\TypeSystem\TypeResolverInterface:
+    alias: App\Module\TypeSystem\TypeResolver
