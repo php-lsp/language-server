@@ -43,11 +43,11 @@ IndexLookup ── used by contributors for queries
 
 | Class | Key | Indexed Data |
 |-------|-----|-------------|
-| `ClassUsageIndexer` | `php.usages.classes` | Class usage locations |
-| `MethodCallUsageIndexer` | `php.usages.methodCalls` | Method call locations |
-| `FunctionCallUsageIndexer` | `php.usages.functionCalls` | Function call locations |
-| `PropertyAccessUsageIndexer` | `php.usages.propertyAccess` | Property access locations |
-| `ClassConstantUsageIndexer` | `php.usages.classConstants` | Class constant usage locations |
+| `ClassUsageIndexer` | `php.classUsages` | Class usage locations |
+| `MethodCallUsageIndexer` | `php.methodCallUsages` | Method call locations |
+| `FunctionCallUsageIndexer` | `php.functionCallUsages` | Function call locations |
+| `PropertyAccessUsageIndexer` | `php.propertyAccessUsages` | Property access locations |
+| `ClassConstantUsageIndexer` | `php.classConstantUsages` | Class constant usage locations |
 
 ## Base Class
 

@@ -30,11 +30,11 @@ Reference contributors rely on usage indexers from the `Indexing` module:
 
 | Indexer | Key | Purpose |
 |---------|-----|---------|
-| `ClassUsageIndexer` | `php.usages.classes` | Tracks class usage locations |
-| `MethodCallUsageIndexer` | `php.usages.methodCalls` | Tracks method call locations |
-| `FunctionCallUsageIndexer` | `php.usages.functionCalls` | Tracks function call locations |
-| `PropertyAccessUsageIndexer` | `php.usages.propertyAccess` | Tracks property access locations |
-| `ClassConstantUsageIndexer` | `php.usages.classConstants` | Tracks class constant usage locations |
+| `ClassUsageIndexer` | `php.classUsages` | Tracks class usage locations |
+| `MethodCallUsageIndexer` | `php.methodCallUsages` | Tracks method call locations |
+| `FunctionCallUsageIndexer` | `php.functionCallUsages` | Tracks function call locations |
+| `PropertyAccessUsageIndexer` | `php.propertyAccessUsages` | Tracks property access locations |
+| `ClassConstantUsageIndexer` | `php.classConstantUsages` | Tracks class constant usage locations |
 
 ## Adding a New Reference Contributor
 

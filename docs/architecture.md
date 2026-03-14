@@ -48,7 +48,7 @@ This means:
            │               │               │
 ┌──────────▼───────────────▼───────────────▼──────────────────┐
 │                   Infrastructure Layer                       │
-│           Indexing, PsiFile (AST), Document Manager          │
+│      Indexing, PsiFile (AST), Document Manager, TypeSystem   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -173,11 +173,11 @@ IndexerInterface[] (individual indexers)
     ├── ClassMethodIndexer        → key "php.methods.fqn"
     │
     │  Usage indexers:
-    ├── ClassUsageIndexer         → key "php.usages.classes"
-    ├── MethodCallUsageIndexer    → key "php.usages.methodCalls"
-    ├── FunctionCallUsageIndexer  → key "php.usages.functionCalls"
-    ├── PropertyAccessUsageIndexer→ key "php.usages.propertyAccess"
-    └── ClassConstantUsageIndexer → key "php.usages.classConstants"
+    ├── ClassUsageIndexer         → key "php.classUsages"
+    ├── MethodCallUsageIndexer    → key "php.methodCallUsages"
+    ├── FunctionCallUsageIndexer  → key "php.functionCallUsages"
+    ├── PropertyAccessUsageIndexer→ key "php.propertyAccessUsages"
+    └── ClassConstantUsageIndexer → key "php.classConstantUsages"
          │
          ▼
     StorageInterface (InMemoryStorage)
@@ -355,6 +355,7 @@ app/
 │   ├── PsiFile/                  #   AST parsing and navigation
 │   ├── Document/                 #   Document loading
 │   ├── Workspace/                #   Project management
+│   ├── TypeSystem/               #   PHPStan-based type resolution
 │   └── Notification/             #   Server notifications
 │
 ├── Infrastructure/Symfony/       # INFRASTRUCTURE — DI compiler passes
