@@ -24,7 +24,6 @@ composer test:unit         # PHPUnit only
 composer test:feature      # Behat only
 
 # Code quality
-composer linter:check      # PHPStan (level max)
 composer mago:lint         # Mago linter (with baseline)
 composer mago:analyze      # Mago analyzer (with baseline)
 composer mago:fix          # Mago auto-fix (safe + potentially-unsafe)
@@ -111,12 +110,6 @@ Available contributor types and their DI tags:
 
 ## Static Analysis
 
-### PHPStan
-- **PHPStan level max** with bleeding edge, strict rules, and deprecation rules
-- Config: `phpstan.neon`
-- Analyzes: `app/` directory only
-
-### Mago
 - **Mago** — fast PHP linter and analyzer (written in Rust)
 - Config: `mago.toml`
 - Baselines: `mago-lint-baseline.toml`, `mago-analysis-baseline.toml`
@@ -148,9 +141,7 @@ Available contributor types and their DI tags:
   architecture and design documentation.
 - See [config/services.yaml](config/services.yaml) and subdirectories for
   service registration details.
-- See [phpstan.neon](phpstan.neon) for PHPStan static analysis configuration.
-- See [mago.toml](mago.toml) for Mago linter and analyzer configuration.
-
+- See [mago.toml](mago.toml) for Mago linter, analyzer, and formatter configuration.
 - See [phpunit.xml](phpunit.xml) and [behat.yaml](behat.yaml) for test
   configuration.
 - See [docs/codespaces.md](docs/codespaces.md) for GitHub Codespaces setup
