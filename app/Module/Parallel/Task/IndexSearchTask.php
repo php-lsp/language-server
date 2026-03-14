@@ -7,13 +7,14 @@ namespace App\Module\Parallel\Task;
 use Amp\Cancellation;
 use Amp\Parallel\Worker\Task;
 use Amp\Sync\Channel;
+use Override;
 
 /**
  * Worker task that performs index search in a separate process.
  * Receives serialized index data and a query string,
  * returns matching results as plain arrays.
  *
- * @implements Task<array<int, array{label: string, kind: int, detail: string}>, mixed, mixed>
+ * @implements Task<list<array{label: string, kind: int, detail: string}>, mixed, mixed>
  */
 final class IndexSearchTask implements Task
 {
@@ -25,6 +26,10 @@ final class IndexSearchTask implements Task
         private readonly string $query,
     ) {}
 
+    /**
+     * @return list<array{label: string, kind: int, detail: string}>
+     */
+    #[Override]
     public function run(Channel $channel, Cancellation $cancellation): array
     {
         $results = [];

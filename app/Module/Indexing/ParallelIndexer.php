@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
  */
 final class ParallelIndexer
 {
-    private const BATCH_SIZE = 20;
+    private const int BATCH_SIZE = 20;
 
     public function __construct(
         private readonly StorageInterface $storage,
@@ -36,8 +36,8 @@ final class ParallelIndexer
 
     public function index(Project $project): void
     {
-        $this->logger->info('Parallel indexing project: ' . $project->uri);
-        $startTime = hrtime(true);
+        $this->logger->info('Parallel indexing project: ' . (string) $project->uri);
+        $startTime = \hrtime(as_number: true);
 
         $phpFiles = [];
 
@@ -45,7 +45,7 @@ final class ParallelIndexer
             $this->collectFiles($file, $phpFiles, 0);
         }
 
-        $realpath = realpath(__DIR__ . '/../../../resources/php-stubs');
+        $realpath = (string) realpath(__DIR__ . '/../../../resources/php-stubs');
         $uri = Uri::createLocal('file://' . $realpath);
         $stubs = $this->files->create($uri->path, $this->filesystemReaderFactory);
         $this->collectFiles($stubs, $phpFiles, 0);
@@ -54,7 +54,7 @@ final class ParallelIndexer
 
         $this->indexFilesInParallel($phpFiles);
 
-        $elapsed = (hrtime(true) - $startTime) / 1_000_000;
+        $elapsed = (\hrtime(as_number: true) - $startTime) / 1_000_000;
         $this->logger->info(sprintf('Parallel indexing finished in %.2f ms', $elapsed));
     }
 
@@ -116,7 +116,7 @@ final class ParallelIndexer
 
         // Strip file:// prefix if present
         if (str_starts_with($path, 'file://')) {
-            $path = substr($path, 7);
+            $path = substr($path, offset: 7);
         }
 
         if (!is_file($path) || !is_readable($path)) {
@@ -156,7 +156,7 @@ final class ParallelIndexer
                 'redis',
                 'imagick',
             ],
-            true,
+            strict: true,
         );
     }
 }

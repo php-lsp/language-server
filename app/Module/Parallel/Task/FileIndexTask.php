@@ -7,7 +7,10 @@ namespace App\Module\Parallel\Task;
 use Amp\Cancellation;
 use Amp\Parallel\Worker\Task;
 use Amp\Sync\Channel;
+use Override;
 use PhpParser\ErrorHandler\Collecting;
+use PhpParser\Node;
+use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\NodeVisitor\NodeConnectingVisitor;
@@ -32,7 +35,28 @@ final class FileIndexTask implements Task
     /**
      * @return array<string, array<string|int, mixed>> Map of indexKey => entries
      */
+    #[Override]
     public function run(Channel $channel, Cancellation $cancellation): array
+    {
+        $ast = $this->parseAst();
+
+        if ($ast === null) {
+            return [];
+        }
+
+        return [
+            'php.classes.fqn' => $this->extractClasses($ast),
+            'php.interfaces.fqn' => $this->extractInterfaces($ast),
+            'php.traits.fqn' => $this->extractTraits($ast),
+            'php.functions.fqn' => $this->extractFunctions($ast),
+            'php.classMethods.fqn' => $this->extractClassMethods($ast),
+        ];
+    }
+
+    /**
+     * @return list<Node>|null
+     */
+    private function parseAst(): ?array
     {
         $parser = new ParserFactory()->createForNewestSupportedVersion();
         $errorHandler = new Collecting();
@@ -41,7 +65,7 @@ final class FileIndexTask implements Task
             $ast = $parser->parse($this->content, $errorHandler);
 
             if ($ast === null) {
-                return [];
+                return null;
             }
 
             $traverser = new NodeTraverser(
@@ -49,24 +73,15 @@ final class FileIndexTask implements Task
                 new NodeConnectingVisitor(),
                 new ParentConnectingVisitor(),
             );
-            $ast = $traverser->traverse($ast);
+
+            return $traverser->traverse($ast);
         } catch (\Throwable) {
-            return [];
+            return null;
         }
-
-        $results = [];
-
-        $results['php.classes.fqn'] = $this->extractClasses($ast);
-        $results['php.interfaces.fqn'] = $this->extractInterfaces($ast);
-        $results['php.traits.fqn'] = $this->extractTraits($ast);
-        $results['php.functions.fqn'] = $this->extractFunctions($ast);
-        $results['php.classMethods.fqn'] = $this->extractClassMethods($ast);
-
-        return $results;
     }
 
     /**
-     * @param array<\PhpParser\Node> $ast
+     * @param list<Node> $ast
      *
      * @return array<string, string>
      */
@@ -74,7 +89,7 @@ final class FileIndexTask implements Task
     {
         $results = [];
 
-        foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Class_::class) as $class) {
+        foreach ($this->findNodes($ast, Stmt\Class_::class) as $class) {
             if ($class->namespacedName === null) {
                 continue;
             }
@@ -87,7 +102,7 @@ final class FileIndexTask implements Task
     }
 
     /**
-     * @param array<\PhpParser\Node> $ast
+     * @param list<Node> $ast
      *
      * @return list<string>
      */
@@ -95,7 +110,7 @@ final class FileIndexTask implements Task
     {
         $results = [];
 
-        foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Interface_::class) as $interface) {
+        foreach ($this->findNodes($ast, Stmt\Interface_::class) as $interface) {
             if ($interface->namespacedName === null) {
                 continue;
             }
@@ -107,7 +122,7 @@ final class FileIndexTask implements Task
     }
 
     /**
-     * @param array<\PhpParser\Node> $ast
+     * @param list<Node> $ast
      *
      * @return list<string>
      */
@@ -115,7 +130,7 @@ final class FileIndexTask implements Task
     {
         $results = [];
 
-        foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Trait_::class) as $trait) {
+        foreach ($this->findNodes($ast, Stmt\Trait_::class) as $trait) {
             if ($trait->namespacedName === null) {
                 continue;
             }
@@ -127,7 +142,7 @@ final class FileIndexTask implements Task
     }
 
     /**
-     * @param array<\PhpParser\Node> $ast
+     * @param list<Node> $ast
      *
      * @return array<string, list<string|int>>
      */
@@ -135,7 +150,7 @@ final class FileIndexTask implements Task
     {
         $results = [];
 
-        foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Function_::class) as $function) {
+        foreach ($this->findNodes($ast, Stmt\Function_::class) as $function) {
             if ($function->namespacedName === null) {
                 continue;
             }
@@ -148,7 +163,7 @@ final class FileIndexTask implements Task
     }
 
     /**
-     * @param array<\PhpParser\Node> $ast
+     * @param list<Node> $ast
      *
      * @return array<string, list<string>>
      */
@@ -156,7 +171,7 @@ final class FileIndexTask implements Task
     {
         $results = [];
 
-        foreach ($this->findNodes($ast, \PhpParser\Node\Stmt\Class_::class) as $class) {
+        foreach ($this->findNodes($ast, Stmt\Class_::class) as $class) {
             if ($class->namespacedName === null) {
                 continue;
             }
@@ -164,7 +179,7 @@ final class FileIndexTask implements Task
             $className = $class->namespacedName->toString();
 
             foreach ($class->stmts as $stmt) {
-                if (!$stmt instanceof \PhpParser\Node\Stmt\ClassMethod) {
+                if (!$stmt instanceof Stmt\ClassMethod) {
                     continue;
                 }
 
@@ -178,9 +193,9 @@ final class FileIndexTask implements Task
     /**
      * Recursively find all nodes of a given type.
      *
-     * @template T of \PhpParser\Node
+     * @template T of Node
      *
-     * @param array<\PhpParser\Node> $nodes
+     * @param list<Node> $nodes
      * @param class-string<T> $type
      *
      * @return list<T>
@@ -194,14 +209,16 @@ final class FileIndexTask implements Task
                 $results[] = $node;
             }
 
-            if ($node instanceof \PhpParser\Node\Stmt\Namespace_) {
-                foreach ($node->stmts as $stmt) {
-                    if (!$stmt instanceof $type) {
-                        continue;
-                    }
+            if (!$node instanceof Stmt\Namespace_) {
+                continue;
+            }
 
-                    $results[] = $stmt;
+            foreach ($node->stmts as $stmt) {
+                if (!$stmt instanceof $type) {
+                    continue;
                 }
+
+                $results[] = $stmt;
             }
         }
 
