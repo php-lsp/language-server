@@ -67,6 +67,7 @@ app/
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── Document/              # Document loading and identification
 │   ├── Workspace/             # Workspace/project management
+│   ├── TypeSystem/            # PHPStan-based type resolution (TypeResolver, PHPStanBootstrap)
 │   └── Notification/          # Server notification sender
 ├── Infrastructure/Symfony/    # LSPCompilerPass for DI
 └── Listener/                  # Server, logger, message event listeners
@@ -127,6 +128,7 @@ Available contributor types and their DI tags:
 - `php-lsp/bridge-server-react` — Async I/O via ReactPHP
 - `php-lsp/ext-document-manager` — Document lifecycle management
 - `monolog/monolog` — Logging
+- `phpstan/phpstan` — PHPStan for type resolution (used by TypeSystem module)
 - `carthage-software/mago` — Mago PHP linter, analyzer, and formatter
 
 ## Guidelines
