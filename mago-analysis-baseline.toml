@@ -49,168 +49,6 @@ message = "Parameter `$initialized` is never used."
 count = 1
 
 [[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "impossible-assignment"
-message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "invalid-method-access"
-message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Analyser\ScopeFactory)`).'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "invalid-method-access"
-message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\DependencyInjection\Container)`).'
-count = 3
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-assignment"
-message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$$nodeScopeResolver` (unknown-ref(PHPStan\Analyser\NodeScopeResolver)).'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$$phpstanContainer` (null|unknown-ref(PHPStan\DependencyInjection\Container)).'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$$scopeFactory` (unknown-ref(PHPStan\Analyser\ScopeFactory)).'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-property-type-coercion"
-message = 'A value with a less specific type `mixed` is being assigned to property `$$typeNodeResolver` (unknown-ref(PHPStan\PhpDoc\TypeNodeResolver)).'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `app\controller\phpstananalyzer::gettypeatposition`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-class"
-message = 'Class `PHPStan\DependencyInjection\ContainerFactory` not found.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\NodeScopeResolver`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\ScopeFactory`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `PHPStan\DependencyInjection\Container`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `PHPStan\PhpDoc\TypeNodeResolver`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\Type`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-method"
-message = 'Method `create` does not exist on type `PHPStan\Analyser\ScopeContext`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\NodeScopeResolver` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\ScopeContext` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\ScopeFactory` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\DependencyInjection\ContainerFactory` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\DependencyInjection\Container` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\PhpDoc\TypeNodeResolver` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Type\Type` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "write-only-property"
-message = "Property `$nodeScopeResolver` is written to but never read."
-count = 1
-
-[[issues]]
-file = "app/Controller/PHPStanAnalyzer.php"
-code = "write-only-property"
-message = "Property `$typeNodeResolver` is written to but never read."
-count = 1
-
-[[issues]]
 file = "app/Controller/SetTraceController.php"
 code = "unused-parameter"
 message = "Parameter `$editor` is never used."
@@ -1016,62 +854,8 @@ count = 1
 
 [[issues]]
 file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "invalid-method-access"
-message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Type\Type)`).'
-count = 2
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
 code = "missing-override-attribute"
 message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\DocblockDocumentationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #3 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\Type`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "non-existent-method"
-message = 'Method `precise` does not exist on type `PHPStan\Type\VerbosityLevel`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "non-existent-method"
-message = 'Method `typeOnly` does not exist on type `PHPStan\Type\VerbosityLevel`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Type\Type` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Type\VerbosityLevel` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "unused-property"
-message = "Property `$indexLookup` is never used."
 count = 1
 
 [[issues]]
@@ -1924,6 +1708,288 @@ count = 1
 file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "redundant-docblock-type"
 message = "Redundant docblock type for variable `$classes`."
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "impossible-assignment"
+message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Analyser\ScopeFactory)`).'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\DependencyInjection\Container)`).'
+count = 3
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `app\module\typesystem\phpstanbootstrap::boot`: expected `unknown-ref(PHPStan\DependencyInjection\Container)`, but found `null|unknown-ref(PHPStan\DependencyInjection\Container)`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "mixed-property-type-coercion"
+message = 'A value with a less specific type `mixed` is being assigned to property `$$container` (null|unknown-ref(PHPStan\DependencyInjection\Container)).'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\typesystem\phpstanbootstrap::createscopeforfile`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\typesystem\phpstanbootstrap::getnodescoperesolver`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\typesystem\phpstanbootstrap::getreflectionprovider`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\typesystem\phpstanbootstrap::getscopefactory`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-class"
+message = 'Class `PHPStan\DependencyInjection\ContainerFactory` not found.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\MutatingScope`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\NodeScopeResolver`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\ScopeFactory`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\DependencyInjection\Container`.'
+count = 2
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Reflection\ReflectionProvider`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-method"
+message = 'Method `create` does not exist on type `PHPStan\Analyser\ScopeContext`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\MutatingScope` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\NodeScopeResolver` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\ScopeContext` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\ScopeFactory` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\DependencyInjection\ContainerFactory` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\DependencyInjection\Container` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Reflection\ReflectionProvider` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/PHPStanBootstrap.php"
+code = "nullable-return-statement"
+message = 'Function `app\module\typesystem\phpstanbootstrap::boot` is declared to return `unknown-ref(PHPStan\DependencyInjection\Container)` but possibly returns a nullable value (inferred as `null|unknown-ref(PHPStan\DependencyInjection\Container)`).'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Analyser\NodeScopeResolver)`).'
+count = 4
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Analyser\Scope)`).'
+count = 3
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `app\module\typesystem\typeresult::__construct`: expected `unknown-ref(PHPStan\Type\Type)`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "mixed-operand"
+message = "Right operand in `&&` operation has `mixed` type."
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\typesystem\typeresolver::resolvevariableatposition`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\Scope`.'
+count = 2
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\Type`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\Scope` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolver.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Type\Type` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResolverInterface.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Type\Type` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "invalid-method-access"
+message = 'Attempting to access a method on a non-object type (`unknown-ref(PHPStan\Type\Type)`).'
+count = 2
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\typesystem\typeresult::describe`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\typesystem\typeresult::describeshort`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Analyser\Scope`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\Type`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\VerbosityLevel`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-method"
+message = 'Method `precise` does not exist on type `PHPStan\Type\VerbosityLevel`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-method"
+message = 'Method `typeOnly` does not exist on type `PHPStan\Type\VerbosityLevel`.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Analyser\Scope` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Type\Type` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/TypeSystem/TypeResult.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `PHPStan\Type\VerbosityLevel` does not exist.'
 count = 1
 
 [[issues]]

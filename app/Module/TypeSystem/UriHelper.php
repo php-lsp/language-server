@@ -12,12 +12,12 @@ final class UriHelper
             return $uri;
         }
 
-        $path = substr($uri, 7);
+        $path = substr($uri, offset: 7);
         $path = urldecode($path);
 
         // Windows: file:///C:/path → C:/path
         if (preg_match('#^/[A-Za-z]:/#', $path)) {
-            $path = substr($path, 1);
+            $path = substr($path, offset: 1);
         }
 
         return $path;

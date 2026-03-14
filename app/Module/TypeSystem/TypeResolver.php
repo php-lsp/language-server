@@ -9,6 +9,7 @@ use App\Module\PsiFile\SourceFileRoot;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
+use Override;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\Type;
@@ -22,6 +23,7 @@ final class TypeResolver implements TypeResolverInterface
         private readonly LoggerInterface $logger,
     ) {}
 
+    #[Override]
     public function resolveAtPosition(
         EditorInterface $editor,
         TextDocumentIdentifier $textDocumentIdentifier,
@@ -105,6 +107,7 @@ final class TypeResolver implements TypeResolverInterface
         );
     }
 
+    #[Override]
     public function resolveVariableAtPosition(
         EditorInterface $editor,
         TextDocumentIdentifier $textDocumentIdentifier,
