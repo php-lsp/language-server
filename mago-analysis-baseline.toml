@@ -289,18 +289,6 @@ message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type
 count = 1
 
 [[issues]]
-file = "app/Controller/TextDocument/PrepareRenameController.php"
-code = "missing-return-type"
-message = "Function `__invoke` is missing a return type hint."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/PrepareRenameController.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `PhpParser\Node` does not accept it.'
-count = 1
-
-[[issues]]
 file = "app/Controller/TextDocument/ReferencesController.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
@@ -328,18 +316,6 @@ count = 1
 file = "app/Controller/TextDocument/RenameController.php"
 code = "invalid-property-assignment-value"
 message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\References\ReferenceContributor>`, but got `array<array-key, mixed>`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RenameController.php"
-code = "missing-return-type"
-message = "Function `__invoke` is missing a return type hint."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RenameController.php"
-code = "unused-property"
-message = "Property `$fileManager` is never used."
 count = 1
 
 [[issues]]
