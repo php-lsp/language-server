@@ -1,0 +1,273 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Benchmark: Sequential vs ReactPHP Cooperative vs AMPHP Parallel
+ *
+ * Two scenarios:
+ *   A) Index search — large data, light compute (current contributor workload)
+ *   B) CPU-heavy — small data, heavy compute (AST parsing simulation)
+ */
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Amp\Future;
+use Amp\Parallel\Worker\ContextWorkerPool;
+use App\Module\Parallel\Task\CpuHeavyTask;
+use App\Module\Parallel\Task\IndexSearchTask;
+use App\Module\Parallel\Task\WarmupTask;
+
+// ─── Configuration ──────────────────────────────────────────────
+
+$contributorCount = (int)($argv[1] ?? 5);
+$indexSize = (int)($argv[2] ?? 50_000);
+$iterations = (int)($argv[3] ?? 5);
+$workerCount = (int)($argv[4] ?? 4);
+
+echo "╔══════════════════════════════════════════════════════════════╗\n";
+echo "║          Completion Contributor Parallel Benchmark           ║\n";
+echo "╠══════════════════════════════════════════════════════════════╣\n";
+echo "║  Contributors:     " . str_pad((string)$contributorCount, 39) . "║\n";
+echo "║  Index size each:  " . str_pad(number_format($indexSize), 39) . "║\n";
+echo "║  Iterations:       " . str_pad((string)$iterations, 39) . "║\n";
+echo "║  Worker pool size: " . str_pad((string)$workerCount, 39) . "║\n";
+echo "╚══════════════════════════════════════════════════════════════╝\n\n";
+
+// ─── Helpers ────────────────────────────────────────────────────
+
+function generateIndex(int $size): array
+{
+    $entries = [];
+    $prefixes = ['App\\Controller\\', 'App\\Module\\', 'App\\Core\\', 'Vendor\\Package\\', 'Symfony\\Component\\'];
+    for ($i = 0; $i < $size; $i++) {
+        $entries[] = $prefixes[$i % 5] . 'Class' . $i . 'Name' . ($i % 100);
+    }
+    return $entries;
+}
+
+function simulateIndexSearch(array $index, string $query): array
+{
+    $results = [];
+    foreach ($index as $entry) {
+        if (stripos($entry, $query) !== false) {
+            $results[] = ['label' => $entry, 'kind' => 6, 'detail' => '[class]'];
+        }
+    }
+    return $results;
+}
+
+function simulateCpuHeavy(string $source, int $work): array
+{
+    $results = [];
+    for ($i = 0; $i < $work; $i++) {
+        preg_match_all('/\b\w+\b/', $source, $matches);
+        $hash = md5($source . $i);
+        $results[] = ['label' => substr($hash, 0, 8), 'kind' => $i % 10];
+    }
+    return $results;
+}
+
+function benchmark(string $name, int $iterations, callable $fn): array
+{
+    $times = [];
+    $resultCount = 0;
+
+    $fn(); // warmup
+
+    for ($i = 0; $i < $iterations; $i++) {
+        $start = hrtime(true);
+        $results = $fn();
+        $times[] = (hrtime(true) - $start) / 1_000_000;
+        $resultCount = count($results);
+    }
+
+    $avg = array_sum($times) / count($times);
+    $min = min($times);
+    $max = max($times);
+
+    echo sprintf(
+        "  %-38s avg: %8.2f ms  min: %8.2f ms  max: %8.2f ms  results: %d\n",
+        $name,
+        $avg,
+        $min,
+        $max,
+        $resultCount,
+    );
+
+    return ['avg' => $avg, 'min' => $min, 'max' => $max, 'results' => $resultCount];
+}
+
+function printSummary(string $title, array $benchmarks): void
+{
+    echo "\n╔══════════════════════════════════════════════════════════════╗\n";
+    echo "║  " . str_pad($title, 58) . "║\n";
+    echo "╠══════════════════════════════════════════════════════════════╣\n";
+
+    $baseline = reset($benchmarks)['avg'];
+    foreach ($benchmarks as $name => $data) {
+        $speedup = $baseline / $data['avg'];
+        $indicator = $speedup > 1.1 ? 'FASTER' : ($speedup < 0.9 ? 'SLOWER' : 'SAME');
+        echo sprintf(
+            "║  %-30s %8.2f ms  (%.2fx) %-6s   ║\n",
+            $name,
+            $data['avg'],
+            $speedup,
+            $indicator,
+        );
+    }
+
+    echo "╚══════════════════════════════════════════════════════════════╝\n";
+}
+
+// ─── Setup worker pool ──────────────────────────────────────────
+
+$pool = new ContextWorkerPool($workerCount);
+$warmupFutures = [];
+for ($i = 0; $i < $workerCount; $i++) {
+    $warmupFutures[] = $pool->submit(new WarmupTask())->getFuture();
+}
+Future\await($warmupFutures);
+echo "Worker pool ready ({$workerCount} processes)\n";
+
+// ═══════════════════════════════════════════════════════════════
+// SCENARIO A: Index search (large data transfer, light compute)
+// This is what ClassesCompletionContributor / FunctionCompletionContributor do
+// ═══════════════════════════════════════════════════════════════
+
+echo "\n══ SCENARIO A: Index search (large data, light compute) ══════\n";
+
+$indexes = [];
+for ($i = 0; $i < $contributorCount; $i++) {
+    $indexes[$i] = generateIndex($indexSize);
+}
+$query = 'Class42';
+echo "Generated " . number_format($contributorCount * $indexSize) . " total index entries\n\n";
+
+$scenarioA = [];
+
+echo "── Sequential ──\n";
+$scenarioA['Sequential'] = benchmark('Sequential foreach', $iterations, function () use ($indexes, $query) {
+    $all = [];
+    foreach ($indexes as $idx) {
+        $all = array_merge($all, simulateIndexSearch($idx, $query));
+    }
+    return $all;
+});
+
+echo "── ReactPHP async ──\n";
+$scenarioA['ReactPHP async'] = benchmark('ReactPHP (single-thread)', $iterations, function () use ($indexes, $query) {
+    $promises = [];
+    foreach ($indexes as $idx) {
+        $promises[] = React\Async\async(fn () => simulateIndexSearch($idx, $query))();
+    }
+    return array_merge(...React\Async\await(React\Promise\all($promises)));
+});
+
+echo "── AMPHP fibers ──\n";
+$scenarioA['AMPHP fibers'] = benchmark('AMPHP fibers (single-thread)', $iterations, function () use ($indexes, $query) {
+    $futures = [];
+    foreach ($indexes as $idx) {
+        $futures[] = Amp\async(fn () => simulateIndexSearch($idx, $query));
+    }
+    return array_merge(...Future\await($futures));
+});
+
+echo "── AMPHP parallel workers ──\n";
+$scenarioA['AMPHP parallel'] = benchmark('AMPHP parallel (workers)', $iterations, function () use ($indexes, $query, $pool) {
+    $futures = [];
+    foreach ($indexes as $idx) {
+        $futures[] = $pool->submit(new IndexSearchTask($idx, $query))->getFuture();
+    }
+    return array_merge(...Future\await($futures));
+});
+
+printSummary('SCENARIO A: Index search results', $scenarioA);
+
+// ═══════════════════════════════════════════════════════════════
+// SCENARIO B: CPU-heavy work (small data transfer, heavy compute)
+// This simulates AST parsing / complex analysis per contributor
+// ═══════════════════════════════════════════════════════════════
+
+echo "\n══ SCENARIO B: CPU-heavy (small data, heavy compute) ═════════\n";
+
+$sourceCode = str_repeat("<?php\nnamespace App\\Module;\nclass Example extends Base implements Interface1 {\n    public function doSomething(string \$arg): void { return; }\n}\n", 20);
+$workPerContributor = 500;
+echo "Source: " . strlen($sourceCode) . " bytes, work iterations: {$workPerContributor}\n\n";
+
+$scenarioB = [];
+
+echo "── Sequential ──\n";
+$scenarioB['Sequential'] = benchmark('Sequential foreach', $iterations, function () use ($sourceCode, $contributorCount, $workPerContributor) {
+    $all = [];
+    for ($i = 0; $i < $contributorCount; $i++) {
+        $all = array_merge($all, simulateCpuHeavy($sourceCode, $workPerContributor));
+    }
+    return $all;
+});
+
+echo "── ReactPHP async ──\n";
+$scenarioB['ReactPHP async'] = benchmark('ReactPHP (single-thread)', $iterations, function () use ($sourceCode, $contributorCount, $workPerContributor) {
+    $promises = [];
+    for ($i = 0; $i < $contributorCount; $i++) {
+        $promises[] = React\Async\async(fn () => simulateCpuHeavy($sourceCode, $workPerContributor))();
+    }
+    return array_merge(...React\Async\await(React\Promise\all($promises)));
+});
+
+echo "── AMPHP fibers ──\n";
+$scenarioB['AMPHP fibers'] = benchmark('AMPHP fibers (single-thread)', $iterations, function () use ($sourceCode, $contributorCount, $workPerContributor) {
+    $futures = [];
+    for ($i = 0; $i < $contributorCount; $i++) {
+        $futures[] = Amp\async(fn () => simulateCpuHeavy($sourceCode, $workPerContributor));
+    }
+    return array_merge(...Future\await($futures));
+});
+
+echo "── AMPHP parallel workers ──\n";
+$scenarioB['AMPHP parallel'] = benchmark('AMPHP parallel (workers)', $iterations, function () use ($sourceCode, $contributorCount, $workPerContributor, $pool) {
+    $futures = [];
+    for ($i = 0; $i < $contributorCount; $i++) {
+        $futures[] = $pool->submit(new CpuHeavyTask($sourceCode, $workPerContributor))->getFuture();
+    }
+    return array_merge(...Future\await($futures));
+});
+
+printSummary('SCENARIO B: CPU-heavy results', $scenarioB);
+
+// ═══════════════════════════════════════════════════════════════
+// SCENARIO C: CPU-heavy with more contributors (scaling test)
+// ═══════════════════════════════════════════════════════════════
+
+echo "\n══ SCENARIO C: CPU-heavy x10 contributors (scaling test) ═════\n";
+
+$heavyContributors = 10;
+$workPerContributor = 500;
+echo "Contributors: {$heavyContributors}, work iterations: {$workPerContributor}\n\n";
+
+$scenarioC = [];
+
+echo "── Sequential ──\n";
+$scenarioC['Sequential'] = benchmark('Sequential foreach', $iterations, function () use ($sourceCode, $heavyContributors, $workPerContributor) {
+    $all = [];
+    for ($i = 0; $i < $heavyContributors; $i++) {
+        $all = array_merge($all, simulateCpuHeavy($sourceCode, $workPerContributor));
+    }
+    return $all;
+});
+
+echo "── AMPHP parallel workers ──\n";
+$scenarioC['AMPHP parallel'] = benchmark('AMPHP parallel (workers)', $iterations, function () use ($sourceCode, $heavyContributors, $workPerContributor, $pool) {
+    $futures = [];
+    for ($i = 0; $i < $heavyContributors; $i++) {
+        $futures[] = $pool->submit(new CpuHeavyTask($sourceCode, $workPerContributor))->getFuture();
+    }
+    return array_merge(...Future\await($futures));
+});
+
+printSummary('SCENARIO C: Scaling test results', $scenarioC);
+
+$pool->shutdown();
+
+echo "\nDone.\n";

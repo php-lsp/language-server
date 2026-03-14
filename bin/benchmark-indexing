@@ -1,0 +1,238 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Benchmark: Sequential vs Parallel PHP file indexing.
+ *
+ * Uses real PHP files from the project to measure parsing + index extraction
+ * performance with sequential processing vs amphp/parallel workers.
+ */
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Amp\Future;
+use Amp\Parallel\Worker\ContextWorkerPool;
+use App\Module\Parallel\Task\FileIndexTask;
+use App\Module\Parallel\Task\WarmupTask;
+use PhpParser\ErrorHandler\Collecting;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\NameResolver;
+use PhpParser\NodeVisitor\NodeConnectingVisitor;
+use PhpParser\NodeVisitor\ParentConnectingVisitor;
+use PhpParser\ParserFactory;
+
+// ─── Configuration ──────────────────────────────────────────────
+
+$workerCount = (int)($argv[1] ?? 4);
+$iterations = (int)($argv[2] ?? 3);
+
+// ─── Collect PHP files ──────────────────────────────────────────
+
+function collectPhpFiles(string $dir, array $ignore = []): array
+{
+    $files = [];
+    $items = scandir($dir);
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..') {
+            continue;
+        }
+        if (in_array($item, $ignore, true)) {
+            continue;
+        }
+        $path = $dir . '/' . $item;
+        if (is_dir($path)) {
+            $files = array_merge($files, collectPhpFiles($path, $ignore));
+        } elseif (str_ends_with($item, '.php')) {
+            $files[] = $path;
+        }
+    }
+    return $files;
+}
+
+$projectDir = realpath(__DIR__ . '/..');
+$stubsDir = $projectDir . '/resources/php-stubs';
+
+// Collect from app/ + resources/php-stubs/
+$appFiles = collectPhpFiles($projectDir . '/app');
+$stubFiles = is_dir($stubsDir) ? collectPhpFiles($stubsDir, ['tests', 'meta', 'psalm', 'rector']) : [];
+$allFiles = array_merge($appFiles, $stubFiles);
+
+$fileData = [];
+$totalBytes = 0;
+foreach ($allFiles as $path) {
+    $content = file_get_contents($path);
+    if ($content !== false) {
+        $fileData[] = ['uri' => 'file://' . $path, 'content' => $content];
+        $totalBytes += strlen($content);
+    }
+}
+
+echo "╔══════════════════════════════════════════════════════════════╗\n";
+echo "║             Indexing Parallel Benchmark                     ║\n";
+echo "╠══════════════════════════════════════════════════════════════╣\n";
+echo "║  PHP files:        " . str_pad((string)count($fileData), 39) . "║\n";
+echo "║  Total size:       " . str_pad(number_format($totalBytes / 1024, 1) . ' KB', 39) . "║\n";
+echo "║  Iterations:       " . str_pad((string)$iterations, 39) . "║\n";
+echo "║  Worker pool size: " . str_pad((string)$workerCount, 39) . "║\n";
+echo "╚══════════════════════════════════════════════════════════════╝\n\n";
+
+// ─── Benchmark helper ───────────────────────────────────────────
+
+function benchmark(string $name, int $iterations, callable $fn): array
+{
+    $times = [];
+    $indexedCount = 0;
+
+    $fn(); // warmup
+
+    for ($i = 0; $i < $iterations; $i++) {
+        $start = hrtime(true);
+        $result = $fn();
+        $times[] = (hrtime(true) - $start) / 1_000_000;
+        $indexedCount = $result;
+    }
+
+    $avg = array_sum($times) / count($times);
+    echo sprintf(
+        "  %-38s avg: %8.2f ms  min: %8.2f ms  max: %8.2f ms  entries: %d\n",
+        $name,
+        $avg,
+        min($times),
+        max($times),
+        $indexedCount,
+    );
+
+    return ['avg' => $avg, 'min' => min($times), 'max' => max($times)];
+}
+
+// ─── Sequential indexing function ───────────────────────────────
+
+function indexSequentially(array $fileData): int
+{
+    $parser = (new ParserFactory())->createForNewestSupportedVersion();
+    $totalEntries = 0;
+
+    foreach ($fileData as $file) {
+        $errorHandler = new Collecting();
+        try {
+            $ast = $parser->parse($file['content'], $errorHandler);
+            if ($ast === null) {
+                continue;
+            }
+
+            $traverser = new NodeTraverser(
+                new NameResolver($errorHandler, ['preserveOriginalNames' => true]),
+                new NodeConnectingVisitor(),
+                new ParentConnectingVisitor(),
+            );
+            $ast = $traverser->traverse($ast);
+
+            // Count extracted entries (simulating what indexers do)
+            foreach ($ast as $node) {
+                if ($node instanceof \PhpParser\Node\Stmt\Namespace_) {
+                    foreach ($node->stmts as $stmt) {
+                        if (
+                            $stmt instanceof \PhpParser\Node\Stmt\Class_
+                            || $stmt instanceof \PhpParser\Node\Stmt\Interface_
+                            || $stmt instanceof \PhpParser\Node\Stmt\Trait_
+                            || $stmt instanceof \PhpParser\Node\Stmt\Function_
+                        ) {
+                            $totalEntries++;
+                        }
+                    }
+                } elseif (
+                    $node instanceof \PhpParser\Node\Stmt\Class_
+                    || $node instanceof \PhpParser\Node\Stmt\Interface_
+                    || $node instanceof \PhpParser\Node\Stmt\Trait_
+                    || $node instanceof \PhpParser\Node\Stmt\Function_
+                ) {
+                    $totalEntries++;
+                }
+            }
+        } catch (\Throwable) {
+            continue;
+        }
+    }
+
+    return $totalEntries;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 1. SEQUENTIAL
+// ═══════════════════════════════════════════════════════════════
+
+echo "── 1. Sequential indexing ──────────────────────────────────\n";
+$sequential = benchmark('Sequential (single-thread)', $iterations, function () use ($fileData) {
+    return indexSequentially($fileData);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 2. AMPHP Parallel Workers
+// ═══════════════════════════════════════════════════════════════
+
+echo "── 2. AMPHP parallel indexing ────────────────────────────────\n";
+
+$pool = new ContextWorkerPool($workerCount);
+
+// Warmup
+$warmupFutures = [];
+for ($i = 0; $i < $workerCount; $i++) {
+    $warmupFutures[] = $pool->submit(new WarmupTask())->getFuture();
+}
+Future\await($warmupFutures);
+echo "  Workers warmed up.\n";
+
+$parallel = benchmark('AMPHP parallel (workers)', $iterations, function () use ($fileData, $pool) {
+    $totalEntries = 0;
+    $batches = array_chunk($fileData, 20);
+
+    foreach ($batches as $batch) {
+        $futures = [];
+        foreach ($batch as $file) {
+            $futures[] = $pool->submit(new FileIndexTask($file['uri'], $file['content']))->getFuture();
+        }
+
+        $results = Future\await($futures);
+        foreach ($results as $indexData) {
+            foreach ($indexData as $entries) {
+                $totalEntries += count($entries);
+            }
+        }
+    }
+
+    return $totalEntries;
+});
+
+$pool->shutdown();
+
+// ═══════════════════════════════════════════════════════════════
+// Summary
+// ═══════════════════════════════════════════════════════════════
+
+echo "\n╔══════════════════════════════════════════════════════════════╗\n";
+echo "║                       Summary                               ║\n";
+echo "╠══════════════════════════════════════════════════════════════╣\n";
+
+$baseline = $sequential['avg'];
+foreach ([
+    'Sequential' => $sequential,
+    'AMPHP parallel' => $parallel,
+] as $name => $data) {
+    $speedup = $baseline / $data['avg'];
+    $indicator = $speedup > 1.1 ? 'FASTER' : ($speedup < 0.9 ? 'SLOWER' : 'SAME');
+    echo sprintf(
+        "║  %-30s %8.2f ms  (%.2fx) %-6s   ║\n",
+        $name,
+        $data['avg'],
+        $speedup,
+        $indicator,
+    );
+}
+
+echo "╚══════════════════════════════════════════════════════════════╝\n";
+echo sprintf("\nFiles per second: Sequential=%.0f  Parallel=%.0f\n",
+    count($fileData) / ($sequential['avg'] / 1000),
+    count($fileData) / ($parallel['avg'] / 1000),
+);
