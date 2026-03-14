@@ -87,7 +87,7 @@ count = 1
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (1.6800000000000002)."
+message = "Class has a high kan defect score (1.9800000000000002)."
 count = 1
 
 [[issues]]

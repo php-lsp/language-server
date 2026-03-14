@@ -721,6 +721,42 @@ message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 1
 
 [[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\ClassConstantDeclarationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 3
+
+[[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "null-argument"
+message = 'Argument #2 of method `App\Module\Declaration\ClassConstantDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "missing-override-attribute"
 message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\ClassDeclarationContributor::contribute`.'
@@ -730,7 +766,7 @@ count = 1
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `App\Module\Declaration\ClassDeclarationContributor::positiontorange`: expected `int`, but found `mixed`.'
-count = 3
+count = 4
 
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
@@ -742,7 +778,7 @@ count = 4
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 6
+count = 8
 
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
@@ -772,7 +808,7 @@ count = 3
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 3
+count = 4
 
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
@@ -905,6 +941,84 @@ file = "app/Module/Declaration/FunctionDeclarationContributor.php"
 code = "possibly-null-property-access"
 message = "Attempting to access a property on a possibly `null` value."
 count = 2
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\GlobalConstantDeclarationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 2
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "null-argument"
+message = 'Argument #2 of method `App\Module\Declaration\GlobalConstantDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\PropertyDeclarationContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "mixed-property-access"
+message = "Attempting to access a property on a non-object type (`mixed`)."
+count = 3
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "null-argument"
+message = 'Argument #2 of method `App\Module\Declaration\PropertyDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/VariableDeclarationContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\VariableDeclarationContributor::contribute`.'
+count = 1
 
 [[issues]]
 file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"

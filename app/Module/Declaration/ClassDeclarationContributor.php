@@ -10,6 +10,7 @@ use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
 use App\Module\Indexing\Indexer\ClassIndexer;
+use App\Module\Indexing\Indexer\EnumIndexer;
 use App\Module\Indexing\Indexer\InterfaceIndexer;
 use App\Module\Indexing\Indexer\TraitIndexer;
 use App\Module\Indexing\IndexLookup;
@@ -97,6 +98,16 @@ final class ClassDeclarationContributor implements DeclarationContributor
         }
 
         foreach ($this->indexLookup->findByKey(TraitIndexer::class) as $value) {
+            if ($value->value->fqn !== $className) {
+                continue;
+            }
+            $consumer(new Location(
+                uri: $value->uri,
+                range: $this->positionToRange($value->uri, $value->value->startPosition, $context),
+            ));
+        }
+
+        foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $value) {
             if ($value->value->fqn !== $className) {
                 continue;
             }
