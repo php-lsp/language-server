@@ -17,6 +17,15 @@ abstract class Context extends TestCase implements ContextInterface
     protected ?InitializedContextEnvironment $env = null;
 
     /**
+     * Behat instantiates contexts without constructor args, but
+     * PHPUnit 11's TestCase requires a $name parameter.
+     */
+    public function __construct(string $name = 'behat')
+    {
+        parent::__construct($name);
+    }
+
+    /**
      * @api
      */
     #[BeforeScenario]
