@@ -43,10 +43,14 @@ app/
 ├── Application.php            # Kernel — extends LanguageServerKernel
 ├── Controller/                # LSP request handlers (routes via #[Route] attributes)
 │   ├── InitializeController.php
+│   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
 │   └── TextDocument/          # textDocument/* method handlers
 │       ├── CompletionController.php
 │       ├── DeclarationController.php
+│       ├── DocumentSymbolController.php  # textDocument/documentSymbol
 │       ├── HoverController.php
+│       ├── RenameController.php
+│       ├── PrepareRenameController.php
 │       ├── DiagnosticController.php
 │       └── ...
 ├── Core/Contracts/            # Plugin interfaces and attributes
@@ -58,12 +62,12 @@ app/
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
 │   └── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
 ├── Module/                    # Feature implementations
-│   ├── Completion/            # Keyword, class, function, superglobal, shortcut contributors (5)
-│   ├── Declaration/           # Class, method, function declaration contributors (3)
-│   ├── Documentation/         # Docblock and node-trace contributors (2)
-│   ├── References/            # Class, function, method, property, variable, interface, constant reference contributors (7)
-│   ├── Signature/             # Function, method, constructor signature contributors (3)
-│   ├── Indexing/              # Declaration indexers (5) + usage indexers (5) + storage
+│   ├── Completion/            # Completion contributors (15): keywords, classes, functions, interfaces, traits, enums, constants, superglobals, shortcuts, class members, class constants, enum cases, use statements, namespaces, variables
+│   ├── Declaration/           # Declaration contributors (7): class, method, function, property, class constant, global constant, variable
+│   ├── Documentation/         # Documentation/hover contributors (7): docblock, nodes-trace, class, function, method, property, constant
+│   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, constant
+│   ├── Signature/             # Signature contributors (3): function, method, constructor
+│   ├── Indexing/              # Declaration indexers (11) + usage indexers (5) + storage + IndexData value objects
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── Document/              # Document loading and identification
 │   ├── Workspace/             # Workspace/project management
