@@ -37,9 +37,7 @@ final class InitializeController
         private readonly ProjectFactoryInterface $projectFactory,
         private readonly ProjectManager $projectManager,
         private ServerNotificationSender $notificationSender,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(InitializeParams $request): InitializeResult
     {
@@ -53,13 +51,13 @@ final class InitializeController
             capabilities: new ServerCapabilities(
                 textDocumentSync: TextDocumentSyncKind::Incremental,
                 completionProvider: new CompletionOptions(
-//                    triggerCharacters: [],
+                    //                    triggerCharacters: [],
                     triggerCharacters: ['.', ':', '<', '\'', '"', '`'],
                 ),
                 hoverProvider: true,
-//                codeLensProvider: new CodeLensOptions(
-//                    resolveProvider: true,
-//                ),
+                //                codeLensProvider: new CodeLensOptions(
+                //                    resolveProvider: true,
+                //                ),
                 signatureHelpProvider: new SignatureHelpOptions(
                     triggerCharacters: ['(', ',', ':', ' '],
                 ),
@@ -70,7 +68,7 @@ final class InitializeController
                 renameProvider: new RenameOptions(
                     prepareProvider: true,
                 ),
-//                documentSymbolProvider: new DocumentSymbolOptions(),
+                //                documentSymbolProvider: new DocumentSymbolOptions(),
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,

@@ -20,9 +20,7 @@ final class FunctionCompletionContributor implements CompletionContributor
 {
     public function __construct(
         private readonly IndexLookup $indexLookup,
-    )
-    {
-    }
+    ) {}
 
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {

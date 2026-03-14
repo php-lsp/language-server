@@ -25,22 +25,20 @@ final class FunctionDeclarationContributor implements DeclarationContributor
         private readonly IndexLookup $indexLookup,
         private readonly InMemoryPsiFileManager $fileManager,
         private readonly DocumentIdentifierFactoryInterface $documentIdentifierFactory,
-    )
-    {
-    }
+    ) {}
 
     public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
     {
         $editor = $context->editor;
         $document = $editor->findByUriString($context->textDocumentIdentifier->uri);
         if ($document === null) {
-//            dump('document is null', $context->textDocumentIdentifier);
+            //            dump('document is null', $context->textDocumentIdentifier);
             return;
         }
 
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-//            dump('file is null', $context->textDocumentIdentifier);
+            //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 

@@ -16,9 +16,7 @@ final class PrepareRenameController
 {
     public function __construct(
         private InMemoryPsiFileManager $fileManager,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(EditorInterface $editor, PrepareRenameParams $params)
     {

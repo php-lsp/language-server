@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Module\Document;
@@ -28,7 +29,7 @@ class InMemoryDocumentIdentifierFactory implements DocumentIdentifierFactoryInte
 
         $uri = $path;
         if (!str_starts_with($path, 'file://')) {
-            $uri = (string)Uri::createLocal($path);
+            $uri = (string) Uri::createLocal($path);
         }
 
         $value = new TextDocumentIdentifier($uri);

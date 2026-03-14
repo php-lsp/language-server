@@ -7,7 +7,5 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class LSPCompilerPass implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container): void
-    {
-    }
+    public function process(ContainerBuilder $container): void {}
 }

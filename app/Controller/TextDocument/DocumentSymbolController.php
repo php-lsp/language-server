@@ -16,14 +16,12 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 
-//#[AsController, Route('textDocument/documentSymbol')]
+// #[AsController, Route('textDocument/documentSymbol')]
 final class DocumentSymbolController
 {
     public function __construct(
         private InMemoryPsiFileManager $fileManager,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(EditorInterface $editor, DocumentSymbolParams $request): array
     {

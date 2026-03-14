@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core\Contracts\Completion;
@@ -16,9 +17,7 @@ class CompletionContext
         public Position $position,
         public EditorInterface $editor,
         public InMemoryPsiFileManager $fileManager
-    )
-    {
-    }
+    ) {}
 
     public function currentNode(): ?Node
     {

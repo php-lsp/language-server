@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core\Contracts\References;
@@ -12,9 +13,7 @@ class ReferenceConsumer
          * @var list<Location>
          */
         public array $results = [],
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(Location ...$items): void
     {

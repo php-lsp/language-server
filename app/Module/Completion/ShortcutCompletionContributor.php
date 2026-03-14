@@ -131,7 +131,7 @@ final class ShortcutCompletionContributor implements CompletionContributor
         );
     }
 
-    private function globalEntities(Node $node):iterable
+    private function globalEntities(Node $node): iterable
     {
         $parent = Tree::parent($node);
         if (

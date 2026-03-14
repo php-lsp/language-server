@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Module\PsiFile;
@@ -7,15 +8,12 @@ use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Protocol\Type\Position;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
-use PhpParser\NodeVisitor\FindingVisitor;
 
 class PHPPsiFile
 {
     public function __construct(
         public readonly SourceFileRoot $ast,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @return array<Node>
@@ -24,24 +22,26 @@ class PHPPsiFile
     {
         if (is_int($position)) {
             $visitor = new NodeFinder();
+
             return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
                 return $node->getStartFilePos() <= $position && $position <= $node->getEndFilePos();
-
             });
         }
         if ($position instanceof Position) {
             $line = $position->line + 1;
 
             $visitor = new NodeFinder();
+
             return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
                 if (
                     $node->getStartLine() <= $line && $line <= $node->getEndLine()
                 ) {
-//                $length = $node->getEndFilePos() - $node->getStartFilePos();
+                    //                $length = $node->getEndFilePos() - $node->getStartFilePos();
                     $startColumn = $this->toColumn($this->ast->document, $node->getStartFilePos());
                     $endColumn = $this->toColumn($this->ast->document, $node->getEndFilePos());
 
                     $result = $startColumn <= $position->character && $position->character <= $endColumn;
+
                     return $result;
                 }
 
@@ -52,9 +52,10 @@ class PHPPsiFile
         return [];
     }
 
-    public function findLastAtPosition(Position $position): null|Node
+    public function findLastAtPosition(Position $position): ?Node
     {
         $nodes = $this->findAtPosition($position);
+
         return end($nodes) ?: null;
     }
 

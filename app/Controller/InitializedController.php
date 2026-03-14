@@ -16,9 +16,7 @@ final class InitializedController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly ServerNotificationSender $notificationSender,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(InitializedParams $initialized): void
     {

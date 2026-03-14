@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core\Contracts\Completion;
 
 use Lsp\Protocol\Type\CompletionItem;
+
 use function React\Async\delay;
 
 class CompletionConsumer
@@ -31,15 +33,14 @@ class CompletionConsumer
          * Максимальное количество результатов (null = без лимита)
          */
         public ?int $limit = null,
-    )
-    {
+    ) {
         $this->lastYield = microtime(true);
     }
 
     public function __invoke(CompletionItem ...$items): void
     {
-//        array_push($this->results, ...$items);
-//        return;
+        //        array_push($this->results, ...$items);
+        //        return;
         foreach ($items as $item) {
             // Проверяем лимит
             if ($this->limit !== null && count($this->results) >= $this->limit) {
@@ -47,7 +48,7 @@ class CompletionConsumer
             }
 
             $this->results[] = $item;
-            $this->itemCount++;
+            ++$this->itemCount;
 
             if ($this->shouldYield()) {
                 delay(0);

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Module\PsiFile;
@@ -19,7 +20,5 @@ class SourceFileRoot
          * @var array<Error>
          */
         public array $errors,
-    )
-    {
-    }
+    ) {}
 }

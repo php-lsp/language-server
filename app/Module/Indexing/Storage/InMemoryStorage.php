@@ -14,8 +14,7 @@ class InMemoryStorage implements StorageInterface
          * @var array<string, list<Entry>>
          */
         private array $entries = [],
-    )
-    {
+    ) {
         $this->emptyEntries = [new Entry('', [], '')];
     }
 

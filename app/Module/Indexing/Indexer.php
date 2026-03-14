@@ -11,6 +11,7 @@ use Lsp\Workspace\Project\Project;
 use Lsp\Workspace\Uri\Uri;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+
 use function React\Async\async;
 use function React\Async\await;
 
@@ -26,8 +27,7 @@ final class Indexer
         private LoggerInterface $logger,
         private FilesystemReaderFactoryInterface $filesystemReaderFactory,
         private FileFactoryInterface $files,
-    )
-    {
+    ) {
         $this->indexers = iterator_to_array($indexers);
     }
 
@@ -55,7 +55,7 @@ final class Indexer
             'config',
             'resources',
             'runtime',
-//            'vendor',
+            //            'vendor',
             'psalm',
             'rector',
             'thecodingmachine',
@@ -74,8 +74,8 @@ final class Indexer
             'imagick',
             'tests',
         ];
-        if (in_array($file->name, $ignored)) {
-//            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";
+        if (in_array($file->name, $ignored, true)) {
+            //            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";
             return;
         }
 

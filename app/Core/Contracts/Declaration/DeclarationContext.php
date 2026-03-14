@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core\Contracts\Declaration;
@@ -13,7 +14,5 @@ readonly class DeclarationContext
         public TextDocumentIdentifier $textDocumentIdentifier,
         public Position $position,
         public EditorInterface $editor,
-    )
-    {
-    }
+    ) {}
 }

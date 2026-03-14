@@ -23,16 +23,14 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
     public function __construct(
         private readonly IndexLookup $indexLookup,
         private readonly InMemoryPsiFileManager $fileManager,
-    )
-    {
-    }
+    ) {}
 
     public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
     {
         $editor = $context->editor;
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-//            dump('file is null', $context->textDocumentIdentifier);
+            //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 

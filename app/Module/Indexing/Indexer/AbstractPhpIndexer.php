@@ -15,9 +15,7 @@ abstract class AbstractPhpIndexer implements IndexerInterface
 {
     public function __construct(
         private InMemoryPsiFileManager $fileManager,
-    )
-    {
-    }
+    ) {}
 
     public function supports(VirtualFileInterface $file): bool
     {

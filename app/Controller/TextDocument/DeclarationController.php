@@ -24,14 +24,13 @@ final class DeclarationController
     public function __construct(
         #[AutowireIterator('lsp.declarationContributors')]
         iterable $contributors,
-    )
-    {
+    ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
     public function __invoke(EditorInterface $editor, DeclarationParams $params): array
     {
-//        dump('ReferenceParams: ', $params);
+        //        dump('ReferenceParams: ', $params);
 
         $context = new DeclarationContext($params->textDocument, $params->position, $editor);
         $consumer = new DeclarationConsumer();

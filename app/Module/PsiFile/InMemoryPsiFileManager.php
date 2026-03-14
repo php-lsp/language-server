@@ -35,8 +35,7 @@ class InMemoryPsiFileManager
         private ResultProviderInterface $resultProvider,
         private LoggerInterface $logger,
         private DocumentLoaderInterface $documentLoader,
-    )
-    {
+    ) {
         $this->cache = new FifoCache(300);
     }
 
@@ -44,7 +43,7 @@ class InMemoryPsiFileManager
     {
         $uri = match (true) {
             $identifier instanceof TextDocumentIdentifier => $identifier->uri,
-            $identifier instanceof Uri => (string)$identifier,
+            $identifier instanceof Uri => (string) $identifier,
             default => throw new \InvalidArgumentException('Unsupported identifier ' . get_debug_type($identifier)),
         };
         if ($document === null) {
@@ -69,7 +68,7 @@ class InMemoryPsiFileManager
             );
 
             $parameters = $this->resultProvider->getResult($p);
-//            dump('PublishDiagnostics: ', $parameters);
+            //            dump('PublishDiagnostics: ', $parameters);
 
             $notification = new Notification(
                 method: 'textDocument/publishDiagnostics',
@@ -82,16 +81,16 @@ class InMemoryPsiFileManager
                 ]);
             }
 
-
-//            $this->connection->notify(
-//                new Notification(
-//                    'textDocument/publishDiagnostics',
-//                    $encoder->toArray($p),
-//                )
-//            );
+            //            $this->connection->notify(
+            //                new Notification(
+            //                    'textDocument/publishDiagnostics',
+            //                    $encoder->toArray($p),
+            //                )
+            //            );
         }
 
         $psiFile = new PHPPsiFile($root);
+
         return $psiFile;
     }
 
@@ -121,12 +120,12 @@ class InMemoryPsiFileManager
 
     public function findPsiFileByUri(Uri $uri): ?PHPPsiFile
     {
-        $psiFile = $this->cache->get((string)$uri);
+        $psiFile = $this->cache->get((string) $uri);
 
         if ($psiFile === null) {
-            $document = $this->documentLoader->load($uri);;
+            $document = $this->documentLoader->load($uri);
             $psiFile = $this->refreshFile($document, $uri);
-            $this->cache->set((string)$uri, $psiFile);
+            $this->cache->set((string) $uri, $psiFile);
         }
 
         return $psiFile;

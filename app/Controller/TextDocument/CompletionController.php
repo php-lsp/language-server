@@ -15,7 +15,7 @@ use Lsp\Router\Attribute\Route;
 use Psr\Log\LoggerInterface;
 use React\Promise\PromiseInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Throwable;
+
 use function React\Async\async;
 use function React\Async\await;
 use function React\Promise\all;
@@ -34,8 +34,7 @@ final class CompletionController
         iterable $contributors,
         private LoggerInterface $logger,
         private InMemoryPsiFileManager $fileManager,
-    )
-    {
+    ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
@@ -59,11 +58,10 @@ final class CompletionController
     private function runContributor(
         CompletionContributor $contributor,
         CompletionContext $context
-    ): PromiseInterface
-    {
+    ): PromiseInterface {
         $consumer = new CompletionConsumer();
 
-        $onRejected = function (Throwable $e) use ($consumer) {
+        $onRejected = function (\Throwable $e) use ($consumer) {
             $this->logger->error($e);
 
             return $consumer->results;
@@ -75,7 +73,8 @@ final class CompletionController
                     $contributor->contribute($context, $consumer);
 
                     return $consumer->results;
-                })()
+                }
+            )()
                 ->catch($onRejected),
             1.0,
         )

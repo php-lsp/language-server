@@ -40,7 +40,7 @@ final class Application extends LanguageServerKernel
                 },
             );
         }
-//        dump($container->get(LoggerInterface::class));
+        //        dump($container->get(LoggerInterface::class));
         $container->addCompilerPass(new LSPCompilerPass());
         $container->addCompilerPass(new DocumentManagerExtension());
     }

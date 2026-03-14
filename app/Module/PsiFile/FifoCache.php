@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Module\PsiFile;
@@ -19,9 +20,7 @@ final class FifoCache
     public function __construct(
         private readonly int $maxSize,
         private readonly float $evictionPercent = 0.1,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @return TElement|null
@@ -32,13 +31,13 @@ final class FifoCache
     }
 
     /**
-     * @param string $key
      * @param TElement $value
      */
     public function set(string $key, mixed $value, bool $preventDeletion = false): void
     {
         if (isset($this->cache[$key])) {
             $this->cache[$key] = $value;
+
             return;
         }
 
@@ -79,7 +78,7 @@ final class FifoCache
      */
     private function evict(): void
     {
-        $evictCount = max(1, (int)ceil($this->maxSize * $this->evictionPercent));
+        $evictCount = max(1, (int) ceil($this->maxSize * $this->evictionPercent));
 
         $keysToRemove = array_slice($this->queue, 0, $evictCount);
 

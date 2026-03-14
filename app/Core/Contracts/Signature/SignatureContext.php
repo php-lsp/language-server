@@ -12,7 +12,5 @@ readonly class SignatureContext
         public TextDocumentIdentifier $textDocumentIdentifier,
         public Position $position,
         public EditorInterface $editor,
-    )
-    {
-    }
+    ) {}
 }

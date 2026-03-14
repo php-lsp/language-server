@@ -17,9 +17,7 @@ final class NodesTraceDocumentationContributor implements DocumentationContribut
 {
     public function __construct(
         private InMemoryPsiFileManager $fileManager,
-    )
-    {
-    }
+    ) {}
 
     public function contribute(DocumentationContext $context, DocumentationConsumer $consumer): void
     {
