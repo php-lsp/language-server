@@ -15,7 +15,44 @@ $user->|
 //        Answer requires knowing the type of $user
 ```
 
-### 1.2 Architectural Patterns from Mature LSPs
+### 1.2 Three Architectures for a Responsive IDE
+
+The rust-analyzer team identified three fundamental architectures used by
+mature IDEs. This classification is essential for choosing the right approach.
+
+> Source: [Three Architectures for a Responsive IDE](https://rust-analyzer.github.io//blog/2020/07/20/three-architectures-for-responsive-ide.html)
+
+#### Architecture A: Map-Reduce (IntelliJ, Sorbet)
+
+1. **Indexing phase** — per-file, embarrassingly parallel. Builds a "dumb"
+   index of declarations, symbols, and signatures. Does NOT resolve types
+   or cross-file references.
+2. **Analysis phase** — on-demand, uses the index to resolve only what is
+   needed for the current query.
+
+Key insight: **it is laziness, not incrementality, that makes an IDE fast.**
+The index tells the system exactly which small set of files is relevant,
+enabling it to skip huge swaths of code entirely.
+
+#### Architecture B: Compilation Unit Snapshotting (C++, OCaml)
+
+Snapshot compiler state after processing imports/headers. Restore from
+snapshot when only the body of a compilation unit changes. Works for
+languages with explicit compilation units.
+
+#### Architecture C: Demand-Driven Incremental (rust-analyzer)
+
+All computations are instrumented as queries in a dependency graph (Salsa
+framework). Results are memoized. On input change, only queries whose
+transitive dependencies actually changed are recomputed. If a recomputed
+query produces the same result, invalidation stops (**early cutoff**).
+
+**For PHP LSP, Architecture A is the best fit.** PHP has a natural per-file
+compilation model. Build a dumb index during project open, then resolve
+types lazily per-request. Architecture C is overkill for PHP's simpler
+module system.
+
+### 1.3 Specific Implementations
 
 #### TypeScript (tsserver) — Lazy Control Flow Graph
 
@@ -99,7 +136,30 @@ Layer 5: Scope Management
     - Global scope
 ```
 
-### 1.4 Two Fundamental Strategies
+### 1.4 Type Comparison: TrinaryLogic
+
+PHPStan introduced an important concept: type comparisons should not return
+`bool` but **TrinaryLogic** (yes / no / maybe):
+
+```
+isSuperTypeOf(Type $other): TrinaryLogic
+```
+
+- `yes` — `int` is supertype of `int` (always true)
+- `no` — `int` is supertype of `string` (never true)
+- `maybe` — `mixed` is supertype of `int` (depends on context)
+
+This is critical for PHP because of:
+- `mixed` type (accepts everything, but you can't call methods on it)
+- Union types with partial overlap
+- Template type parameters before resolution
+- Magic methods (`__call`) where the method *might* exist
+
+Typhoon Type does not include this — it must be implemented as part of the
+inference engine. This is a bounded task: a single `TypeComparator` class
+with a visitor over Typhoon Type variants.
+
+### 1.5 Two Fundamental Strategies
 
 **Strategy A: Pre-compute Everything (PHPStan/Psalm approach)**
 
@@ -125,6 +185,34 @@ Only resolve types when queried. Build lightweight structural metadata
 at a time (the cursor position), not analyze the entire file. But for PHP
 specifically, we can combine both: use lightweight pre-computation at the
 declaration level, and lazy inference at the expression level.
+
+### 1.6 PHP-Specific Challenges
+
+**Dynamic typing and coercion.** PHP has implicit type coercion (int → float,
+Stringable → string). This means `accepts()` must differ from `isSuperTypeOf()`:
+`float` accepts `int` (coercion), but `int` is NOT a subtype of `float`.
+
+**Magic methods.** `__get`, `__set`, `__call`, `__callStatic` make properties
+and methods resolvable only at runtime. Solution: read `@property`, `@method`
+PHPDoc annotations on the class, and provide extension points for frameworks.
+
+**Docblocks as primary type source.** PHP's native type system is too weak
+for rich tooling. PHPDoc (`@param`, `@return`, `@var`, `@template`) is the
+primary source of generics, array shapes, conditional types. Documented types
+should be **preferred** over declared types when both exist.
+
+**Arrays as everything.** PHP arrays serve as lists, maps, tuples, and records.
+Array shape syntax (`array{name: string, age: int}`) is essential. This is
+a PHPDoc-only feature — no native equivalent.
+
+**Generics via `@template`.** No native generics in PHP. Template resolution
+must handle `@template T`, bounds (`T of SomeInterface`), variance
+(`@template-covariant`), and propagation through inheritance (`@extends`,
+`@implements`).
+
+**Frameworks.** Laravel's `User::all()` resolves through `__callStatic` →
+`Model` → `new static`. Without framework-aware stubs, naive analysis fails.
+Strategy: provide a stub/extension system from the start.
 
 ---
 
@@ -525,7 +613,41 @@ Start with Typhoon Reflection — it's accurate and handles templates/generics.
 Once working, profile and optimize hot paths by caching resolved types in the
 index.
 
-### 3.9 File Layout
+### 3.9 TypeComparator (TrinaryLogic)
+
+A standalone class that implements type relationship checks:
+
+```php
+enum TrinaryLogic {
+    case Yes;
+    case No;
+    case Maybe;
+
+    public function and(self $other): self { ... }
+    public function or(self $other): self { ... }
+    public function negate(): self { ... }
+}
+
+class TypeComparator {
+    // Is $a a supertype of $b?
+    // intT->isSuperTypeOf(intT) = Yes
+    // unionT(intT, stringT)->isSuperTypeOf(intT) = Yes
+    // intT->isSuperTypeOf(stringT) = No
+    // mixedT->isSuperTypeOf(intT) = Yes
+    public function isSuperTypeOf(Type $a, Type $b): TrinaryLogic;
+
+    // Does $a accept $b (with coercion)?
+    // floatT->accepts(intT) = Yes (coercion)
+    // intT->accepts(floatT) = No
+    public function accepts(Type $a, Type $b, bool $strictTypes): TrinaryLogic;
+}
+```
+
+This is implemented as a visitor over Typhoon Type variants. It is the
+**critical correctness component** — all narrowing, completion filtering,
+and diagnostics depend on it.
+
+### 3.10 File Layout
 
 ```
 app/Module/TypeSystem/
@@ -645,6 +767,7 @@ assignments.
 
 ## Sources
 
+- [Three Architectures for a Responsive IDE](https://rust-analyzer.github.io//blog/2020/07/20/three-architectures-for-responsive-ide.html)
 - [Flow Nodes: How Type Inference Is Implemented (TypeScript)](https://effectivetypescript.com/2024/03/24/flownodes/)
 - [rust-analyzer Architecture](https://rust-analyzer.github.io/book/contributing/architecture.html)
 - [Salsa Algorithm Explained](https://medium.com/@eliah.lakhin/salsa-algorithm-explained-c5d6df1dd291)
