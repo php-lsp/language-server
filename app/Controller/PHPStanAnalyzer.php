@@ -3,20 +3,18 @@
 namespace App\Controller;
 
 use App\Module\PsiFile\InMemoryPsiFileManager;
-use App\Module\PsiFile\PHPPsiFileParser;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
+use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
+use PhpParser\Node;
 use PHPStan\Analyser\NodeScopeResolver;
-use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Analyser\ScopeContext;
+use PHPStan\Analyser\ScopeFactory;
 use PHPStan\DependencyInjection\Container;
 use PHPStan\DependencyInjection\ContainerFactory;
 use PHPStan\PhpDoc\TypeNodeResolver;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Type;
-use PhpParser\Node;
-use Lsp\Protocol\Type\Position;
 
 class PHPStanAnalyzer
 {
@@ -26,12 +24,10 @@ class PHPStanAnalyzer
     private TypeNodeResolver $typeNodeResolver;
 
     public function __construct(
-//        private NodeScopeResolver $scopeResolver,
+        //        private NodeScopeResolver $scopeResolver,
         private InMemoryPsiFileManager $fileManager,
         private ProjectManager $projectManager,
-    )
-    {
-    }
+    ) {}
 
     public function getTypeAtPosition(EditorInterface $editor, TextDocumentIdentifier $textDocumentIdentifier, Position $position): ?Type
     {
@@ -60,7 +56,6 @@ class PHPStanAnalyzer
             ScopeContext::create($this->uriToPath($textDocumentIdentifier->uri))
         );
 
-
         $result = null;
         foreach ($nodes as $node) {
             if ($node instanceof Node\Expr) {
@@ -68,9 +63,10 @@ class PHPStanAnalyzer
                 if ($type !== null) {
                     $result = $type;
                 }
-//                dump($type, $node);
+                //                dump($type, $node);
             }
         }
+
         return $result;
     }
 

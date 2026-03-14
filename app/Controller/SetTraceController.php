@@ -15,9 +15,7 @@ final class SetTraceController
 {
     public function __construct(
         private LoggerInterface $logger,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(EditorInterface $editor, SetTraceParams $params): void
     {

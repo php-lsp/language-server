@@ -25,8 +25,7 @@ final class HoverController
     public function __construct(
         #[AutowireIterator('lsp.documentationContributors')]
         iterable $contributors,
-    )
-    {
+    ) {
         $this->contributors = iterator_to_array($contributors);
     }
 

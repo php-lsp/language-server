@@ -26,8 +26,7 @@ final class RenameController
         #[AutowireIterator('lsp.referenceContributors')]
         iterable $contributors,
         private InMemoryPsiFileManager $fileManager,
-    )
-    {
+    ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
@@ -39,8 +38,8 @@ final class RenameController
         foreach ($this->contributors as $contributor) {
             $contributor->contribute($context, $consumer);
         }
-//        $consumer->results;
+        //        $consumer->results;
 
-//        return Tree::getRange($element, $file);
+        //        return Tree::getRange($element, $file);
     }
 }

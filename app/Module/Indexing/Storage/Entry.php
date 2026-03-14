@@ -14,7 +14,5 @@ class Entry
          */
         public readonly mixed $value,
         public readonly string $uri,
-    )
-    {
-    }
+    ) {}
 }

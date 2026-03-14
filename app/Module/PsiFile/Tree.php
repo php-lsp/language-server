@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Module\PsiFile;
@@ -12,10 +13,12 @@ class Tree
 {
     /**
      * @template T of Node
+     *
      * @param class-string<T> $class
+     *
      * @return T|null
      */
-    public static function parentOfType(?Node $node, string $class): object|null
+    public static function parentOfType(?Node $node, string $class): ?object
     {
         while ($node = $node?->getAttribute('parent')) {
             if ($node instanceof $class) {
@@ -26,14 +29,16 @@ class Tree
         return null;
     }
 
-    public static function parent(Node $node):?Node
+    public static function parent(Node $node): ?Node
     {
         return $node->getAttribute('parent');
     }
 
     /**
      * @template T of Node
+     *
      * @param class-string<T> $class
+     *
      * @return T[]
      */
     public static function childrenOfType(Node|SourceFileRoot|null $node, string $class): array
@@ -46,6 +51,7 @@ class Tree
             foreach ($node->children as $child) {
                 $result = array_merge($result, self::childrenOfType($child, $class));
             }
+
             return $result;
         }
 
@@ -65,7 +71,9 @@ class Tree
 
     /**
      * @template T of Node
+     *
      * @param class-string<T> ...$classes
+     *
      * @return T[]
      */
     public static function childrenOfTypes(Node|SourceFileRoot|null $node, string ...$classes): array
@@ -75,7 +83,9 @@ class Tree
 
     /**
      * @template T of Node
+     *
      * @param list<class-string<T>> $classes
+     *
      * @return T[]
      */
     private static function childrenOfTypesInternal(Node|SourceFileRoot|null $node, array $classes): array
@@ -88,6 +98,7 @@ class Tree
             foreach ($node->children as $child) {
                 $result = array_merge($result, self::childrenOfTypesInternal($child, $classes));
             }
+
             return $result;
         }
 
@@ -199,6 +210,6 @@ class Tree
             return (string) $element;
         }
 
-        return '-----'.var_export($element, true).'-----';
+        return '-----' . var_export($element, true) . '-----';
     }
 }

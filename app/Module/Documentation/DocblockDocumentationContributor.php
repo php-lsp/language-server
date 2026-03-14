@@ -20,9 +20,7 @@ final class DocblockDocumentationContributor implements DocumentationContributor
     public function __construct(
         private PHPStanAnalyzer $analyzer,
         private readonly IndexLookup $indexLookup,
-    )
-    {
-    }
+    ) {}
 
     public function contribute(DocumentationContext $context, DocumentationConsumer $consumer): void
     {
@@ -36,9 +34,9 @@ final class DocblockDocumentationContributor implements DocumentationContributor
             $consumer($this->formatType($type));
         }
 
-//        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $key => $value) {
-//            $consumer();
-//        }
+        //        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $key => $value) {
+        //            $consumer();
+        //        }
     }
 
     private function formatType(Type $type): string

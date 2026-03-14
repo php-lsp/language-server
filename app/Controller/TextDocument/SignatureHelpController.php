@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
@@ -24,8 +25,7 @@ final class SignatureHelpController
     public function __construct(
         #[AutowireIterator('lsp.signatureContributors')]
         iterable $contributors,
-    )
-    {
+    ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
@@ -40,8 +40,8 @@ final class SignatureHelpController
 
         return new SignatureHelp(
             signatures: $consumer->results,
-//            activeSignature: 0,
-//            activeParameter: $call['currentParamIndex']
+            //            activeSignature: 0,
+            //            activeParameter: $call['currentParamIndex']
         );
     }
 }

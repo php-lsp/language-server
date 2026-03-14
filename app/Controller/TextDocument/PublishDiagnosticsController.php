@@ -14,9 +14,7 @@ final class PublishDiagnosticsController
 {
     public function __construct(
         private ServerNotificationSender $notificationSender,
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(PublishDiagnosticsParams $message): void
     {

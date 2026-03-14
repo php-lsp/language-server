@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core\Contracts\PrefixMatcher;
@@ -7,9 +8,7 @@ class StrContainsMatcher implements PrefixMatcher
 {
     public function __construct(
         private readonly string $prefix,
-    )
-    {
-    }
+    ) {}
 
     public function match(string $textToMatch): bool
     {

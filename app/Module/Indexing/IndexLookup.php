@@ -10,13 +10,13 @@ final class IndexLookup
 {
     public function __construct(
         private readonly StorageInterface $storage,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @template T
+     *
      * @param class-string<IndexerInterface<T>> $indexerClass
+     *
      * @return iterable<Entry<T>>
      */
     public function findByKey(string $indexerClass): iterable

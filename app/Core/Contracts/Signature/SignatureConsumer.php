@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core\Contracts\Signature;
@@ -12,9 +13,7 @@ class SignatureConsumer
          * @var list<SignatureInformation>
          */
         public array $results = [],
-    )
-    {
-    }
+    ) {}
 
     public function __invoke(SignatureInformation ...$items): void
     {

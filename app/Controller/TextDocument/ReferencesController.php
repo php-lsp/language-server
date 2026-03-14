@@ -24,14 +24,13 @@ final class ReferencesController
     public function __construct(
         #[AutowireIterator('lsp.referenceContributors')]
         iterable $contributors,
-    )
-    {
+    ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
     public function __invoke(EditorInterface $editor, ReferenceParams $params): array
     {
-//        dump('ReferenceParams: ', $params);
+        //        dump('ReferenceParams: ', $params);
 
         $context = new ReferenceContext($params->textDocument, $params->position, $editor);
         $consumer = new ReferenceConsumer();

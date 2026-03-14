@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Module\Notification;
@@ -17,9 +18,7 @@ final class ServerNotificationSender
         private readonly ConnectionProviderInterface $connectionProvider,
         private readonly ResultProviderInterface $resultProvider,
         private readonly LoggerInterface $logger,
-    )
-    {
-    }
+    ) {}
 
     public function showMessage(string $message, MessageType $type = MessageType::Info): Result
     {
@@ -33,6 +32,7 @@ final class ServerNotificationSender
             parameters: $params,
         );
     }
+
     public function sendRawNotification(string $method, array|object|null $parameters): Result
     {
         $connectionProvider = $this->connectionProvider;
@@ -47,6 +47,7 @@ final class ServerNotificationSender
 
         if ($connection === null) {
             $this->logger->error('No active connection available');
+
             return Result::error('No active connection available');
         }
 
@@ -58,9 +59,11 @@ final class ServerNotificationSender
             $connection->notify($notification);
 
             $this->logger->debug('Sent notification: {method}', ['method' => $method]);
+
             return Result::success();
         } catch (\Throwable $e) {
             $this->logger->error('Failed to send notification: {message}', ['message' => $e->getMessage()]);
+
             return Result::error($e->getMessage());
         }
     }
