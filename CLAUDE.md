@@ -128,6 +128,12 @@ Available contributor types and their DI tags:
   documentation to reflect those changes. Keep docs in sync with code.
 - See [README.md](README.md) for installation, running, building, and
   client setup instructions.
+- See [docs/overview.md](docs/overview.md) for LSP protocol overview and
+  IDE connection guide.
+- See [docs/contributors.md](docs/contributors.md) for the contributor
+  system guide (how to create and register contributors).
+- See [docs/architecture.md](docs/architecture.md) for the application
+  architecture and design documentation.
 - See [config/services.yaml](config/services.yaml) and subdirectories for
   service registration details.
 - See [phpstan.neon](phpstan.neon) for static analysis configuration.
