@@ -15,6 +15,7 @@ use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionParams;
+use App\Module\Telemetry\NoopTracer;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -28,7 +29,7 @@ final class CompletionControllerTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
 
-        $controller = new CompletionController([], $logger, $fileManager);
+        $controller = new CompletionController([], $logger, $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new CompletionParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -53,7 +54,7 @@ final class CompletionControllerTest extends TestCase
             }
         };
 
-        $controller = new CompletionController([$contributor], $logger, $fileManager);
+        $controller = new CompletionController([$contributor], $logger, $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new CompletionParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -81,7 +82,7 @@ final class CompletionControllerTest extends TestCase
             }
         };
 
-        $controller = new CompletionController([$contributor], $logger, $fileManager);
+        $controller = new CompletionController([$contributor], $logger, $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new CompletionParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),

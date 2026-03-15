@@ -10,6 +10,7 @@ use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\SignatureHelp;
 use Lsp\Protocol\Type\SignatureHelpParams;
+use App\Module\Telemetry\NoopTracer;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -19,7 +20,7 @@ final class SignatureHelpControllerTest extends TestCase
     #[TestDox('returns signature help with empty signatures when no contributors')]
     public function testEmptyContributors(): void
     {
-        $controller = new SignatureHelpController([]);
+        $controller = new SignatureHelpController([], new NoopTracer());
         $editor = $this->createMock(EditorInterface::class);
         $params = new SignatureHelpParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -42,7 +43,7 @@ final class SignatureHelpControllerTest extends TestCase
             }
         };
 
-        $controller = new SignatureHelpController([$contributor]);
+        $controller = new SignatureHelpController([$contributor], new NoopTracer());
         $editor = $this->createMock(EditorInterface::class);
         $params = new SignatureHelpParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),

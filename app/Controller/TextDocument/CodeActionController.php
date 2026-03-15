@@ -7,6 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\CodeAction\CodeActionConsumer;
 use App\Core\Contracts\CodeAction\CodeActionContext;
 use App\Core\Contracts\CodeAction\CodeActionContributor;
+use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeActionParams;
@@ -24,6 +25,7 @@ final class CodeActionController
     public function __construct(
         #[AutowireIterator('lsp.codeActionContributors')]
         iterable $contributors,
+        private readonly TracerInterface $tracer,
     ) {
         $this->contributors = iterator_to_array($contributors);
     }
@@ -33,18 +35,26 @@ final class CodeActionController
      */
     public function __invoke(EditorInterface $editor, CodeActionParams $params): array
     {
-        $context = new CodeActionContext(
-            $params->textDocument,
-            $params->range,
-            $params->context,
-            $editor,
-        );
-        $consumer = new CodeActionConsumer();
+        return $this->tracer->trace('textDocument/codeAction', function () use ($editor, $params): array {
+            $context = new CodeActionContext(
+                $params->textDocument,
+                $params->range,
+                $params->context,
+                $editor,
+            );
+            $consumer = new CodeActionConsumer();
 
-        foreach ($this->contributors as $contributor) {
-            $contributor->contribute($context, $consumer);
-        }
+            foreach ($this->contributors as $contributor) {
+                $this->tracer->trace($contributor::class, static function () use (
+                    $contributor,
+                    $context,
+                    $consumer,
+                ): void {
+                    $contributor->contribute($context, $consumer);
+                });
+            }
 
-        return $consumer->results;
+            return $consumer->results;
+        });
     }
 }

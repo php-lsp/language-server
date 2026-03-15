@@ -7,6 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
 use App\Core\Contracts\Signature\SignatureContributor;
+use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\SignatureHelp;
@@ -25,23 +26,30 @@ final class SignatureHelpController
     public function __construct(
         #[AutowireIterator('lsp.signatureContributors')]
         iterable $contributors,
+        private readonly TracerInterface $tracer,
     ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
     public function __invoke(EditorInterface $editor, SignatureHelpParams $params): ?SignatureHelp
     {
-        $context = new SignatureContext($params->textDocument, $params->position, $editor);
-        $consumer = new SignatureConsumer();
+        return $this->tracer->trace('textDocument/signatureHelp', function () use ($editor, $params): SignatureHelp {
+            $context = new SignatureContext($params->textDocument, $params->position, $editor);
+            $consumer = new SignatureConsumer();
 
-        foreach ($this->contributors as $contributor) {
-            $contributor->contribute($context, $consumer);
-        }
+            foreach ($this->contributors as $contributor) {
+                $this->tracer->trace($contributor::class, static function () use (
+                    $contributor,
+                    $context,
+                    $consumer,
+                ): void {
+                    $contributor->contribute($context, $consumer);
+                });
+            }
 
-        return new SignatureHelp(
-            signatures: $consumer->results,
-            //            activeSignature: 0,
-            //            activeParameter: $call['currentParamIndex']
-        );
+            return new SignatureHelp(
+                signatures: $consumer->results,
+            );
+        });
     }
 }

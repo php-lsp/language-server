@@ -1,0 +1,59 @@
+# SigNoz APM — local development stack
+#
+# Provides a complete observability platform for the PHP Language Server:
+#   - Traces: request-level spans with contributor breakdown
+#   - Logs: structured log aggregation
+#   - Metrics: service performance dashboards
+#
+# Usage:
+#   docker compose -f docker/signoz/docker-compose.yaml up -d
+#
+# SigNoz UI: http://localhost:3301
+# OTLP HTTP endpoint: http://localhost:4318
+
+services:
+  signoz-clickhouse:
+    image: clickhouse/clickhouse-server:24.1.2-alpine
+    restart: unless-stopped
+    volumes:
+      - signoz-clickhouse-data:/var/lib/clickhouse
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'localhost:8123/ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  signoz-otel-collector:
+    image: signoz/signoz-otel-collector:0.102.12
+    restart: unless-stopped
+    command:
+      - '--config=/etc/otel-collector-config.yaml'
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
+    ports:
+      - '4317:4317'   # gRPC OTLP
+      - '4318:4318'   # HTTP OTLP
+    depends_on:
+      signoz-clickhouse:
+        condition: service_healthy
+
+  signoz-query-service:
+    image: signoz/query-service:0.52.0
+    restart: unless-stopped
+    environment:
+      ClickHouseUrl: tcp://signoz-clickhouse:9000
+      STORAGE: clickhouse
+    depends_on:
+      signoz-clickhouse:
+        condition: service_healthy
+
+  signoz-frontend:
+    image: signoz/frontend:0.52.0
+    restart: unless-stopped
+    ports:
+      - '3301:3301'
+    depends_on:
+      - signoz-query-service
+
+volumes:
+  signoz-clickhouse-data:

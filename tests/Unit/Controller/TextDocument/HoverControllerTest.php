@@ -14,6 +14,7 @@ use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Hover;
 use Lsp\Protocol\Type\HoverParams;
+use App\Module\Telemetry\NoopTracer;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -23,7 +24,7 @@ final class HoverControllerTest extends TestCase
     #[TestDox('returns Hover with empty content when no contributors')]
     public function testReturnsEmptyHover(): void
     {
-        $controller = new HoverController([]);
+        $controller = new HoverController([], new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new HoverParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -46,7 +47,7 @@ final class HoverControllerTest extends TestCase
             }
         };
 
-        $controller = new HoverController([$contributor]);
+        $controller = new HoverController([$contributor], new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new HoverParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),

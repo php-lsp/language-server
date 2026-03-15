@@ -97,13 +97,14 @@ app/
 │   ├── Document/              # Document loading and identification
 │   ├── Workspace/             # Workspace/project management
 │   ├── TypeSystem/            # PHPStan-based type resolution (TypeResolver, PHPStanBootstrap)
-│   └── Notification/          # Server notifications: progress (WorkDoneProgress), error messages, connection state
+│   ├── Notification/          # Server notifications: progress (WorkDoneProgress), error messages, connection state
+│   └── Telemetry/             # APM tracing (OpenTelemetry + SigNoz)
 ├── DependencyInjection/       # HydratorCompilerPass for JSON-RPC serialization
 ├── Infrastructure/Symfony/    # LSPCompilerPass for DI
 └── Listener/                  # Server, logger, message, connection, and error notification listeners
 config/
 ├── services.yaml              # Main DI config (imports services/*.yaml)
-└── services/                  # controllers.yaml, listeners.yaml, logger.yaml
+└── services/                  # controllers.yaml, listeners.yaml, logger.yaml, telemetry.yaml
 tests/
 └── Unit/                      # PHPUnit unit tests
 ```
@@ -163,6 +164,7 @@ Available contributor types and their DI tags:
 - `monolog/monolog` — Logging
 - `phpstan/phpstan` — PHPStan for type resolution (used by TypeSystem module)
 - `carthage-software/mago` — Mago PHP linter, analyzer, and formatter
+- `open-telemetry/sdk` + `open-telemetry/exporter-otlp` — APM tracing via OpenTelemetry
 
 ## Quality Constraints
 
@@ -289,3 +291,5 @@ Skill definitions: [.claude/skills/](.claude/skills/)
   debug HTTP server (index browser, global search, batch actions, JSON API).
 - See [docs/e2e-testing.md](docs/e2e-testing.md) for end-to-end testing guide
   (playground workspace, server lifecycle, LSP client).
+- See [docs/apm.md](docs/apm.md) for APM integration (OpenTelemetry + SigNoz),
+  tracing configuration, and Docker setup.
