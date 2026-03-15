@@ -40,7 +40,10 @@ class ClassConstantUsageIndexer extends AbstractPhpIndexer
                 continue;
             }
 
-            $results[] = [$fetch->class->toString(), $fetch->name->toString(), $fetch->getStartFilePos()];
+            $className = $fetch->class->toString();
+            $constName = $fetch->name->toString();
+            $pos = $fetch->getStartFilePos();
+            $results["{$className}::{$constName}@{$pos}"] = [$className, $constName, $pos];
         }
 
         return $results;

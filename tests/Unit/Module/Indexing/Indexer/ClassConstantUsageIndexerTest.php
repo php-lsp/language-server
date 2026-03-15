@@ -27,8 +27,10 @@ final class ClassConstantUsageIndexerTest extends TestCase
         $result = IndexerTestHelper::indexInternal(ClassConstantUsageIndexer::class, $file);
 
         $this->assertNotEmpty($result);
-        $this->assertSame('Foo', $result[0][0]);
-        $this->assertSame('BAR', $result[0][1]);
+        $values = array_values($result);
+        $this->assertSame('Foo', $values[0][0]);
+        $this->assertSame('BAR', $values[0][1]);
+        $this->assertStringContainsString('Foo::BAR@', array_keys($result)[0]);
     }
 
     #[TestDox('indexes class constant in expression')]
@@ -38,10 +40,11 @@ final class ClassConstantUsageIndexerTest extends TestCase
         $result = IndexerTestHelper::indexInternal(ClassConstantUsageIndexer::class, $file);
 
         $this->assertCount(2, $result);
-        $this->assertSame('Foo', $result[0][0]);
-        $this->assertSame('BAR', $result[0][1]);
-        $this->assertSame('Baz', $result[1][0]);
-        $this->assertSame('QUX', $result[1][1]);
+        $values = array_values($result);
+        $this->assertSame('Foo', $values[0][0]);
+        $this->assertSame('BAR', $values[0][1]);
+        $this->assertSame('Baz', $values[1][0]);
+        $this->assertSame('QUX', $values[1][1]);
     }
 
     #[TestDox('returns empty when no class constants')]
@@ -59,6 +62,7 @@ final class ClassConstantUsageIndexerTest extends TestCase
         $file = PsiFileFactory::fromCode('<?php \Foo::BAR;');
         $result = IndexerTestHelper::indexInternal(ClassConstantUsageIndexer::class, $file);
 
-        $this->assertIsInt($result[0][2]);
+        $values = array_values($result);
+        $this->assertIsInt($values[0][2]);
     }
 }

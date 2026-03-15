@@ -39,7 +39,9 @@ class ClassUsageIndexer extends AbstractPhpIndexer
                 continue;
             }
 
-            $results[] = [$name->toString(), $name->getStartFilePos()];
+            $className = $name->toString();
+            $pos = $name->getStartFilePos();
+            $results["{$className}@{$pos}"] = [$className, $pos];
         }
 
         return $results;

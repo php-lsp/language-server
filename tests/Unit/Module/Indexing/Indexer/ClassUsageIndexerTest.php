@@ -27,7 +27,8 @@ final class ClassUsageIndexerTest extends TestCase
         $result = IndexerTestHelper::indexInternal(ClassUsageIndexer::class, $file);
 
         $this->assertNotEmpty($result);
-        $this->assertSame('Foo', $result[0][0]);
+        $values = array_values($result);
+        $this->assertSame('Foo', $values[0][0]);
     }
 
     #[TestDox('indexes class usage in extends clause')]
@@ -38,6 +39,7 @@ final class ClassUsageIndexerTest extends TestCase
 
         $found = array_filter($result, fn ($r) => $r[0] === 'Foo');
         $this->assertNotEmpty($found);
+        $this->assertStringContainsString('Foo@', array_keys($result)[0]);
     }
 
     #[TestDox('indexes class usage in implements clause')]

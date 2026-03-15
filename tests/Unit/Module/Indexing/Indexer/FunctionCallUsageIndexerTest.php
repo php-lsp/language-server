@@ -27,8 +27,12 @@ final class FunctionCallUsageIndexerTest extends TestCase
         $result = IndexerTestHelper::indexInternal(FunctionCallUsageIndexer::class, $file);
 
         $this->assertCount(2, $result);
-        $this->assertSame('myFunc', $result[0][0]);
-        $this->assertSame('otherFunc', $result[1][0]);
+        $values = array_values($result);
+        $this->assertSame('myFunc', $values[0][0]);
+        $this->assertSame('otherFunc', $values[1][0]);
+        $keys = array_keys($result);
+        $this->assertStringContainsString('myFunc@', $keys[0]);
+        $this->assertStringContainsString('otherFunc@', $keys[1]);
     }
 
     #[TestDox('indexes fully qualified function calls')]
@@ -38,7 +42,8 @@ final class FunctionCallUsageIndexerTest extends TestCase
         $result = IndexerTestHelper::indexInternal(FunctionCallUsageIndexer::class, $file);
 
         $this->assertNotEmpty($result);
-        $this->assertSame('strlen', $result[0][0]);
+        $values = array_values($result);
+        $this->assertSame('strlen', $values[0][0]);
     }
 
     #[TestDox('returns empty when no function calls')]
@@ -56,7 +61,8 @@ final class FunctionCallUsageIndexerTest extends TestCase
         $file = PsiFileFactory::fromCode('<?php myFunc();');
         $result = IndexerTestHelper::indexInternal(FunctionCallUsageIndexer::class, $file);
 
-        $this->assertIsInt($result[0][1]);
-        $this->assertGreaterThan(0, $result[0][1]);
+        $values = array_values($result);
+        $this->assertIsInt($values[0][1]);
+        $this->assertGreaterThan(0, $values[0][1]);
     }
 }

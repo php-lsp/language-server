@@ -27,8 +27,10 @@ final class MethodCallUsageIndexerTest extends TestCase
         $result = IndexerTestHelper::indexInternal(MethodCallUsageIndexer::class, $file);
 
         $this->assertNotEmpty($result);
-        $this->assertSame('doSomething', $result[0][0]);
-        $this->assertNull($result[0][2]);
+        $values = array_values($result);
+        $this->assertSame('doSomething', $values[0][0]);
+        $this->assertNull($values[0][2]);
+        $this->assertStringContainsString('doSomething@', array_keys($result)[0]);
     }
 
     #[TestDox('indexes static method calls with class name')]
@@ -38,8 +40,10 @@ final class MethodCallUsageIndexerTest extends TestCase
         $result = IndexerTestHelper::indexInternal(MethodCallUsageIndexer::class, $file);
 
         $this->assertNotEmpty($result);
-        $this->assertSame('bar', $result[0][0]);
-        $this->assertSame('Foo', $result[0][2]);
+        $values = array_values($result);
+        $this->assertSame('bar', $values[0][0]);
+        $this->assertSame('Foo', $values[0][2]);
+        $this->assertStringContainsString('Foo::bar@', array_keys($result)[0]);
     }
 
     #[TestDox('returns empty when no method calls')]
