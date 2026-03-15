@@ -26,13 +26,18 @@ services:
     arguments:
       $appendNewline: true
 
-  app.logger.handler.buggregator:
+  app.logger.handler.buggregator.socket:
     class: Monolog\Handler\SocketHandler
     arguments:
       $connectionString: '%app.buggregator.host%'
       $level: !php/enum Monolog\Level::Debug
     calls:
       - [ 'setFormatter', [ '@app.logger.formatter.json' ] ]
+
+  app.logger.handler.buggregator:
+    class: Monolog\Handler\WhatFailureGroupHandler
+    arguments:
+      $handlers: [ '@app.logger.handler.buggregator.socket' ]
 
   Psr\Log\LoggerInterface:
     class: Monolog\Logger

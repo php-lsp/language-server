@@ -37,11 +37,13 @@ final class RequestTracingListener extends LoggerListener
                 'id' => (string) $message->getId(),
                 'params' => $params,
             ]);
-        } else {
-            $this->logger->debug('[trace] → {method} (notification)', [
-                'method' => $method,
-                'params' => $params,
-            ]);
+
+            return;
         }
+
+        $this->logger->debug('[trace] → {method} (notification)', [
+            'method' => $method,
+            'params' => $params,
+        ]);
     }
 }

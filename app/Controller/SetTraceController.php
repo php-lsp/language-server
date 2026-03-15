@@ -8,7 +8,6 @@ use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\SetTraceParams;
 use Lsp\Protocol\Type\TraceValue;
 use Lsp\Router\Attribute\Route;
-use Monolog\Handler\HandlerInterface;
 use Monolog\Level;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -30,7 +29,6 @@ final class SetTraceController
         };
 
         if ($this->logger instanceof Logger) {
-            /** @var HandlerInterface $handler */
             foreach ($this->logger->getHandlers() as $handler) {
                 if (!\method_exists($handler, 'setLevel')) {
                     continue;

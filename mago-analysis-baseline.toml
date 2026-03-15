@@ -49,12 +49,6 @@ message = "Parameter `$initialized` is never used."
 count = 1
 
 [[issues]]
-file = "app/Controller/SetTraceController.php"
-code = "unused-parameter"
-message = "Parameter `$editor` is never used."
-count = 1
-
-[[issues]]
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "imprecise-type"
 message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
