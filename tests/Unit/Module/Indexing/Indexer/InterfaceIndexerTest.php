@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Indexing\Indexer;
 
 use App\Module\Indexing\Indexer\InterfaceIndexer;
+use App\Module\Indexing\Storage\IndexData\InterfaceData;
 use App\Tests\Support\IndexerTestHelper;
 use App\Tests\Support\PsiFileFactory;
 use App\Tests\TestCase;
@@ -27,8 +28,10 @@ final class InterfaceIndexerTest extends TestCase
         $results = IndexerTestHelper::indexInternal(InterfaceIndexer::class, $psiFile);
 
         $this->assertCount(2, $results);
-        $this->assertContains('Foo', $results);
-        $this->assertContains('Bar', $results);
+        $this->assertArrayHasKey('Foo', $results);
+        $this->assertArrayHasKey('Bar', $results);
+        $this->assertInstanceOf(InterfaceData::class, $results['Foo']);
+        $this->assertSame('Foo', $results['Foo']->fqn);
     }
 
     #[TestDox('returns empty for file without interfaces')]

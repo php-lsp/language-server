@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Module\Signature;
 
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
+use App\Module\Indexing\Storage\IndexData\FunctionData;
 use App\Module\Signature\FunctionSignatureContributor;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -60,7 +61,7 @@ final class FunctionSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.functions.fqn' => [
-                'file:///def.php' => ['myFunc' => ['myFunc', $funcStartPos]],
+                'file:///def.php' => ['myFunc' => new FunctionData('myFunc', $funcStartPos, strlen($defCode) - 1, [], 'void')],
             ],
         ]);
 
@@ -88,7 +89,7 @@ final class FunctionSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.functions.fqn' => [
-                'file:///def.php' => ['otherFunc' => ['otherFunc', 0]],
+                'file:///def.php' => ['otherFunc' => new FunctionData('otherFunc', 0, 20, [], null)],
             ],
         ]);
 

@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Module\Signature;
 
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
+use App\Module\Indexing\Storage\IndexData\MethodData;
 use App\Module\Signature\MethodSignatureContributor;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -80,7 +81,9 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Foo' => ['bar']],
+                'file:///def.php' => [
+                    'Foo::bar' => new MethodData('bar', 'Foo', 0, 10, 'public', false, false, [], 'void'),
+                ],
             ],
         ]);
 
@@ -113,7 +116,10 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///test.php' => ['Foo' => ['bar', 'baz']],
+                'file:///test.php' => [
+                    'Foo::bar' => new MethodData('bar', 'Foo', 0, 10, 'public', false, false, [], 'string'),
+                    'Foo::baz' => new MethodData('baz', 'Foo', 11, 20, 'public', false, false, [], null),
+                ],
             ],
         ]);
 
@@ -144,7 +150,9 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Other' => ['bar']],
+                'file:///def.php' => [
+                    'Other::bar' => new MethodData('bar', 'Other', 0, 10, 'public', false, false, [], null),
+                ],
             ],
         ]);
 
@@ -181,7 +189,9 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Foo' => ['bar']],
+                'file:///def.php' => [
+                    'Foo::bar' => new MethodData('bar', 'Foo', 0, 10, 'public', false, false, [], 'void'),
+                ],
             ],
         ]);
 

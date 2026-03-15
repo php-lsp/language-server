@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Indexing\Indexer;
 
 use App\Module\Indexing\Indexer\ClassIndexer;
+use App\Module\Indexing\Storage\IndexData\ClassData;
 use App\Tests\Support\IndexerTestHelper;
 use App\Tests\Support\PsiFileFactory;
 use App\Tests\TestCase;
@@ -27,8 +28,12 @@ final class ClassIndexerTest extends TestCase
         $results = IndexerTestHelper::indexInternal(ClassIndexer::class, $psiFile);
 
         $this->assertCount(2, $results);
-        $this->assertContains('Foo', $results);
-        $this->assertContains('Bar', $results);
+        $this->assertArrayHasKey('Foo', $results);
+        $this->assertArrayHasKey('Bar', $results);
+        $this->assertInstanceOf(ClassData::class, $results['Foo']);
+        $this->assertSame('Foo', $results['Foo']->fqn);
+        $this->assertInstanceOf(ClassData::class, $results['Bar']);
+        $this->assertSame('Bar', $results['Bar']->fqn);
     }
 
     #[TestDox('returns empty for file without classes')]

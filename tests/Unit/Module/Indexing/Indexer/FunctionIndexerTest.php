@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Indexing\Indexer;
 
 use App\Module\Indexing\Indexer\FunctionIndexer;
+use App\Module\Indexing\Storage\IndexData\FunctionData;
 use App\Tests\Support\IndexerTestHelper;
 use App\Tests\Support\PsiFileFactory;
 use App\Tests\TestCase;
@@ -29,8 +30,9 @@ final class FunctionIndexerTest extends TestCase
         $this->assertCount(2, $results);
         $this->assertArrayHasKey('foo', $results);
         $this->assertArrayHasKey('bar', $results);
-        $this->assertSame('foo', $results['foo'][0]);
-        $this->assertIsInt($results['foo'][1]);
+        $this->assertInstanceOf(FunctionData::class, $results['foo']);
+        $this->assertSame('foo', $results['foo']->fqn);
+        $this->assertIsInt($results['foo']->startPosition);
     }
 
     #[TestDox('returns empty for file without functions')]

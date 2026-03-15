@@ -7,6 +7,10 @@ namespace App\Tests\Unit\Module\Declaration;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\ClassDeclarationContributor;
+use App\Module\Document\DocumentIdentifierFactoryInterface;
+use App\Module\Indexing\Storage\IndexData\ClassData;
+use App\Module\Indexing\Storage\IndexData\InterfaceData;
+use App\Module\Indexing\Storage\IndexData\TraitData;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -25,8 +29,9 @@ final class ClassDeclarationContributorTest extends TestCase
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn(null);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -47,8 +52,9 @@ final class ClassDeclarationContributorTest extends TestCase
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -68,13 +74,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php new \Foo();');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///def.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -96,13 +104,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar extends \Foo {}');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///def.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -122,13 +132,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar implements \Baz {}');
         $lookup = IndexTestHelper::createLookup([
             'php.interfaces.fqn' => [
-                'file:///iface.php' => ['Baz'],
+                'file:///iface.php' => ['Baz' => new InterfaceData('Baz', 0, 10, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///iface.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -149,13 +161,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php \Foo::BAR;');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///def.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -175,13 +189,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar { public function baz(): \Foo {} }');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///def.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -201,13 +217,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php interface Bar extends \Foo {}');
         $lookup = IndexTestHelper::createLookup([
             'php.interfaces.fqn' => [
-                'file:///iface.php' => ['Foo' => 'Foo'],
+                'file:///iface.php' => ['Foo' => new InterfaceData('Foo', 0, 10, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///iface.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -227,13 +245,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar { use \Foo; }');
         $lookup = IndexTestHelper::createLookup([
             'php.traits.fqn' => [
-                'file:///trait.php' => ['Foo' => 'Foo'],
+                'file:///trait.php' => ['Foo' => new TraitData('Foo', 0, 10)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///trait.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -253,13 +273,15 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php function bar(\Foo $x) {}');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///def.php'));
 
-        $contributor = new ClassDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(

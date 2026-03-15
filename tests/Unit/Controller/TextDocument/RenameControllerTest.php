@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller\TextDocument;
 
 use App\Controller\TextDocument\RenameController;
-use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Tests\Support\ProtocolFactory;
 use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
-use Lsp\Protocol\Type\PrepareRenameParams;
+use Lsp\Protocol\Type\RenameParams;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -19,12 +18,12 @@ final class RenameControllerTest extends TestCase
     #[TestDox('invokes without error')]
     public function testInvokesWithoutError(): void
     {
-        $fileManager = $this->createMock(InMemoryPsiFileManager::class);
-        $controller = new RenameController([], $fileManager);
+        $controller = new RenameController([]);
         $editor = $this->createMock(EditorInterface::class);
-        $params = new PrepareRenameParams(
+        $params = new RenameParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
             position: ProtocolFactory::position(),
+            newName: 'newSymbol',
         );
 
         $result = $controller($editor, $params);
@@ -42,16 +41,17 @@ final class RenameControllerTest extends TestCase
             }
         };
 
-        $fileManager = $this->createMock(InMemoryPsiFileManager::class);
-        $controller = new RenameController([$contributor], $fileManager);
+        $controller = new RenameController([$contributor]);
         $editor = $this->createMock(EditorInterface::class);
-        $params = new PrepareRenameParams(
+        $params = new RenameParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
             position: ProtocolFactory::position(),
+            newName: 'newSymbol',
         );
 
         $result = $controller($editor, $params);
 
-        $this->assertNull($result);
+        $this->assertNotNull($result);
+        $this->assertNotEmpty($result->changes);
     }
 }

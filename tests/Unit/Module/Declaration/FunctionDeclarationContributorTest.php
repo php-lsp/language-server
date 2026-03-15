@@ -8,6 +8,7 @@ use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\FunctionDeclarationContributor;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
+use App\Module\Indexing\Storage\IndexData\FunctionData;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -129,9 +130,11 @@ final class FunctionDeclarationContributorTest extends TestCase
         $defFile = PsiFileFactory::fromCode($defCode, 'file:///def.php');
         $document = PsiFileFactory::document($code);
 
+        $funcStartPos = strpos($defCode, 'function');
+
         $lookup = IndexTestHelper::createLookup([
             'php.functions.fqn' => [
-                'file:///def.php' => ['foo' => ['foo', 6]],
+                'file:///def.php' => ['foo' => new FunctionData('foo', $funcStartPos, strlen($defCode) - 1, [], 'void')],
             ],
         ]);
 
@@ -142,7 +145,7 @@ final class FunctionDeclarationContributorTest extends TestCase
                     return $defFile;
                 }
                 return $psiFile;
-            }
+            },
         );
 
         $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);

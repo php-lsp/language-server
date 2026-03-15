@@ -7,6 +7,8 @@ namespace App\Tests\Unit\Module\Declaration;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\ClassMethodDeclarationContributor;
+use App\Module\Document\DocumentIdentifierFactoryInterface;
+use App\Module\Indexing\Storage\IndexData\MethodData;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -24,8 +26,9 @@ final class ClassMethodDeclarationContributorTest extends TestCase
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn(null);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new ClassMethodDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassMethodDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -46,8 +49,9 @@ final class ClassMethodDeclarationContributorTest extends TestCase
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new ClassMethodDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassMethodDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -67,13 +71,18 @@ final class ClassMethodDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php \Foo::bar();');
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Foo' => ['bar' => true, 'baz' => true]],
+                'file:///def.php' => [
+                    'Foo::bar' => new MethodData('bar', 'Foo', 0, 10, 'public', false, false, [], null),
+                    'Foo::baz' => new MethodData('baz', 'Foo', 11, 20, 'public', false, false, [], null),
+                ],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///def.php'));
 
-        $contributor = new ClassMethodDeclarationContributor($lookup, $fileManager);
+        $contributor = new ClassMethodDeclarationContributor($lookup, $fileManager, $docFactory);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
