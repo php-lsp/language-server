@@ -8,6 +8,7 @@ use App\Controller\InitializeController;
 use App\Module\Indexing\Indexer;
 use App\Module\Notification\ServerNotificationSender;
 use App\Module\Workspace\ProjectManager;
+use App\Tests\Support\MockHelper;
 use App\Tests\TestCase;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
@@ -49,11 +50,41 @@ final class InitializeControllerTest extends TestCase
     {
         $logger = $this->createMock(LoggerInterface::class);
         $indexer = (new \ReflectionClass(Indexer::class))->newInstanceWithoutConstructor();
+        // Set required properties via reflection
+        $loggerProp = new \ReflectionProperty(Indexer::class, 'logger');
+        $loggerProp->setValue($indexer, $logger);
+        $indexersProp = new \ReflectionProperty(Indexer::class, 'indexers');
+        $indexersProp->setValue($indexer, []);
+        $storageProp = new \ReflectionProperty(Indexer::class, 'storage');
+        $storageProp->setValue($indexer, new \App\Module\Indexing\Storage\InMemoryStorage());
+        $filesReaderProp = new \ReflectionProperty(Indexer::class, 'filesystemReaderFactory');
+        $filesReaderProp->setValue($indexer, $this->createMock(\Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface::class));
+        $filesProp = new \ReflectionProperty(Indexer::class, 'files');
+        $filesProp->setValue($indexer, $this->createMock(\Lsp\Workspace\File\FileFactoryInterface::class));
+
         $projectFactory = $this->createMock(ProjectFactoryInterface::class);
         $project = $this->createMock(Project::class);
+        $project->method('getIterator')->willReturn(new \ArrayIterator([]));
+        $uriProp = new \ReflectionProperty(Project::class, 'uri');
+        $uriProp->setValue($project, \Lsp\Workspace\Uri\Uri::createLocal('file:///workspace'));
         $projectFactory->method('create')->willReturn($project);
         $projectManager = new ProjectManager();
-        $sender = (new \ReflectionClass(ServerNotificationSender::class))->newInstanceWithoutConstructor();
+        $connProvider = new class implements \Lsp\Server\ConnectionProviderInterface {
+            public \WeakMap $connections;
+            public function __construct()
+            {
+                $this->connections = new \WeakMap();
+            }
+            public function getConnection(\Lsp\Contracts\Rpc\Message\MessageInterface $message): ?\Lsp\Contracts\Server\ConnectionInterface
+            {
+                return null;
+            }
+        };
+        $sender = new ServerNotificationSender(
+            $connProvider,
+            MockHelper::mock(\Lsp\Dispatcher\Result\Provider\ResultProviderInterface::class),
+            $logger,
+        );
 
         $controller = new InitializeController($logger, $indexer, $projectFactory, $projectManager, $sender);
 

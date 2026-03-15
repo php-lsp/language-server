@@ -79,17 +79,22 @@ Client                               Server
 During initialization, the server tells the client which features it supports.
 Current capabilities of this Language Server:
 
-| Capability             | Description                                           |
-|------------------------|-------------------------------------------------------|
-| **Completion**         | Code completion (classes, functions, keywords, superglobals) |
-| **Hover**              | Documentation on cursor hover                         |
-| **Declaration**        | Go to symbol definition                               |
-| **References**         | Find all usages of a symbol                           |
-| **Rename**             | Rename symbol with prepare support                    |
-| **Signature Help**     | Function parameter hints                              |
-| **Diagnostics**        | Error and warning reports                             |
-| **Workspace Folders**  | Multi-root workspace support                          |
-| **Text Document Sync** | Incremental document synchronization                  |
+| Capability               | Description                                           |
+|--------------------------|-------------------------------------------------------|
+| **Completion**           | Code completion (classes, functions, keywords, superglobals) |
+| **Hover**                | Documentation on cursor hover                         |
+| **Declaration**          | Go to symbol declaration                              |
+| **Definition**           | Go to symbol definition (Ctrl+Click / F12)            |
+| **References**           | Find all usages of a symbol                           |
+| **Rename**               | Rename symbol with prepare support                    |
+| **Document Symbol**      | Outline of symbols in a document                      |
+| **Document Highlight**   | Highlight all occurrences of symbol under cursor      |
+| **Formatting**           | Format entire document via external formatter         |
+| **Workspace Symbol**     | Project-wide symbol search (Ctrl+T)                   |
+| **Signature Help**       | Function parameter hints                              |
+| **Diagnostics**          | Error and warning reports                             |
+| **Workspace Folders**    | Multi-root workspace support                          |
+| **Text Document Sync**   | Incremental document synchronization                  |
 
 ## Connecting to an IDE
 
