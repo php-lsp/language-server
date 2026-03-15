@@ -28,6 +28,7 @@
         "phpstan/phpstan": "^2.1",
         "react/async": "^4.3",
         "react/filesystem": "0.2.x-dev",
+        "react/http": "^1.11",
         "react/promise-timer": "^1.11"
     },
     "autoload": {
@@ -40,7 +41,6 @@
         "carthage-software/mago": "^1.14",
         "php-lsp/protocol-generator": "^1.0",
         "phpunit/phpunit": "^10.5|^11.5",
-        "react/http": "^1.11",
         "symfony/var-dumper": "^6.4|^7.0"
     },
     "autoload-dev": {

@@ -5,11 +5,6 @@ declare(strict_types=1);
 namespace App\Module\Notification;
 
 use App\Core\Contracts\Notification\ProgressNotifierInterface;
-use Lsp\Protocol\Type\ProgressParams;
-use Lsp\Protocol\Type\WorkDoneProgressBegin;
-use Lsp\Protocol\Type\WorkDoneProgressCreateParams;
-use Lsp\Protocol\Type\WorkDoneProgressEnd;
-use Lsp\Protocol\Type\WorkDoneProgressReport;
 use Override;
 
 final class ProgressNotifier implements ProgressNotifierInterface
@@ -23,7 +18,7 @@ final class ProgressNotifier implements ProgressNotifierInterface
     {
         $this->sender->sendRawNotification(
             method: 'window/workDoneProgress/create',
-            parameters: new WorkDoneProgressCreateParams(token: $token),
+            parameters: ['token' => $token],
         );
     }
 
@@ -38,16 +33,19 @@ final class ProgressNotifier implements ProgressNotifierInterface
     ): void {
         $this->sender->sendRawNotification(
             method: '$/progress',
-            parameters: new ProgressParams(
-                token: $token,
-                value: new WorkDoneProgressBegin(
-                    kind: 'begin',
-                    title: $title,
-                    cancellable: $cancellable,
-                    message: $message,
-                    percentage: $this->clampPercentage($percentage),
+            parameters: [
+                'token' => $token,
+                'value' => \array_filter(
+                    [
+                        'kind' => 'begin',
+                        'title' => $title,
+                        'cancellable' => $cancellable,
+                        'message' => $message,
+                        'percentage' => $this->clampPercentage($percentage),
+                    ],
+                    static fn(mixed $v): bool => $v !== null,
                 ),
-            ),
+            ],
         );
     }
 
@@ -61,15 +59,18 @@ final class ProgressNotifier implements ProgressNotifierInterface
     ): void {
         $this->sender->sendRawNotification(
             method: '$/progress',
-            parameters: new ProgressParams(
-                token: $token,
-                value: new WorkDoneProgressReport(
-                    kind: 'report',
-                    cancellable: $cancellable,
-                    message: $message,
-                    percentage: $this->clampPercentage($percentage),
+            parameters: [
+                'token' => $token,
+                'value' => \array_filter(
+                    [
+                        'kind' => 'report',
+                        'cancellable' => $cancellable,
+                        'message' => $message,
+                        'percentage' => $this->clampPercentage($percentage),
+                    ],
+                    static fn(mixed $v): bool => $v !== null,
                 ),
-            ),
+            ],
         );
     }
 
@@ -91,13 +92,16 @@ final class ProgressNotifier implements ProgressNotifierInterface
     {
         $this->sender->sendRawNotification(
             method: '$/progress',
-            parameters: new ProgressParams(
-                token: $token,
-                value: new WorkDoneProgressEnd(
-                    kind: 'end',
-                    message: $message,
+            parameters: \array_filter([
+                'token' => $token,
+                'value' => \array_filter(
+                    [
+                        'kind' => 'end',
+                        'message' => $message,
+                    ],
+                    static fn(mixed $v): bool => $v !== null,
                 ),
-            ),
+            ]),
         );
     }
 }
