@@ -275,6 +275,6 @@ class Tree
             return (string) $element;
         }
 
-        return '-----' . var_export($element, return: true) . '-----';
+        return $element->getType();
     }
 }
