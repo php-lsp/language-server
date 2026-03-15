@@ -10,7 +10,10 @@ use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionOptions;
 use Lsp\Protocol\Type\DeclarationOptions;
+use Lsp\Protocol\Type\DefinitionOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
+use Lsp\Protocol\Type\DocumentFormattingOptions;
+use Lsp\Protocol\Type\DocumentHighlightOptions;
 use Lsp\Protocol\Type\DocumentSymbolOptions;
 use Lsp\Protocol\Type\FileOperationOptions;
 use Lsp\Protocol\Type\FileOperationRegistrationOptions;
@@ -64,6 +67,9 @@ final class InitializeController
                     triggerCharacters: ['(', ',', ':', ' '],
                 ),
                 declarationProvider: new DeclarationOptions(),
+                definitionProvider: new DefinitionOptions(),
+                documentHighlightProvider: new DocumentHighlightOptions(),
+                documentFormattingProvider: new DocumentFormattingOptions(),
                 referencesProvider: new ReferenceOptions(
                     workDoneProgress: null,
                 ),
@@ -117,13 +123,12 @@ final class InitializeController
         $project = $this->projectFactory->create($folder->uri, $folder->name);
         $this->projectManager->setProject($project);
 
-        return;
         $start = microtime(true);
-        $this->logger->info('Indexing project: ' . $start);
+        $this->logger->info('Indexing project: ' . $folder->uri);
 
         $this->indexer->index($project);
 
-        $message = 'Indexing finished in ' . (microtime(true) - $start) . ' seconds';
+        $message = 'Indexing finished in ' . round(microtime(true) - $start, 2) . ' seconds';
 
         $this->logger->info($message);
         $this->notificationSender->showMessage($message);

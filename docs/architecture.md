@@ -105,14 +105,17 @@ Each controller:
 | `SetTraceController` | `$/setTrace` | Trace level configuration |
 | `CompletionController` | `textDocument/completion` | Code completion |
 | `HoverController` | `textDocument/hover` | Hover documentation |
-| `DeclarationController` | `textDocument/declaration` | Go to definition |
+| `DeclarationController` | `textDocument/declaration` | Go to declaration |
+| `DefinitionController` | `textDocument/definition` | Go to definition |
+| `DocumentHighlightController` | `textDocument/documentHighlight` | Highlight symbol occurrences |
+| `FormattingController` | `textDocument/formatting` | Document formatting |
 | `ReferencesController` | `textDocument/references` | Find usages |
-| `RenameController` | `textDocument/rename` | Symbol rename (stub, incomplete) |
+| `RenameController` | `textDocument/rename` | Symbol rename |
 | `PrepareRenameController` | `textDocument/prepareRename` | Rename preparation |
 | `SignatureHelpController` | `textDocument/signatureHelp` | Function signatures |
 | `DiagnosticController` | `textDocument/diagnostic` | Pull diagnostics |
 | `PublishDiagnosticsController` | `textDocument/publishDiagnostics` | Push diagnostics to client |
-| `DocumentSymbolController` | `textDocument/documentSymbol` | Document symbols (disabled) |
+| `DocumentSymbolController` | `textDocument/documentSymbol` | Document symbols |
 
 ### 3. PsiFile — the AST Layer
 

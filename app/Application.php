@@ -6,7 +6,9 @@ namespace App;
 
 use App\Core\Contracts\Completion\AsCompletionContributor;
 use App\Core\Contracts\Declaration\AsDeclarationContributor;
+use App\Core\Contracts\Definition\AsDefinitionContributor;
 use App\Core\Contracts\Documentation\AsDocumentationContributor;
+use App\Core\Contracts\Highlight\AsDocumentHighlightContributor;
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\References\AsReferenceContributor;
 use App\Core\Contracts\Signature\AsSignatureContributor;
@@ -25,7 +27,9 @@ final class Application extends LanguageServerKernel
         AsCompletionContributor::class => 'lsp.completionContributors',
         AsReferenceContributor::class => 'lsp.referenceContributors',
         AsDeclarationContributor::class => 'lsp.declarationContributors',
+        AsDefinitionContributor::class => 'lsp.definitionContributors',
         AsDocumentationContributor::class => 'lsp.documentationContributors',
+        AsDocumentHighlightContributor::class => 'lsp.documentHighlightContributors',
         AsSignatureContributor::class => 'lsp.signatureContributors',
     ];
 
