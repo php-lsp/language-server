@@ -243,3 +243,5 @@ If **any** step fails — fix and repeat from step 1.
 - See [docs/architecture-analysis.md](docs/architecture-analysis.md) for the
   objective architecture analysis, metrics, weakness assessment, and comparison
   with other LSP implementations.
+- See [docs/positions.md](docs/positions.md) for position system documentation
+  (LSP 0-based vs php-parser 1-based, byte offsets, conversion helpers).

@@ -119,6 +119,11 @@ class InMemoryPsiFileManager
         return $psiFile;
     }
 
+    public function invalidate(string $uri): void
+    {
+        $this->cache->remove($uri);
+    }
+
     public function findPsiFileByUri(Uri $uri): ?PHPPsiFile
     {
         $psiFile = $this->cache->get((string) $uri);

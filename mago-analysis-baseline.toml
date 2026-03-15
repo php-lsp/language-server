@@ -223,6 +223,12 @@ message = 'Invalid type for property `$contributors`: expected `list<App\Core\Co
 count = 1
 
 [[issues]]
+file = "app/Controller/TextDocument/DocumentOpenController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #3 of `Lsp\Extension\DocumentManager\Editor\Document\DocumentFactoryInterface::create`: expected `non-negative-int`, but possibly received `int<-2147483648, 2147483647>`.'
+count = 1
+
+[[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
@@ -1328,18 +1334,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
-code = "implicit-to-string-cast"
-message = 'Implicit conversion to `string` for right operand via `Lsp\Workspace\File\VirtualFileInterface::__toString()`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "implicit-to-string-cast"
-message = 'Implicit conversion to `string` for right operand via `Lsp\Workspace\Uri\Uri::__toString()`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
 code = "imprecise-type"
 message = "Type `iterable` in parameter `$indexers` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
@@ -1384,6 +1378,12 @@ count = 1
 file = "app/Module/Indexing/Indexer.php"
 code = "possibly-false-operand"
 message = "Possibly false right operand used in string concatenation (type `false|string`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
+code = "possibly-false-operand"
+message = "Left operand in `>` comparison might be `false` (type `false|non-negative-int`)."
 count = 1
 
 [[issues]]

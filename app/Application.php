@@ -12,8 +12,8 @@ use App\Core\Contracts\Highlight\AsDocumentHighlightContributor;
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\References\AsReferenceContributor;
 use App\Core\Contracts\Signature\AsSignatureContributor;
+use App\Infrastructure\Symfony\DocumentManagerCompilerPass;
 use App\Infrastructure\Symfony\LSPCompilerPass;
-use Lsp\Extension\DocumentManager\DocumentManagerExtension;
 use Lsp\Kernel\LanguageServerKernel;
 use Override;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -48,6 +48,6 @@ final class Application extends LanguageServerKernel
         }
         //        dump($container->get(LoggerInterface::class));
         $container->addCompilerPass(new LSPCompilerPass());
-        $container->addCompilerPass(new DocumentManagerExtension());
+        $container->addCompilerPass(new DocumentManagerCompilerPass());
     }
 }

@@ -117,6 +117,24 @@ final class InMemoryPsiFileManagerTest extends TestCase
         $this->assertSame($first, $second);
     }
 
+    #[TestDox('invalidate removes cached PSI file')]
+    public function testInvalidateRemovesCachedFile(): void
+    {
+        $manager = $this->createManager();
+        $document = PsiFileFactory::document('<?php class Foo {}');
+
+        $editor = $this->createMock(EditorInterface::class);
+        $editor->method('findByUriString')->willReturn($document);
+
+        $identifier = ProtocolFactory::textDocumentIdentifier();
+        $first = $manager->findPsiFile($editor, $identifier);
+
+        $manager->invalidate($identifier->uri);
+
+        $second = $manager->findPsiFile($editor, $identifier);
+        $this->assertNotSame($first, $second);
+    }
+
     #[TestDox('findPsiFileByUri loads and parses')]
     public function testFindPsiFileByUri(): void
     {
