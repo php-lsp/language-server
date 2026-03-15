@@ -88,14 +88,14 @@ app/
 │   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, constant
 │   ├── Signature/             # Signature contributors (3): function, method, constructor
 │   ├── TypeDefinition/        # Type definition contributors (1): type-aware navigation via TypeResolver
-│   ├── Indexing/              # Declaration indexers (10) + usage indexers (5) + relationship indexers (1) + storage + IndexData value objects
+│   ├── Indexing/              # Declaration indexers (10) + usage indexers (5) + relationship indexers (1) + file collection + storage + IndexData value objects
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── Document/              # Document loading and identification
 │   ├── Workspace/             # Workspace/project management
 │   ├── TypeSystem/            # PHPStan-based type resolution (TypeResolver, PHPStanBootstrap)
-│   └── Notification/          # Server notification sender
+│   └── Notification/          # Server notifications: progress (WorkDoneProgress), error messages, connection state
 ├── Infrastructure/Symfony/    # LSPCompilerPass for DI
-└── Listener/                  # Server, logger, message event listeners
+└── Listener/                  # Server, logger, message, connection, and error notification listeners
 config/
 ├── services.yaml              # Main DI config (imports services/*.yaml)
 └── services/                  # controllers.yaml, listeners.yaml, logger.yaml
