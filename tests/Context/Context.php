@@ -16,6 +16,11 @@ abstract class Context extends TestCase implements ContextInterface
 {
     protected ?InitializedContextEnvironment $env = null;
 
+    public function __construct(string $name = 'behat')
+    {
+        parent::__construct($name);
+    }
+
     /**
      * @api
      */
