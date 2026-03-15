@@ -43,30 +43,39 @@ class Tree
      */
     public static function childrenOfType(Node|SourceFileRoot|null $node, string $class): array
     {
+        $result = [];
+        self::collectChildrenOfType($node, $class, $result);
+
+        return $result;
+    }
+
+    /**
+     * @template TCollect of Node
+     *
+     * @param class-string<TCollect> $class
+     * @param list<TCollect> $result
+     */
+    private static function collectChildrenOfType(Node|SourceFileRoot|null $node, string $class, array &$result): void
+    {
         if ($node === null) {
-            return [];
+            return;
         }
+
         if ($node instanceof SourceFileRoot) {
-            $result = [];
             foreach ($node->children as $child) {
-                $result = array_merge($result, self::childrenOfType($child, $class));
+                self::collectChildrenOfType($child, $class, $result);
             }
 
-            return $result;
+            return;
         }
 
-        $result = [];
         if ($node instanceof $class) {
             $result[] = $node;
         }
 
-        $children = self::getNodeChildren($node);
-
-        foreach ($children as $child) {
-            $result = array_merge($result, self::childrenOfType($child, $class));
+        foreach (self::getNodeChildren($node) as $child) {
+            self::collectChildrenOfType($child, $class, $result);
         }
-
-        return $result;
     }
 
     /**
@@ -90,19 +99,30 @@ class Tree
      */
     private static function childrenOfTypesInternal(Node|SourceFileRoot|null $node, array $classes): array
     {
+        $result = [];
+        self::collectChildrenOfTypes($node, $classes, $result);
+
+        return $result;
+    }
+
+    /**
+     * @param list<class-string<Node>> $classes
+     * @param list<Node> $result
+     */
+    private static function collectChildrenOfTypes(Node|SourceFileRoot|null $node, array $classes, array &$result): void
+    {
         if ($node === null) {
-            return [];
+            return;
         }
+
         if ($node instanceof SourceFileRoot) {
-            $result = [];
             foreach ($node->children as $child) {
-                $result = array_merge($result, self::childrenOfTypesInternal($child, $classes));
+                self::collectChildrenOfTypes($child, $classes, $result);
             }
 
-            return $result;
+            return;
         }
 
-        $result = [];
         foreach ($classes as $class) {
             if (!$node instanceof $class) {
                 continue;
@@ -112,13 +132,9 @@ class Tree
             break;
         }
 
-        $children = self::getNodeChildren($node);
-
-        foreach ($children as $child) {
-            $result = array_merge($result, self::childrenOfTypesInternal($child, $classes));
+        foreach (self::getNodeChildren($node) as $child) {
+            self::collectChildrenOfTypes($child, $classes, $result);
         }
-
-        return $result;
     }
 
     /**
@@ -168,6 +184,41 @@ class Tree
     }
 
     /**
+     * @var array<string, list<int>> Cached line start offsets keyed by URI+version.
+     */
+    private static array $lineOffsetCache = [];
+
+    /**
+     * @return list<int>
+     */
+    private static function getLineOffsets(Document $document): array
+    {
+        $cacheKey = spl_object_id($document) . ':' . $document->version;
+
+        if (isset(self::$lineOffsetCache[$cacheKey])) {
+            return self::$lineOffsetCache[$cacheKey];
+        }
+
+        $text = $document->getContents();
+        $offsets = [0];
+        $offset = 0;
+
+        while (($pos = strpos($text, "\n", $offset)) !== false) {
+            $offsets[] = $pos + 1;
+            $offset = $pos + 1;
+        }
+
+        self::$lineOffsetCache[$cacheKey] = $offsets;
+
+        return $offsets;
+    }
+
+    public static function clearLineOffsetCache(): void
+    {
+        self::$lineOffsetCache = [];
+    }
+
+    /**
      * @return array{int, int}
      */
     public static function toLineColumn(Document $document, int $pos): array
@@ -177,17 +228,21 @@ class Tree
             throw new \RuntimeException('Invalid position information');
         }
 
-        $needle = "\n";
-        $line = substr_count($text, $needle, offset: 0, length: $pos);
+        $offsets = self::getLineOffsets($document);
 
-        $lineStartPos = strrpos($text, $needle, $pos - strlen($text));
-        if (false === $lineStartPos) {
-            $lineStartPos = -1;
+        // Binary search for the line containing $pos
+        $lo = 0;
+        $hi = count($offsets) - 1;
+        while ($lo < $hi) {
+            $mid = ($lo + $hi + 1) >> 1;
+            if ($offsets[$mid] <= $pos) {
+                $lo = $mid;
+            } else {
+                $hi = $mid - 1;
+            }
         }
 
-        $column = $pos - $lineStartPos - 1;
-
-        return [$line, $column];
+        return [$lo, $pos - $offsets[$lo]];
     }
 
     public static function getParentNodes(Node $node, int $limit = 100): iterable

@@ -1502,6 +1502,12 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "ambiguous-object-property-access"
+message = "Cannot statically verify property access on a generic `object` type."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "hidden-generator-return"
 message = 'The value returned by generator function `app\module\indexing\storage\inmemorystorage::read` may be inaccessible to callers.'
 count = 1
@@ -1514,8 +1520,32 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "invalid-property-assignment-value"
+message = 'Invalid type for property `$secondaryIndexes`: expected `array<string, array<string, array<string, list<App\Module\Indexing\Storage\Entry<mixed>>>>>`, but got `array<string, array<string, array<int|string, App\Module\Indexing\Storage\Entry<mixed>|list<App\Module\Indexing\Storage\Entry<mixed>>>>>`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 3
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "possibly-undefined-variable"
+message = "Variable `$index` might not have been defined on all execution paths leading to this point."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "string-member-selector"
+message = "This member selector uses a non-literal string type (`string`); its specific value cannot be statically determined."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "yield-from-invalid-value-type"
+message = 'Invalid value type from `yield from`: current generator expects to yield `App\Module\Indexing\Storage\Entry<mixed>`, but the inner iterable yields `list<App\Module\Indexing\Storage\Entry<mixed>>`.'
 count = 1
 
 [[issues]]
@@ -1647,8 +1677,14 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
 code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
@@ -1672,6 +1708,12 @@ count = 1
 file = "app/Module/PsiFile/Tree.php"
 code = "imprecise-type"
 message = "Type `iterable` in return type of `getParentNodes` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "invalid-return-statement"
+message = '''Invalid return type for function `app\module\psifile\tree::childrenoftypesinternal`: expected `array<array-key, ('T.app\module\psifile\tree::childrenoftypesinternal() extends PhpParser\Node)>`, but found `list<PhpParser\Node>`.'''
 count = 1
 
 [[issues]]

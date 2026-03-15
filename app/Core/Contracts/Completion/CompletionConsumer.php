@@ -12,14 +12,15 @@ class CompletionConsumer
 {
     private int $itemCount = 0;
     private float $lastYield;
+    private int $resultCount = 0;
 
     /**
-     * Количество элементов между yield
+     * Number of items between yield checks.
      */
     private const int YIELD_EVERY = 100;
 
     /**
-     * Максимальное время между yield (в миллисекундах)
+     * Maximum time between yields (milliseconds).
      */
     private const int YIELD_INTERVAL_MS = 10;
 
@@ -30,24 +31,23 @@ class CompletionConsumer
         public array $results = [],
 
         /**
-         * Максимальное количество результатов (null = без лимита)
+         * Maximum number of results (null = unlimited).
          */
         public ?int $limit = null,
     ) {
         $this->lastYield = microtime(true);
+        $this->resultCount = count($results);
     }
 
     public function __invoke(CompletionItem ...$items): void
     {
-        //        array_push($this->results, ...$items);
-        //        return;
         foreach ($items as $item) {
-            // Проверяем лимит
-            if ($this->limit !== null && count($this->results) >= $this->limit) {
+            if ($this->limit !== null && $this->resultCount >= $this->limit) {
                 return;
             }
 
             $this->results[] = $item;
+            ++$this->resultCount;
             ++$this->itemCount;
 
             if ($this->shouldYield()) {
@@ -57,13 +57,10 @@ class CompletionConsumer
         }
     }
 
-    /**
-     * Проверить нужно ли отдать управление
-     */
     private function shouldYield(): bool
     {
-        if (($this->itemCount % self::YIELD_EVERY) === 0) {
-            return true;
+        if (($this->itemCount % self::YIELD_EVERY) !== 0) {
+            return false;
         }
 
         $now = microtime(true);
