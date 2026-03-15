@@ -27,11 +27,21 @@ abstract class AbstractPhpIndexer implements IndexerInterface
     }
 
     /**
+     * Maximum file size (bytes) to parse during indexing.
+     */
+    private const int MAX_FILE_SIZE = 500_000;
+
+    /**
      * @return array<TValue>
      */
     #[Override]
     public function index(VirtualFileInterface $file): iterable
     {
+        $path = $file->uri->path;
+        if (is_file($path) && filesize($path) > self::MAX_FILE_SIZE) {
+            return [];
+        }
+
         $phpFile = $this->fileManager->findPsiFileByUri($file->uri);
 
         return $this->indexInternal($phpFile);

@@ -35,61 +35,75 @@ final class Indexer
 
     public function index(Project $project): void
     {
-        $this->logger->info('Indexing project: ' . $project->uri);
+        $this->logger->info('Indexing project: {uri}', ['uri' => (string) $project->uri]);
+
+        $fileCount = 0;
         foreach ($project as $file) {
-            $this->walkFilesInternal($file, 0);
+            $fileCount += $this->walkFilesInternal($file);
         }
 
         $realpath = realpath(__DIR__ . '/../../../resources/php-stubs');
         $uri = Uri::createLocal('file://' . $realpath);
         $stubs = $this->files->create($uri->path, $this->filesystemReaderFactory);
 
-        $this->walkFilesInternal($stubs, 0);
-        $this->logger->info('Indexing finished');
+        $fileCount += $this->walkFilesInternal($stubs);
+
+        $this->logger->info('Indexing finished: {count} files indexed', ['count' => $fileCount]);
     }
 
-    private function walkFilesInternal(VirtualFileInterface $file, int $level): void
+    /**
+     * Maximum file size (bytes) to index. Files larger than this are skipped
+     * to prevent memory exhaustion on auto-generated code.
+     */
+    private const int MAX_FILE_SIZE = 500_000;
+
+    /**
+     * Directories skipped during indexing.
+     */
+    private const array IGNORED_DIRS = [
+        'node_modules',
+        '.git',
+        '.idea',
+        'config',
+        'resources',
+        'runtime',
+        'vendor',
+        'psalm',
+        'rector',
+        'thecodingmachine',
+        'aerospike',
+        'tests',
+        'mongodb',
+        'meta',
+        'rdkafka',
+        'intl',
+        'swoole',
+        'wincache',
+        'couchbase',
+        'couchbase_v2',
+        'relay',
+        'redis',
+        'imagick',
+    ];
+
+    private function walkFilesInternal(VirtualFileInterface $file): int
     {
-        $ignored = [
-            'node_modules',
-            '.git',
-            '.idea',
-            'config',
-            'resources',
-            'runtime',
-            //            'vendor',
-            'psalm',
-            'rector',
-            'thecodingmachine',
-            'aerospike',
-            'tests',
-            'mongodb',
-            'meta',
-            'rdkafka',
-            'intl',
-            'swoole',
-            'wincache',
-            'couchbase',
-            'couchbase_v2',
-            'relay',
-            'redis',
-            'imagick',
-            'tests',
-        ];
-        if (in_array($file->name, $ignored, strict: true)) {
-            //            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";
-            return;
+        if (in_array($file->name, self::IGNORED_DIRS, strict: true)) {
+            return 0;
         }
 
-        $this->logger->info(str_repeat(' ', $level) . $file);
+        $count = 0;
 
         if ($file->count() === 0) {
             $this->runIndexers($file);
+            $count = 1;
         }
 
         foreach ($file as $child) {
-            $this->walkFilesInternal($child, $level + 1);
+            $count += $this->walkFilesInternal($child);
         }
+
+        return $count;
     }
 
     private function runIndexers(VirtualFileInterface $file): void
