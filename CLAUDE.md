@@ -167,3 +167,5 @@ baseline entries.
   configuration.
 - See [docs/codespaces.md](docs/codespaces.md) for GitHub Codespaces setup
   and troubleshooting guide.
+- See [docs/features.md](docs/features.md) for the feature roadmap, LSP
+  capabilities checklist, and implementation priorities.

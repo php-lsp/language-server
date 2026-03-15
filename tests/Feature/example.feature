@@ -6,4 +6,4 @@ Feature: Example Feature Test
 
     Scenario: Example Negative Scenario
         When I have an example "test 42"
-        Then value is "test"
+        Then value is "test 42"
