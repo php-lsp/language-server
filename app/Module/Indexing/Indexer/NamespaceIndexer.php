@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
-use App\Module\Indexing\Storage\IndexData\NamespaceData;
+use App\Module\Indexing\Data\NamespaceData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use PhpParser\Node\Stmt\Namespace_;
 
-#[AsIndexer]
 /**
  * @extends AbstractPhpIndexer<NamespaceData>
  */
+#[AsIndexer]
 class NamespaceIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
@@ -32,6 +32,7 @@ class NamespaceIndexer extends AbstractPhpIndexer
             }
 
             $fqn = $namespace->name->toString();
+
             $results[$fqn] = new NamespaceData(
                 fqn: $fqn,
                 startPosition: $namespace->getStartFilePos(),

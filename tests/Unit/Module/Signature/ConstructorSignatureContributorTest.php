@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Module\Signature;
 
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
-use App\Module\Indexing\Storage\IndexData\ClassData;
+use App\Module\Indexing\Data\ClassData;
 use App\Module\Signature\ConstructorSignatureContributor;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -81,7 +81,7 @@ final class ConstructorSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 100, false, false, false, null, [])],
             ],
         ]);
 
@@ -121,7 +121,7 @@ final class ConstructorSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 100, false, false, false, null, [])],
             ],
         ]);
 
@@ -150,7 +150,7 @@ final class ConstructorSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Bar' => new ClassData('Bar', 0, 10, null, [], false, false)],
+                'file:///def.php' => ['Bar' => new ClassData('Bar', 0, 100, false, false, false, null, [])],
             ],
         ]);
 
@@ -187,7 +187,7 @@ final class ConstructorSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 100, false, false, false, null, [])],
             ],
         ]);
 

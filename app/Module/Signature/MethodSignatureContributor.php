@@ -8,6 +8,8 @@ use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
 use App\Core\Contracts\Signature\SignatureContributor;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
@@ -43,10 +45,22 @@ final class MethodSignatureContributor implements SignatureContributor
         [$className, $methodName] = $call;
 
         foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($entry->value->className !== $className) {
+            if ($entry->key !== $className) {
                 continue;
             }
-            if ($entry->value->name !== $methodName) {
+
+            /** @var list<MethodData> $methods */
+            $methods = $entry->value;
+            $found = false;
+            foreach ($methods as $method) {
+                if ($method->name !== $methodName) {
+                    continue;
+                }
+
+                $found = true;
+                break;
+            }
+            if (!$found) {
                 continue;
             }
 
@@ -151,7 +165,7 @@ final class MethodSignatureContributor implements SignatureContributor
         $params = [];
         $paramLabels = [];
         foreach ($method->params as $param) {
-            $typeStr = FunctionSignatureContributor::typeToString($param->type);
+            $typeStr = NodeTypeExtractor::typeToString($param->type) ?? '';
             $varName = $param->var instanceof Node\Expr\Variable && is_string($param->var->name)
                 ? $param->var->name
                 : 'unknown';
@@ -163,7 +177,7 @@ final class MethodSignatureContributor implements SignatureContributor
             );
         }
 
-        $returnType = FunctionSignatureContributor::typeToString($method->returnType);
+        $returnType = NodeTypeExtractor::typeToString($method->returnType) ?? '';
         $returnSuffix = $returnType !== '' ? ': ' . $returnType : '';
         $label = sprintf(
             '%s::%s(%s)%s',

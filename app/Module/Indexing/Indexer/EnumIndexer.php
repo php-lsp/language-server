@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
-use App\Module\Indexing\Storage\IndexData\EnumData;
+use App\Module\Indexing\Data\EnumData;
+use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
-use PhpParser\Node;
 use PhpParser\Node\Stmt\Enum_;
 
-#[AsIndexer]
 /**
  * @extends AbstractPhpIndexer<EnumData>
  */
+#[AsIndexer]
 class EnumIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
@@ -28,22 +28,22 @@ class EnumIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($enums as $enum) {
-            $fqn = $enum->namespacedName->toString();
-            $implements = [];
-            foreach ($enum->implements as $implement) {
-                $implements[] = $implement->toString();
+            if ($enum->name === null) {
+                continue;
             }
 
-            $backedType = null;
-            if ($enum->scalarType !== null) {
-                $backedType = $enum->scalarType->toString();
+            $fqn = $enum->namespacedName?->toString() ?? $enum->name->toString();
+
+            $implements = [];
+            foreach ($enum->implements as $impl) {
+                $implements[] = $impl->toString();
             }
 
             $results[$fqn] = new EnumData(
                 fqn: $fqn,
                 startPosition: $enum->getStartFilePos(),
                 endPosition: $enum->getEndFilePos(),
-                backedType: $backedType,
+                backedType: NodeTypeExtractor::typeToString($enum->scalarType),
                 implements: $implements,
             );
         }

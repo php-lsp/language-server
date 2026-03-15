@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\SetTraceParams;
+use Lsp\Protocol\Type\TraceValue;
 use Lsp\Router\Attribute\Route;
+use Monolog\Level;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
 #[AsController, Route('$/setTrace')]
@@ -17,10 +19,28 @@ final class SetTraceController
         private LoggerInterface $logger,
     ) {}
 
-    public function __invoke(EditorInterface $editor, SetTraceParams $params): void
+    public function __invoke(SetTraceParams $params): void
     {
         $value = $params->value;
+        $level = match ($value) {
+            TraceValue::Off => Level::Warning,
+            TraceValue::Messages => Level::Info,
+            TraceValue::Verbose => Level::Debug,
+        };
 
-        $this->logger->info('Trace value set to: ' . $value->name);
+        if ($this->logger instanceof Logger) {
+            foreach ($this->logger->getHandlers() as $handler) {
+                if (!\method_exists($handler, 'setLevel')) {
+                    continue;
+                }
+
+                $handler->setLevel($level);
+            }
+        }
+
+        $this->logger->info('Trace level set to {trace} (log level: {level})', [
+            'trace' => $value->name,
+            'level' => $level->name,
+        ]);
     }
 }

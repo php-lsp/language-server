@@ -9,6 +9,7 @@ use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
+use App\Module\Indexing\Data\FunctionData;
 use App\Module\Indexing\Indexer\FunctionIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
@@ -32,13 +33,11 @@ final class FunctionDeclarationContributor implements DeclarationContributor
         $editor = $context->editor;
         $document = $editor->findByUriString($context->textDocumentIdentifier->uri);
         if ($document === null) {
-            //            dump('document is null', $context->textDocumentIdentifier);
             return;
         }
 
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-            //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 
@@ -55,14 +54,17 @@ final class FunctionDeclarationContributor implements DeclarationContributor
         $functionName = $node->name->toString();
 
         foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $value) {
-            if ($value->value->fqn !== $functionName) {
+            /** @var FunctionData $data */
+            $data = $value->value;
+
+            if ($data->fqn !== $functionName) {
                 continue;
             }
+
             $textDocumentIdentifier = $this->documentIdentifierFactory->create($value->uri);
             $source = $this->fileManager->findPsiFile($context->editor, $textDocumentIdentifier);
-            $position = $value->value->startPosition;
 
-            [$line, $column] = Tree::toLineColumn($source->ast->document, $position);
+            [$line, $column] = Tree::toLineColumn($source->ast->document, $data->startPosition);
 
             $exactPosition = new Position($line, $column);
             $startRange = new Range($exactPosition, $exactPosition);

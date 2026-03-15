@@ -8,9 +8,10 @@ use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
-use App\Module\Document\DocumentIdentifierFactoryInterface;
+use App\Module\Indexing\Data\ClassData;
+use App\Module\Indexing\Data\InterfaceData;
+use App\Module\Indexing\Data\TraitData;
 use App\Module\Indexing\Indexer\ClassIndexer;
-use App\Module\Indexing\Indexer\EnumIndexer;
 use App\Module\Indexing\Indexer\InterfaceIndexer;
 use App\Module\Indexing\Indexer\TraitIndexer;
 use App\Module\Indexing\IndexLookup;
@@ -27,7 +28,6 @@ final class ClassDeclarationContributor implements DeclarationContributor
     public function __construct(
         private readonly IndexLookup $indexLookup,
         private readonly InMemoryPsiFileManager $fileManager,
-        private readonly DocumentIdentifierFactoryInterface $documentIdentifierFactory,
     ) {}
 
     public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
@@ -35,7 +35,6 @@ final class ClassDeclarationContributor implements DeclarationContributor
         $editor = $context->editor;
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-            //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 
@@ -77,60 +76,43 @@ final class ClassDeclarationContributor implements DeclarationContributor
             return;
         }
 
+        $zeroPosition = new Position(0, 0);
+        $defaultRange = new Range($zeroPosition, $zeroPosition);
+
         foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $value) {
-            if ($value->value->fqn !== $className) {
+            /** @var ClassData $data */
+            $data = $value->value;
+            if ($data->fqn !== $className) {
                 continue;
             }
             $consumer(new Location(
                 uri: $value->uri,
-                range: $this->positionToRange($value->uri, $value->value->startPosition, $context),
+                range: $defaultRange,
             ));
         }
 
         foreach ($this->indexLookup->findByKey(InterfaceIndexer::class) as $value) {
-            if ($value->value->fqn !== $className) {
+            /** @var InterfaceData $data */
+            $data = $value->value;
+            if ($data->fqn !== $className) {
                 continue;
             }
             $consumer(new Location(
                 uri: $value->uri,
-                range: $this->positionToRange($value->uri, $value->value->startPosition, $context),
+                range: $defaultRange,
             ));
         }
 
         foreach ($this->indexLookup->findByKey(TraitIndexer::class) as $value) {
-            if ($value->value->fqn !== $className) {
+            /** @var TraitData $data */
+            $data = $value->value;
+            if ($data->fqn !== $className) {
                 continue;
             }
             $consumer(new Location(
                 uri: $value->uri,
-                range: $this->positionToRange($value->uri, $value->value->startPosition, $context),
+                range: $defaultRange,
             ));
         }
-
-        foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $value) {
-            if ($value->value->fqn !== $className) {
-                continue;
-            }
-            $consumer(new Location(
-                uri: $value->uri,
-                range: $this->positionToRange($value->uri, $value->value->startPosition, $context),
-            ));
-        }
-    }
-
-    private function positionToRange(string $uri, int $startPosition, DeclarationContext $context): Range
-    {
-        $textDocumentIdentifier = $this->documentIdentifierFactory->create($uri);
-        $source = $this->fileManager->findPsiFile($context->editor, $textDocumentIdentifier);
-        if ($source === null) {
-            $zeroPosition = new Position(0, 0);
-
-            return new Range($zeroPosition, $zeroPosition);
-        }
-
-        [$line, $column] = Tree::toLineColumn($source->ast->document, $startPosition);
-        $exactPosition = new Position($line, $column);
-
-        return new Range($exactPosition, $exactPosition);
     }
 }

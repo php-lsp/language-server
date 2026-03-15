@@ -5,18 +5,21 @@ declare(strict_types=1);
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
-use App\Module\Indexing\Storage\IndexData\PropertyData;
+use App\Module\Indexing\Data\NodeTypeExtractor;
+use App\Module\Indexing\Data\PropertyData;
+use App\Module\Indexing\Data\Visibility;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
-use PhpParser\Node;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\Trait_;
 
-#[AsIndexer]
 /**
- * @extends AbstractPhpIndexer<PropertyData>
+ * @extends AbstractPhpIndexer<list<PropertyData>>
  */
+#[AsIndexer]
 class PropertyIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
@@ -30,59 +33,83 @@ class PropertyIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($classLikes as $classLike) {
-            $className = $classLike->namespacedName?->toString() ?? '';
-            $properties = Tree::childrenOfType($classLike, Property::class);
+            if ($classLike->name === null) {
+                continue;
+            }
 
-            foreach ($properties as $property) {
-                foreach ($property->props as $prop) {
-                    $name = $prop->name->toString();
-                    $key = $className . '::$' . $name;
+            $className = $classLike->namespacedName?->toString() ?? $classLike->name->toString();
+            $properties = $this->extractProperties($classLike, $className);
 
-                    $visibility = 'public';
-                    if ($property->isPrivate()) {
-                        $visibility = 'private';
-                    } elseif ($property->isProtected()) {
-                        $visibility = 'protected';
-                    }
-
-                    $results[$key] = new PropertyData(
-                        name: $name,
-                        className: $className,
-                        startPosition: $property->getStartFilePos(),
-                        endPosition: $property->getEndFilePos(),
-                        visibility: $visibility,
-                        type: $this->extractType($property->type),
-                        isStatic: $property->isStatic(),
-                        isReadonly: $property->isReadonly(),
-                    );
-                }
+            if ($properties !== []) {
+                $results[$className] = $properties;
             }
         }
 
         return $results;
     }
 
-    private function extractType(?Node $type): ?string
+    /**
+     * @return list<PropertyData>
+     */
+    private function extractProperties(Class_|Trait_ $classLike, string $className): array
     {
-        if ($type === null) {
-            return null;
-        }
-        if ($type instanceof Node\Name) {
-            return $type->toString();
-        }
-        if ($type instanceof Node\Identifier) {
-            return $type->toString();
-        }
-        if ($type instanceof Node\NullableType) {
-            return '?' . $this->extractType($type->type);
-        }
-        if ($type instanceof Node\UnionType) {
-            return implode('|', array_map(fn(Node $t) => $this->extractType($t), $type->types));
-        }
-        if ($type instanceof Node\IntersectionType) {
-            return implode('&', array_map(fn(Node $t) => $this->extractType($t), $type->types));
+        $properties = [];
+
+        foreach ($classLike->stmts as $stmt) {
+            if ($stmt instanceof Property) {
+                foreach ($stmt->props as $prop) {
+                    $properties[] = new PropertyData(
+                        name: $prop->name->toString(),
+                        className: $className,
+                        startPosition: $stmt->getStartFilePos(),
+                        endPosition: $stmt->getEndFilePos(),
+                        visibility: NodeTypeExtractor::extractVisibility($stmt),
+                        type: NodeTypeExtractor::typeToString($stmt->type),
+                        isStatic: $stmt->isStatic(),
+                        isReadonly: $stmt->isReadonly(),
+                        isPromoted: false,
+                    );
+                }
+            }
+
+            if ($stmt instanceof ClassMethod && $stmt->name->toString() === '__construct') {
+                foreach ($stmt->params as $param) {
+                    if ($param->flags === 0) {
+                        continue;
+                    }
+
+                    $varName = $param->var instanceof \PhpParser\Node\Expr\Variable && is_string($param->var->name)
+                        ? $param->var->name
+                        : '';
+
+                    $properties[] = new PropertyData(
+                        name: $varName,
+                        className: $className,
+                        startPosition: $param->getStartFilePos(),
+                        endPosition: $param->getEndFilePos(),
+                        visibility: $this->paramVisibility($param),
+                        type: NodeTypeExtractor::typeToString($param->type),
+                        isStatic: false,
+                        isReadonly: (bool) ($param->flags & \PhpParser\Modifiers::READONLY),
+                        isPromoted: true,
+                    );
+                }
+            }
         }
 
-        return null;
+        return $properties;
+    }
+
+    private function paramVisibility(Param $param): Visibility
+    {
+        if (($param->flags & \PhpParser\Modifiers::PRIVATE) !== 0) {
+            return Visibility::Private;
+        }
+
+        if (($param->flags & \PhpParser\Modifiers::PROTECTED) !== 0) {
+            return Visibility::Protected;
+        }
+
+        return Visibility::Public;
     }
 }

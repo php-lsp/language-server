@@ -8,7 +8,7 @@ use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
-use App\Module\Document\DocumentIdentifierFactoryInterface;
+use App\Module\Indexing\Data\MethodData;
 use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
@@ -24,7 +24,6 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
     public function __construct(
         private readonly IndexLookup $indexLookup,
         private readonly InMemoryPsiFileManager $fileManager,
-        private readonly DocumentIdentifierFactoryInterface $documentIdentifierFactory,
     ) {}
 
     public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
@@ -32,7 +31,6 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
         $editor = $context->editor;
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-            //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 
@@ -49,30 +47,27 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
         $className = $node->class->toString();
         $methodName = $node->name->toString();
 
+        $zeroPosition = new Position(0, 0);
+        $startRange = new Range($zeroPosition, $zeroPosition);
+
         foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $value) {
-            if ($value->value->className !== $className) {
-                continue;
-            }
-            if ($value->value->name !== $methodName) {
+            if ($value->key !== $className) {
                 continue;
             }
 
-            $textDocumentIdentifier = $this->documentIdentifierFactory->create($value->uri);
-            $source = $this->fileManager->findPsiFile($context->editor, $textDocumentIdentifier);
+            /** @var list<MethodData> $methods */
+            $methods = $value->value;
 
-            if ($source !== null) {
-                [$line, $column] = Tree::toLineColumn($source->ast->document, $value->value->startPosition);
-                $exactPosition = new Position($line, $column);
-                $range = new Range($exactPosition, $exactPosition);
-            } else {
-                $zeroPosition = new Position(0, 0);
-                $range = new Range($zeroPosition, $zeroPosition);
+            foreach ($methods as $method) {
+                if ($method->name !== $methodName) {
+                    continue;
+                }
+
+                $consumer(new Location(
+                    uri: $value->uri,
+                    range: $startRange,
+                ));
             }
-
-            $consumer(new Location(
-                uri: $value->uri,
-                range: $range,
-            ));
         }
     }
 }

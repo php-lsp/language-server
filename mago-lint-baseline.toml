@@ -153,7 +153,7 @@ count = 1
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (1.9800000000000002)."
+message = "Class has a high kan defect score (1.61)."
 count = 1
 
 [[issues]]
@@ -173,12 +173,6 @@ file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
 count = 8
-
-[[issues]]
-file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
 
 [[issues]]
 file = "app/Module/Documentation/ClassDocumentationContributor.php"
@@ -223,6 +217,36 @@ message = "This arrow function does not use `$this` and should be declared stati
 count = 1
 
 [[issues]]
+file = "app/Module/Indexing/Data/ClassData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ConstantData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/MethodData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ParameterData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/PropertyData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
 file = "app/Module/Indexing/IndexLookup.php"
 code = "strict-types"
 message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
@@ -253,70 +277,16 @@ message = "Missing `declare(strict_types=1);` statement at the beginning of the 
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 2
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
-code = "prefer-first-class-callable"
-message = "Use first-class callable syntax `...` instead of a arrow function."
-count = 2
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
-code = "prefer-first-class-callable"
-message = "Use first-class callable syntax `...` instead of a arrow function."
-count = 2
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
-code = "prefer-first-class-callable"
-message = "Use first-class callable syntax `...` instead of a arrow function."
-count = 2
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/GlobalConstantIndexer.php"
+file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/GlobalConstantIndexer.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
+file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.02)."
 count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/GlobalConstantIndexer.php"
-code = "halstead"
-message = "Method has a high halstead effort"
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/GlobalConstantIndexer.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 4
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
-code = "prefer-first-class-callable"
-message = "Use first-class callable syntax `...` instead of a arrow function."
-count = 2
 
 [[issues]]
 file = "app/Module/Indexing/Storage/Entry.php"
@@ -517,18 +487,6 @@ message = "Class has a high kan defect score (1.7000000000000002)."
 count = 1
 
 [[issues]]
-file = "app/Module/Signature/FunctionSignatureContributor.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/FunctionSignatureContributor.php"
-code = "kan-defect"
-message = "Class has a high kan defect score (1.7400000000000002)."
-count = 1
-
-[[issues]]
 file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -537,7 +495,7 @@ count = 1
 [[issues]]
 file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (2.49)."
+message = "Class has a high kan defect score (2.79)."
 count = 1
 
 [[issues]]

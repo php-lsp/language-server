@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
-use App\Module\Indexing\Storage\IndexData\TraitData;
+use App\Module\Indexing\Data\TraitData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use PhpParser\Node\Stmt\Trait_;
 
-#[AsIndexer]
 /**
  * @extends AbstractPhpIndexer<TraitData>
  */
+#[AsIndexer]
 class TraitIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
@@ -27,7 +27,11 @@ class TraitIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($traits as $trait) {
-            $fqn = $trait->namespacedName->toString();
+            if ($trait->name === null) {
+                continue;
+            }
+
+            $fqn = $trait->namespacedName?->toString() ?? $trait->name->toString();
 
             $results[$fqn] = new TraitData(
                 fqn: $fqn,

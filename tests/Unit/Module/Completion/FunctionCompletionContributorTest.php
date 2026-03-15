@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Completion;
 
 use App\Module\Completion\FunctionCompletionContributor;
-use App\Module\Indexing\Storage\IndexData\FunctionData;
+use App\Module\Indexing\Data\FunctionData;
 use App\Tests\Support\CompletionTestHelper;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\PsiFileFactory;
@@ -23,7 +23,7 @@ final class FunctionCompletionContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.functions.fqn' => [
-                'file:///test.php' => ['myFunc' => new FunctionData('myFunc', 6, 32, [], null)],
+                'file:///test.php' => ['myFunc' => new FunctionData('myFunc', 0, 30, null, [])],
             ],
         ]);
         $contributor = new FunctionCompletionContributor($lookup);

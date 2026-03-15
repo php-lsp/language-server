@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Completion;
 
 use App\Module\Completion\ClassesCompletionContributor;
+use App\Module\Indexing\Data\ClassData;
 use App\Module\Indexing\Indexer\ClassIndexer;
-use App\Module\Indexing\Storage\IndexData\ClassData;
 use App\Tests\Support\CompletionTestHelper;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\PsiFileFactory;
@@ -24,7 +24,7 @@ final class ClassesCompletionContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///test.php' => ['App\\MyClass' => new ClassData('App\\MyClass', 0, 10, null, [], false, false)],
+                'file:///test.php' => ['App\\MyClass' => new ClassData('App\\MyClass', 0, 50, false, false, false, null, [])],
             ],
         ]);
         $contributor = new ClassesCompletionContributor($lookup);
@@ -45,7 +45,7 @@ final class ClassesCompletionContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///test.php' => ['App\\Foo' => new ClassData('App\\Foo', 0, 10, null, [], false, false)],
+                'file:///test.php' => ['App\\Foo' => new ClassData('App\\Foo', 0, 50, false, false, false, null, [])],
             ],
         ]);
         $contributor = new ClassesCompletionContributor($lookup);
