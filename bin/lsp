@@ -84,7 +84,7 @@ if (!in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed', 'micro'], true)) {
         return;
     }
 
-    $projectDir = dirname(__DIR__);
+    $projectDir = getcwd() ?: dirname(__DIR__);
     $envFile = $projectDir . '/.env';
 
     if (is_file($envFile)) {
