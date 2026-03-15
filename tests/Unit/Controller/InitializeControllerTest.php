@@ -12,6 +12,7 @@ use App\Module\Notification\ActiveConnectionProvider;
 use App\Module\Notification\ProgressNotifier;
 use App\Module\Notification\ServerNotificationSender;
 use App\Module\Workspace\ProjectManager;
+use App\Tests\Support\MockHelper;
 use App\Tests\TestCase;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
 use Lsp\Protocol\Type\InitializeParams;
@@ -59,7 +60,7 @@ final class InitializeControllerTest extends TestCase
         $sender = new ServerNotificationSender($connectionProvider, $resultProvider, $logger);
         $progressNotifier = new ProgressNotifier($sender);
 
-        $fileCollector = $this->createMock(IndexerFileCollector::class);
+        $fileCollector = MockHelper::mock(IndexerFileCollector::class);
         $fileCollector->method('collect')->willReturn([]);
 
         $indexer = new Indexer(
