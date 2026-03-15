@@ -171,74 +171,9 @@ jobs:
         with:
           php-version: '8.4'
           coverage: none
-          tools: phpcov
 
       - name: Merge Coverage Reports
-        run: |
-          mkdir -p coverage-merged
-          # Convert clover XML files to a combined text report
-          # Use php to merge clover XML coverage
-          php -r '
-          $files = glob("coverage-*.xml");
-          if (count($files) === 0) { echo "No coverage files found\n"; exit(1); }
-
-          $mergedLines = [];
-          $mergedCoveredLines = [];
-          $totalStatements = 0;
-          $coveredStatements = 0;
-
-          foreach ($files as $file) {
-              $xml = simplexml_load_file($file);
-              if ($xml === false) continue;
-
-              foreach ($xml->project->file ?? [] as $fileNode) {
-                  $fileName = (string)$fileNode["name"];
-                  foreach ($fileNode->line ?? [] as $line) {
-                      $lineNum = (int)$line["num"];
-                      $count = (int)$line["count"];
-                      $type = (string)$line["type"];
-                      if ($type !== "stmt") continue;
-
-                      $key = $fileName . ":" . $lineNum;
-                      if (!isset($mergedLines[$key])) {
-                          $mergedLines[$key] = 0;
-                          $totalStatements++;
-                      }
-                      if ($mergedLines[$key] === 0 && $count > 0) {
-                          $coveredStatements++;
-                      }
-                      $mergedLines[$key] = max($mergedLines[$key], $count);
-                  }
-              }
-
-              // Also check nested package/file structure
-              foreach ($xml->project->package ?? [] as $package) {
-                  foreach ($package->file ?? [] as $fileNode) {
-                      $fileName = (string)$fileNode["name"];
-                      foreach ($fileNode->line ?? [] as $line) {
-                          $lineNum = (int)$line["num"];
-                          $count = (int)$line["count"];
-                          $type = (string)$line["type"];
-                          if ($type !== "stmt") continue;
-
-                          $key = $fileName . ":" . $lineNum;
-                          if (!isset($mergedLines[$key])) {
-                              $mergedLines[$key] = 0;
-                              $totalStatements++;
-                          }
-                          if ($mergedLines[$key] === 0 && $count > 0) {
-                              $coveredStatements++;
-                          }
-                          $mergedLines[$key] = max($mergedLines[$key], $count);
-                      }
-                  }
-              }
-          }
-
-          $percentage = $totalStatements > 0 ? round(($coveredStatements / $totalStatements) * 100, 2) : 0;
-          echo "Lines: " . $percentage . "% (" . $coveredStatements . "/" . $totalStatements . ")\n";
-          file_put_contents("coverage-output.txt", "Lines: " . $percentage . "%\n");
-          '
+        run: php .github/scripts/merge-coverage.php coverage-*.xml
 
       - name: Extract Coverage Percentage
         id: coverage
@@ -253,7 +188,7 @@ jobs:
       - name: Run Mago Lint
         id: mago-lint
         run: |
-          mago lint --baseline mago-lint-baseline.toml 2>&1 | tee mago-lint-output.txt || true
+          mago lint --baseline mago-lint-baseline.toml 2>&1 | tail -5 | tee mago-lint-output.txt || true
           echo "output<<EOF_MAGO_LINT" >> "$GITHUB_OUTPUT"
           cat mago-lint-output.txt >> "$GITHUB_OUTPUT"
           echo "EOF_MAGO_LINT" >> "$GITHUB_OUTPUT"
@@ -261,7 +196,7 @@ jobs:
       - name: Run Mago Analyze
         id: mago-analyze
         run: |
-          mago analyze --baseline mago-analysis-baseline.toml 2>&1 | tee mago-analyze-output.txt || true
+          mago analyze --baseline mago-analysis-baseline.toml 2>&1 | tail -5 | tee mago-analyze-output.txt || true
           echo "output<<EOF_MAGO_ANALYZE" >> "$GITHUB_OUTPUT"
           cat mago-analyze-output.txt >> "$GITHUB_OUTPUT"
           echo "EOF_MAGO_ANALYZE" >> "$GITHUB_OUTPUT"
@@ -296,7 +231,6 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |
           COVERAGE=${{ steps.coverage.outputs.percentage }}
-          # Determine color based on coverage
           if (( $(echo "$COVERAGE >= 80" | bc -l) )); then
             COLOR="brightgreen"
           elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
@@ -306,7 +240,6 @@ jobs:
           else
             COLOR="red"
           fi
-          # Download badge SVG from shields.io
           curl -s "https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}" -o .github/coverage-badge.svg
 
       - name: Commit Coverage Badge
