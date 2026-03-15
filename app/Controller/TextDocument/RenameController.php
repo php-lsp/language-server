@@ -7,10 +7,11 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\References\ReferenceConsumer;
 use App\Core\Contracts\References\ReferenceContext;
 use App\Core\Contracts\References\ReferenceContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
-use Lsp\Protocol\Type\PrepareRenameParams;
+use Lsp\Protocol\Type\RenameParams;
+use Lsp\Protocol\Type\TextEdit;
+use Lsp\Protocol\Type\WorkspaceEdit;
 use Lsp\Router\Attribute\Route;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
@@ -25,12 +26,11 @@ final class RenameController
     public function __construct(
         #[AutowireIterator('lsp.referenceContributors')]
         iterable $contributors,
-        private InMemoryPsiFileManager $fileManager,
     ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
-    public function __invoke(EditorInterface $editor, PrepareRenameParams $params)
+    public function __invoke(EditorInterface $editor, RenameParams $params): ?WorkspaceEdit
     {
         $context = new ReferenceContext($params->textDocument, $params->position, $editor);
         $consumer = new ReferenceConsumer();
@@ -39,7 +39,20 @@ final class RenameController
             $contributor->contribute($context, $consumer);
         }
 
-        //        $consumer->results;
-        //        return Tree::getRange($element, $file);
+        if ($consumer->results === []) {
+            return null;
+        }
+
+        /** @var array<non-empty-string, list<TextEdit>> $changes */
+        $changes = [];
+
+        foreach ($consumer->results as $location) {
+            $changes[$location->uri][] = new TextEdit(
+                range: $location->range,
+                newText: $params->newName,
+            );
+        }
+
+        return new WorkspaceEdit(changes: $changes);
     }
 }

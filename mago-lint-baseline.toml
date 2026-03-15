@@ -26,20 +26,44 @@ count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "no-redundant-use"
-message = "Unused import: `AsController`."
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
 count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "no-redundant-use"
-message = "Unused import: `Route`."
+code = "halstead"
+message = "Method has a high halstead difficulty"
 count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+code = "kan-defect"
+message = "Class has a high kan defect score (2.74)."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.55)."
 count = 1
 
 [[issues]]
@@ -61,9 +85,51 @@ message = "Missing `declare(strict_types=1);` statement at the beginning of the 
 count = 1
 
 [[issues]]
+file = "app/Module/Completion/ClassConstantCompletionContributor.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.0300000000000002)."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/EnumCaseCompletionContributor.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
+count = 1
+
+[[issues]]
 file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
 code = "strict-types"
 message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/VariableCompletionContributor.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "app/Module/Completion/VariableCompletionContributor.php"
+code = "prefer-early-continue"
+message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -109,9 +175,33 @@ message = "Avoid `elseif` clauses."
 count = 8
 
 [[issues]]
-file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.9800000000000002)."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ConstantDocumentationContributor.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
 count = 1
 
 [[issues]]
@@ -124,6 +214,36 @@ count = 1
 file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
 code = "prefer-static-closure"
 message = "This arrow function does not use `$this` and should be declared static."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ClassData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ConstantData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/MethodData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ParameterData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/PropertyData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -157,21 +277,15 @@ message = "Missing `declare(strict_types=1);` statement at the beginning of the 
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/ClassIndexer.php"
-code = "tagged-todo"
-message = "TODO should be tagged with (@username) or (#issue)."
+file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
-code = "tagged-todo"
-message = "TODO should be tagged with (@username) or (#issue)."
+file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.02)."
 count = 1
 
 [[issues]]
@@ -196,6 +310,30 @@ count = 2
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "strict-types"
 message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/ClassData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/ConstantData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/MethodData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/PropertyData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
 count = 1
 
 [[issues]]
@@ -349,18 +487,6 @@ message = "Class has a high kan defect score (1.7000000000000002)."
 count = 1
 
 [[issues]]
-file = "app/Module/Signature/FunctionSignatureContributor.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/FunctionSignatureContributor.php"
-code = "kan-defect"
-message = "Class has a high kan defect score (1.7400000000000002)."
-count = 1
-
-[[issues]]
 file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -369,13 +495,7 @@ count = 1
 [[issues]]
 file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (2.49)."
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/MethodSignatureContributor.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
+message = "Class has a high kan defect score (2.79)."
 count = 1
 
 [[issues]]

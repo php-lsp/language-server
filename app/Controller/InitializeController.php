@@ -11,6 +11,7 @@ use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionOptions;
 use Lsp\Protocol\Type\DeclarationOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
+use Lsp\Protocol\Type\DocumentSymbolOptions;
 use Lsp\Protocol\Type\FileOperationOptions;
 use Lsp\Protocol\Type\FileOperationRegistrationOptions;
 use Lsp\Protocol\Type\InitializeParams;
@@ -24,6 +25,7 @@ use Lsp\Protocol\Type\TextDocumentSyncKind;
 use Lsp\Protocol\Type\WorkspaceFolder;
 use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
 use Lsp\Protocol\Type\WorkspaceOptions;
+use Lsp\Protocol\Type\WorkspaceSymbolOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\Project\ProjectFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -68,13 +70,14 @@ final class InitializeController
                 renameProvider: new RenameOptions(
                     prepareProvider: true,
                 ),
-                //                documentSymbolProvider: new DocumentSymbolOptions(),
+                documentSymbolProvider: new DocumentSymbolOptions(),
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
                     identifier: null,
                     workDoneProgress: null,
                 ),
+                workspaceSymbolProvider: new WorkspaceSymbolOptions(),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(
                         supported: true,

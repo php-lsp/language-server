@@ -47,7 +47,7 @@ final class PrepareRenameControllerTest extends TestCase
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new PrepareRenameParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
-            position: ProtocolFactory::position(0, 10),
+            position: ProtocolFactory::position(0, 13),
         );
 
         $result = $controller($editor, $params);

@@ -33,6 +33,7 @@ final class ShortcutCompletionContributor implements CompletionContributor
     {
         yield from $this->globalEntities($node);
         yield from $this->classSnippets($node);
+        yield from $this->controlFlowSnippets($node);
     }
 
     public function classSnippets(Node $node): \Generator
@@ -126,6 +127,122 @@ final class ShortcutCompletionContributor implements CompletionContributor
                 {
                     ${0}
                 }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+    }
+
+    private function controlFlowSnippets(Node $node): iterable
+    {
+        yield 'foreach' => new CompletionItem(
+            label: 'foreach',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'foreach (...) { }',
+            insertText: <<<'TEXT'
+                foreach (${1:\$array} as ${2:\$key} => ${3:\$value}) {
+                    ${0}
+                }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield 'for' => new CompletionItem(
+            label: 'for',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'for (...) { }',
+            insertText: <<<'TEXT'
+                for (${1:\$i} = 0; ${1:\$i} < ${2:\$count}; ${1:\$i}++) {
+                    ${0}
+                }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield 'while' => new CompletionItem(
+            label: 'while',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'while (...) { }',
+            insertText: <<<'TEXT'
+                while (${1:condition}) {
+                    ${0}
+                }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield 'do' => new CompletionItem(
+            label: 'do',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'do { } while (...)',
+            insertText: <<<'TEXT'
+                do {
+                    ${0}
+                } while (${1:condition});
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield 'if' => new CompletionItem(
+            label: 'if',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'if (...) { }',
+            insertText: <<<'TEXT'
+                if (${1:condition}) {
+                    ${0}
+                }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield 'ife' => new CompletionItem(
+            label: 'ife',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'if (...) { } else { }',
+            insertText: <<<'TEXT'
+                if (${1:condition}) {
+                    ${2}
+                } else {
+                    ${0}
+                }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield 'try' => new CompletionItem(
+            label: 'try',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'try { } catch (...) { }',
+            insertText: <<<'TEXT'
+                try {
+                    ${1}
+                } catch (${2:\Throwable} ${3:\$e}) {
+                    ${0}
+                }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield 'match' => new CompletionItem(
+            label: 'match',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'match (...) { }',
+            insertText: <<<'TEXT'
+                match (${1:\$value}) {
+                    ${2:pattern} => ${3:result},
+                    default => ${0},
+                }
+                TEXT,
+            insertTextFormat: InsertTextFormat::Snippet,
+        );
+
+        yield '/**' => new CompletionItem(
+            label: '/**',
+            kind: CompletionItemKind::SnippetKind,
+            detail: 'docblock comment',
+            insertText: <<<'TEXT'
+                /**
+                 * ${0}
+                 */
                 TEXT,
             insertTextFormat: InsertTextFormat::Snippet,
         );
