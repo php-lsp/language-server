@@ -211,9 +211,26 @@ After completing any code change:
 5. `composer mago:format:check` — verify formatting
 6. `composer test` — verify all tests pass
 7. For new features: check coverage >= 80%
-8. Push and verify all CI workflows are green
+8. `/review-docs` — synchronize documentation with code changes
+9. `/review-architecture` — check dependency violations and coupling
+10. Push and verify all CI workflows are green
 
 If **any** step fails — fix and repeat from step 1.
+
+## Review Skills
+
+Custom slash commands for code review. Run in order after quality checks pass.
+
+| Skill | Command | When to Run | Purpose |
+|-------|---------|-------------|---------|
+| Tests | `/review-tests` | When writing or fixing tests | Enforce test doubles, structure, coverage rules |
+| Docs | `/review-docs` | After tests and static analysis | Sync docs with code changes, LLM-optimized style |
+| Architecture | `/review-architecture` | Last, after `/review-docs` | Detect dependency violations, layer boundary crossings |
+
+Pipeline order: code changes → mago fix/format → lint/analyze → tests →
+`/review-tests` (if writing tests) → `/review-docs` → `/review-architecture` → push.
+
+Skill definitions: [.claude/skills/](.claude/skills/)
 
 ## Guidelines
 
