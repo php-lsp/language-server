@@ -15,59 +15,53 @@ and the [LSP 3.18 specification](https://github.com/microsoft/language-server-pr
 |-----------------------------------|-------------|---------------------------------------------------|
 | `initialize` / `initialized`     | Done        | Workspace folders, project indexing                |
 | `$/setTrace`                      | Done        | Trace level setting                                |
-| `textDocument/completion`         | Done        | 5 contributors, parallel execution, 1s timeout    |
-| `textDocument/hover`              | Done        | 2 documentation contributors                      |
-| `textDocument/declaration`        | Done        | 3 declaration contributors                        |
+| `textDocument/completion`         | Done        | 15 contributors, parallel execution, 1s timeout   |
+| `textDocument/hover`              | Done        | 7 documentation contributors                      |
+| `textDocument/declaration`        | Done        | 7 declaration contributors                        |
+| `textDocument/definition`         | Done        | 4 definition contributors (class, function, method, variable) |
 | `textDocument/references`         | Done        | 7 reference contributors                          |
 | `textDocument/signatureHelp`      | Done        | 3 signature contributors                          |
 | `textDocument/prepareRename`      | Done        | Returns range of symbol under cursor               |
-| `textDocument/rename`             | **Stub**    | Controller exists but returns nothing              |
+| `textDocument/rename`             | Done        | Builds WorkspaceEdit from reference results        |
 | `textDocument/diagnostic`         | Done        | PHP parse errors only                              |
 | `textDocument/publishDiagnostics` | Done        | Push-model diagnostics                             |
-| `textDocument/documentSymbol`     | **Disabled**| Code present, not registered (`#[AsController]`)   |
+| `textDocument/documentSymbol`     | Done        | Classes, interfaces, traits, enums, functions, members |
+| `textDocument/documentHighlight`  | Done        | 2 contributors (variables, names)                  |
+| `textDocument/formatting`         | Done        | Delegates to external formatter (php-cs-fixer/phpcbf) |
+| `workspace/symbol`               | Done        | Project-wide symbol search via index               |
 
-### Indexing System (10 indexers)
+### Indexing System (16 indexers)
 
-- **Declarations:** class, function, interface, trait, class method
+- **Declarations:** class, function, interface, trait, enum, class method, property, global constant, namespace
 - **Usages:** class, function call, method call, property access, class constant
+- **Relationships:** inheritance (extends/implements)
 
 ---
 
 ## Roadmap
 
-### Phase 1 — Fix & Enable Existing Code
+### Phase 1 — Fix & Enable Existing Code ✓
 
-These are low-hanging fruit — code already exists but is incomplete or disabled.
+All Phase 1 items have been completed.
 
-- [ ] **`textDocument/rename`** — implement `WorkspaceEdit` creation from
-  reference results. The controller already collects references, just needs to
-  build the edit with `TextEdit` entries per document.
-  - *Contributor pattern:* reuse existing `ReferenceContributor` list
-  - *Implementation:* map each `Location` → `TextDocumentEdit` with new name
-  - *Edge cases:* renaming classes should also rename the file (like Intelephense)
-  - *Acceptance params type:* `RenameParams` (currently uses `PrepareRenameParams`)
+- [x] **`textDocument/rename`** — implemented. Builds `WorkspaceEdit` from
+  reference results using `TextEdit` entries per document.
 
-- [ ] **`textDocument/documentSymbol`** — enable the existing controller.
-  - *Steps:* add `#[AsController]` attribute, uncomment `documentSymbolProvider`
-    in `InitializeController`, add interface/enum/trait/constant support,
-    handle `null` from `findPsiFile`
-  - *Stretch:* extract into contributor pattern for extensibility
+- [x] **`textDocument/documentSymbol`** — enabled. Supports classes, interfaces,
+  traits, enums, functions, methods, properties, constants, enum cases.
 
-- [ ] **Indexing on initialize** — `walkWorkspaceFolder` has `return;` before
-  indexing. Re-enable with async/background execution so `initialize` doesn't
-  block.
+- [x] **Indexing on initialize** — re-enabled. `walkWorkspaceFolder` now
+  indexes the project and loads PHP stubs on initialization.
 
 ### Phase 2 — Core Features (Must-Have)
 
 Essential features that every competitive PHP LSP provides.
 
-- [ ] **`textDocument/definition`** (`definitionProvider`)
-  Separate from `declaration`. In LSP, "definition" goes to the concrete
-  implementation; "declaration" goes to the interface/abstract. Most editors
-  bind `Ctrl+Click` / `F12` to `definition`, not `declaration`.
-  - *Implementation:* add `DefinitionContributor` interface + attribute
-  - *Reuse:* `DeclarationContributor` logic, plus resolving interfaces →
-    concrete classes
+- [x] **`textDocument/definition`** (`definitionProvider`)
+  Implemented with 4 contributors: class, function, method, variable.
+  Separate from `declaration` — `definition` goes to the concrete
+  implementation. Most editors bind `Ctrl+Click` / `F12` to `definition`.
+  - *Architecture:* `DefinitionContributor` interface + `#[AsDefinitionContributor]`
 
 - [ ] **`textDocument/typeDefinition`** (`typeDefinitionProvider`)
   Navigate to the type of a variable/parameter. E.g. clicking `$user` jumps to
@@ -87,23 +81,21 @@ Essential features that every competitive PHP LSP provides.
   - **Remove unused import** — quick-fix for unused `use`
   - *Architecture:* `CodeActionContributor` interface with `#[AsCodeActionContributor]`
 
-- [ ] **`textDocument/formatting`** (`documentFormattingProvider`)
-  Format entire document. Delegate to external tool (Mago, php-cs-fixer, phpcbf).
-  - *Implementation:* run formatter as subprocess, return `TextEdit[]`
-  - *Config:* allow user to configure formatter command in workspace settings
+- [x] **`textDocument/formatting`** (`documentFormattingProvider`)
+  Implemented. Delegates to external tool (php-cs-fixer, phpcbf) via
+  subprocess, returns full-document `TextEdit[]`.
 
 - [ ] **`textDocument/rangeFormatting`** (`documentRangeFormattingProvider`)
   Format a selected range only. Same as above but with range parameter.
 
-- [ ] **`textDocument/documentHighlight`** (`documentHighlightProvider`)
-  Highlight all occurrences of symbol under cursor within the document.
-  - *Implementation:* lightweight version of `references` scoped to current file
-  - *Both Intelephense and Phpactor support this*
+- [x] **`textDocument/documentHighlight`** (`documentHighlightProvider`)
+  Implemented with 2 contributors: variable highlight (with read/write
+  distinction) and name highlight (FullyQualified names).
+  - *Architecture:* `DocumentHighlightContributor` + `#[AsDocumentHighlightContributor]`
 
-- [ ] **`workspace/symbol`** (`workspaceSymbolProvider`)
-  Search for symbols across the entire workspace (Ctrl+T in most editors).
-  - *Use existing index:* query `IndexLookup` by name pattern (fuzzy matching)
-  - *Return:* `SymbolInformation[]` with location
+- [x] **`workspace/symbol`** (`workspaceSymbolProvider`)
+  Implemented. Searches classes, interfaces, traits, enums, functions,
+  methods, properties, and constants via `IndexLookup`.
 
 ### Phase 3 — Enhanced Navigation (Nice-to-Have)
 

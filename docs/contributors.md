@@ -16,8 +16,10 @@ the others.
 | Type | Interface | Attribute | DI Tag |
 |------|-----------|-----------|--------|
 | Code completion | `CompletionContributor` | `#[AsCompletionContributor]` | `lsp.completionContributors` |
-| Go to definition | `DeclarationContributor` | `#[AsDeclarationContributor]` | `lsp.declarationContributors` |
+| Go to declaration | `DeclarationContributor` | `#[AsDeclarationContributor]` | `lsp.declarationContributors` |
+| Go to definition | `DefinitionContributor` | `#[AsDefinitionContributor]` | `lsp.definitionContributors` |
 | Documentation (hover) | `DocumentationContributor` | `#[AsDocumentationContributor]` | `lsp.documentationContributors` |
+| Document highlight | `DocumentHighlightContributor` | `#[AsDocumentHighlightContributor]` | `lsp.documentHighlightContributors` |
 | Find references | `ReferenceContributor` | `#[AsReferenceContributor]` | `lsp.referenceContributors` |
 | Function signatures | `SignatureContributor` | `#[AsSignatureContributor]` | `lsp.signatureContributors` |
 | Indexing | `IndexerInterface` | `#[AsIndexer]` | `lsp.indexers` |

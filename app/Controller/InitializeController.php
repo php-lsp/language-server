@@ -47,7 +47,6 @@ final class InitializeController
             capabilities: new ServerCapabilities(
                 textDocumentSync: TextDocumentSyncKind::Incremental,
                 completionProvider: new CompletionOptions(
-                    //                    triggerCharacters: [],
                     triggerCharacters: ['.', ':', '<', '\'', '"', '`'],
                 ),
                 hoverProvider: true,
@@ -55,6 +54,9 @@ final class InitializeController
                     triggerCharacters: ['(', ',', ':', ' '],
                 ),
                 declarationProvider: true,
+                definitionProvider: true,
+                documentHighlightProvider: true,
+                documentFormattingProvider: true,
                 referencesProvider: true,
                 renameProvider: new RenameOptions(
                     prepareProvider: true,
@@ -84,13 +86,12 @@ final class InitializeController
         $project = $this->projectFactory->create($folder->uri, $folder->name);
         $this->projectManager->setProject($project);
 
-        return;
         $start = microtime(true);
-        $this->logger->info('Indexing project: ' . $start);
+        $this->logger->info('Indexing project: ' . $folder->uri);
 
         $this->indexer->index($project);
 
-        $message = 'Indexing finished in ' . (microtime(true) - $start) . ' seconds';
+        $message = 'Indexing finished in ' . round(microtime(true) - $start, 2) . ' seconds';
 
         $this->logger->info($message);
         $this->notificationSender->showMessage($message);

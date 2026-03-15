@@ -3,8 +3,9 @@
 ## Project Overview
 
 PHP Language Server Protocol (LSP) implementation — a modular server providing
-code intelligence (completion, declarations, hover, references, rename,
-diagnostics) to IDEs and editors via the LSP standard.
+code intelligence (completion, definition, declaration, hover, references,
+rename, document highlight, formatting, diagnostics) to IDEs and editors via
+the LSP standard.
 
 - **Language:** PHP 8.4+
 - **Framework:** php-lsp/kernel + Symfony DependencyInjection
@@ -46,7 +47,10 @@ app/
 │   └── TextDocument/          # textDocument/* method handlers
 │       ├── CompletionController.php
 │       ├── DeclarationController.php
-│       ├── DocumentSymbolController.php  # textDocument/documentSymbol
+│       ├── DefinitionController.php
+│       ├── DocumentHighlightController.php
+│       ├── DocumentSymbolController.php
+│       ├── FormattingController.php
 │       ├── HoverController.php
 │       ├── RenameController.php
 │       ├── PrepareRenameController.php
@@ -55,7 +59,9 @@ app/
 ├── Core/Contracts/            # Plugin interfaces and attributes
 │   ├── Completion/            # CompletionContributor, AsCompletionContributor
 │   ├── Declaration/           # DeclarationContributor, AsDeclarationContributor
+│   ├── Definition/            # DefinitionContributor, AsDefinitionContributor
 │   ├── Documentation/         # DocumentationContributor, AsDocumentationContributor
+│   ├── Highlight/             # DocumentHighlightContributor, AsDocumentHighlightContributor
 │   ├── Indexing/              # IndexerInterface, AsIndexer
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
@@ -63,7 +69,9 @@ app/
 ├── Module/                    # Feature implementations
 │   ├── Completion/            # Completion contributors (15): keywords, classes, functions, interfaces, traits, enums, constants, superglobals, shortcuts, class members, class constants, enum cases, use statements, namespaces, variables
 │   ├── Declaration/           # Declaration contributors (7): class, method, function, property, class constant, global constant, variable
+│   ├── Definition/            # Definition contributors (4): class, function, method, variable
 │   ├── Documentation/         # Documentation/hover contributors (7): docblock, nodes-trace, class, function, method, property, constant
+│   ├── Highlight/             # Document highlight contributors (2): variable, name
 │   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, constant
 │   ├── Signature/             # Signature contributors (3): function, method, constructor
 │   ├── Indexing/              # Declaration indexers (11) + usage indexers (5) + storage + IndexData value objects
@@ -101,7 +109,9 @@ Available contributor types and their DI tags:
 |------------------------------|--------------------------------|
 | `#[AsCompletionContributor]` | `lsp.completionContributors`   |
 | `#[AsDeclarationContributor]`| `lsp.declarationContributors`  |
+| `#[AsDefinitionContributor]` | `lsp.definitionContributors`   |
 | `#[AsDocumentationContributor]`| `lsp.documentationContributors`|
+| `#[AsDocumentHighlightContributor]`| `lsp.documentHighlightContributors`|
 | `#[AsReferenceContributor]`  | `lsp.referenceContributors`    |
 | `#[AsSignatureContributor]`  | `lsp.signatureContributors`    |
 | `#[AsIndexer]`               | `lsp.indexers`                 |
