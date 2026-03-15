@@ -44,36 +44,49 @@ app/
 ├── Controller/                # LSP request handlers (routes via #[Route] attributes)
 │   ├── InitializeController.php
 │   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
+│   ├── CancelRequestController.php  # $/cancelRequest — request cancellation
 │   └── TextDocument/          # textDocument/* method handlers
+│       ├── CodeActionController.php
 │       ├── CompletionController.php
 │       ├── DeclarationController.php
 │       ├── DefinitionController.php
 │       ├── DocumentHighlightController.php
 │       ├── DocumentSymbolController.php
 │       ├── FormattingController.php
+│       ├── RangeFormattingController.php
 │       ├── HoverController.php
+│       ├── ImplementationController.php
+│       ├── TypeDefinitionController.php
 │       ├── RenameController.php
 │       ├── PrepareRenameController.php
 │       ├── DiagnosticController.php
 │       └── ...
+├── Core/Cancellation/         # CancellationToken, CancellationTokenRegistry
 ├── Core/Contracts/            # Plugin interfaces and attributes
+│   ├── CodeAction/            # CodeActionContributor, AsCodeActionContributor
 │   ├── Completion/            # CompletionContributor, AsCompletionContributor
 │   ├── Declaration/           # DeclarationContributor, AsDeclarationContributor
 │   ├── Definition/            # DefinitionContributor, AsDefinitionContributor
 │   ├── Documentation/         # DocumentationContributor, AsDocumentationContributor
 │   ├── Highlight/             # DocumentHighlightContributor, AsDocumentHighlightContributor
+│   ├── Implementation/        # ImplementationContributor, AsImplementationContributor
 │   ├── Indexing/              # IndexerInterface, AsIndexer
+│   ├── PsiFile/               # PsiFileInterface, PsiFileManagerInterface
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
+│   ├── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
 │   └── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
 ├── Module/                    # Feature implementations
+│   ├── CodeAction/            # Code action contributors (2): import symbol, remove unused import
 │   ├── Completion/            # Completion contributors (15): keywords, classes, functions, interfaces, traits, enums, constants, superglobals, shortcuts, class members, class constants, enum cases, use statements, namespaces, variables
 │   ├── Declaration/           # Declaration contributors (7): class, method, function, property, class constant, global constant, variable
 │   ├── Definition/            # Definition contributors (4): class, function, method, variable
 │   ├── Documentation/         # Documentation/hover contributors (7): docblock, nodes-trace, class, function, method, property, constant
 │   ├── Highlight/             # Document highlight contributors (2): variable, name
+│   ├── Implementation/        # Implementation contributors (1): interface/class implementations
 │   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, constant
 │   ├── Signature/             # Signature contributors (3): function, method, constructor
+│   ├── TypeDefinition/        # Type definition contributors (1): type-aware navigation via TypeResolver
 │   ├── Indexing/              # Declaration indexers (11) + usage indexers (5) + storage + IndexData value objects
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── Document/              # Document loading and identification
@@ -107,13 +120,16 @@ Available contributor types and their DI tags:
 
 | Attribute                    | Tag                            |
 |------------------------------|--------------------------------|
+| `#[AsCodeActionContributor]` | `lsp.codeActionContributors`   |
 | `#[AsCompletionContributor]` | `lsp.completionContributors`   |
 | `#[AsDeclarationContributor]`| `lsp.declarationContributors`  |
 | `#[AsDefinitionContributor]` | `lsp.definitionContributors`   |
 | `#[AsDocumentationContributor]`| `lsp.documentationContributors`|
 | `#[AsDocumentHighlightContributor]`| `lsp.documentHighlightContributors`|
+| `#[AsImplementationContributor]`| `lsp.implementationContributors`|
 | `#[AsReferenceContributor]`  | `lsp.referenceContributors`    |
 | `#[AsSignatureContributor]`  | `lsp.signatureContributors`    |
+| `#[AsTypeDefinitionContributor]`| `lsp.typeDefinitionContributors`|
 | `#[AsIndexer]`               | `lsp.indexers`                 |
 
 ## Code Style

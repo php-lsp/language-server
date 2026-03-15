@@ -12,4 +12,6 @@ interface StorageInterface
     public function read(string $indexKey): iterable;
 
     public function write(string $indexKey, array $values, string $uri): void;
+
+    public function deleteByUri(string $uri): void;
 }

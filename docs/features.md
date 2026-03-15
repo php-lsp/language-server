@@ -63,30 +63,27 @@ Essential features that every competitive PHP LSP provides.
   implementation. Most editors bind `Ctrl+Click` / `F12` to `definition`.
   - *Architecture:* `DefinitionContributor` interface + `#[AsDefinitionContributor]`
 
-- [ ] **`textDocument/typeDefinition`** (`typeDefinitionProvider`)
-  Navigate to the type of a variable/parameter. E.g. clicking `$user` jumps to
-  `class User`.
-  - *Use `TypeResolver`* to get the type, then find declaration of that type
+- [x] **`textDocument/typeDefinition`** (`typeDefinitionProvider`)
+  Implemented with 1 contributor using `TypeResolver` to resolve the type
+  and then finding its declaration in the index.
 
-- [ ] **`textDocument/implementation`** (`implementationProvider`)
-  Find all implementations of an interface or abstract class/method.
-  - *Indexer work:* need `implements`/`extends` index
-  - *Both Intelephense (premium) and Phpactor support this*
+- [x] **`textDocument/implementation`** (`implementationProvider`)
+  Implemented with 1 contributor using the `InheritanceIndexer` to find
+  classes that implement/extend the target interface or class.
+  - *Architecture:* `ImplementationContributor` interface + `#[AsImplementationContributor]`
 
-- [ ] **`textDocument/codeAction`** (`codeActionProvider`)
-  Contextual actions at cursor position. Start with:
-  - **Import symbol** — add missing `use` statement
-  - **Implement interface methods** — generate method stubs
-  - **Add PHPDoc** — auto-generate docblock from signature
-  - **Remove unused import** — quick-fix for unused `use`
+- [x] **`textDocument/codeAction`** (`codeActionProvider`)
+  Implemented with 2 contributors:
+  - **Import symbol** — add missing `use` statement for unresolved names
+  - **Remove unused import** — quick-fix for unused `use` statements
   - *Architecture:* `CodeActionContributor` interface with `#[AsCodeActionContributor]`
 
 - [x] **`textDocument/formatting`** (`documentFormattingProvider`)
   Implemented. Delegates to external tool (php-cs-fixer, phpcbf) via
   subprocess, returns full-document `TextEdit[]`.
 
-- [ ] **`textDocument/rangeFormatting`** (`documentRangeFormattingProvider`)
-  Format a selected range only. Same as above but with range parameter.
+- [x] **`textDocument/rangeFormatting`** (`documentRangeFormattingProvider`)
+  Implemented. Formats a selected range by delegating to external formatter.
 
 - [x] **`textDocument/documentHighlight`** (`documentHighlightProvider`)
   Implemented with 2 contributors: variable highlight (with read/write

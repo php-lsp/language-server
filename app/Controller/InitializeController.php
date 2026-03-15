@@ -8,6 +8,7 @@ use App\Module\Indexing\Indexer;
 use App\Module\Notification\ServerNotificationSender;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
+use Lsp\Protocol\Type\CodeActionOptions;
 use Lsp\Protocol\Type\CompletionOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
 use Lsp\Protocol\Type\InitializeParams;
@@ -55,8 +56,17 @@ final class InitializeController
                 ),
                 declarationProvider: true,
                 definitionProvider: true,
+                typeDefinitionProvider: true,
+                implementationProvider: true,
                 documentHighlightProvider: true,
                 documentFormattingProvider: true,
+                documentRangeFormattingProvider: true,
+                codeActionProvider: new CodeActionOptions(
+                    codeActionKinds: [
+                        'quickfix',
+                        'source.organizeImports',
+                    ],
+                ),
                 referencesProvider: true,
                 renameProvider: new RenameOptions(
                     prepareProvider: true,

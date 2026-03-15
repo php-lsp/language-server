@@ -10,5 +10,8 @@ services:
   App\Module\:
     resource: '%kernel.project_dir%/app/Module'
 
+  App\Core\Cancellation\:
+    resource: '%kernel.project_dir%/app/Core/Cancellation'
+
   App\Module\TypeSystem\TypeResolverInterface:
     alias: App\Module\TypeSystem\TypeResolver

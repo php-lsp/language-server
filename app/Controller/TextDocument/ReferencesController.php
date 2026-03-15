@@ -30,8 +30,6 @@ final class ReferencesController
 
     public function __invoke(EditorInterface $editor, ReferenceParams $params): array
     {
-        //        dump('ReferenceParams: ', $params);
-
         $context = new ReferenceContext($params->textDocument, $params->position, $editor);
         $consumer = new ReferenceConsumer();
 

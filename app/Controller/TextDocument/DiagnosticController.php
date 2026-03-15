@@ -32,8 +32,6 @@ final class DiagnosticController
         EditorInterface $editor,
         DocumentDiagnosticParams $params,
     ): RelatedFullDocumentDiagnosticReport {
-        //        dump('textDocument/diagnostic:', $params);
-
         $identifier = $params->textDocument;
         $document = $this->getDocument($editor, $identifier);
 
@@ -51,7 +49,6 @@ final class DiagnosticController
             $root->errors,
         );
 
-        //        dump('textDocument/diagnostic/result: ', $result);
         return new RelatedFullDocumentDiagnosticReport(
             kind: DocumentDiagnosticReportKind::Full->value,
             items: $result,
