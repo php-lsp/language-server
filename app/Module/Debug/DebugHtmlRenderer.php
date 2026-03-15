@@ -111,6 +111,15 @@ final class DebugHtmlRenderer
 
               .file-indexes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
               .file-indexes .index-tag { cursor: pointer; }
+
+              .accordion { border: 1px solid #30363d; border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
+              .accordion-header { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #21262d; cursor: pointer; user-select: none; }
+              .accordion-header:hover { background: #282e36; }
+              .accordion-header .arrow { color: #8b949e; font-size: 12px; transition: transform 0.15s; }
+              .accordion-header.open .arrow { transform: rotate(90deg); }
+              .accordion-header .accordion-title { flex: 1; }
+              .accordion-body { display: none; }
+              .accordion-header.open + .accordion-body { display: block; }
             </style>
             </head>
             <body>
@@ -128,7 +137,7 @@ final class DebugHtmlRenderer
             </div>
 
             <div class="container">
-              <div id="content" hx-get="/views/indexes" hx-trigger="load" hx-target="#content">
+              <div id="content">
                 <div class="empty">Loading...</div>
               </div>
             </div>
@@ -189,6 +198,41 @@ final class DebugHtmlRenderer
 
               rows.forEach(function(row) { row.parentNode.appendChild(row); });
             }
+
+            // Hash-based routing: read location.hash and load the right view
+            function navigateToHash() {
+              var hash = location.hash.replace(/^#/, '') || '/';
+              var viewUrl = '/views';
+              if (hash === '/') {
+                viewUrl = '/views/indexes';
+              } else if (hash.indexOf('/files') === 0) {
+                viewUrl = '/views' + hash;
+              } else if (hash.indexOf('/indexes') === 0) {
+                viewUrl = '/views' + hash;
+              } else if (hash.indexOf('/search') === 0) {
+                viewUrl = '/views' + hash;
+              } else {
+                viewUrl = '/views/indexes';
+              }
+              htmx.ajax('GET', viewUrl, {target: '#content'});
+            }
+
+            // On page load, navigate based on hash
+            document.addEventListener('DOMContentLoaded', navigateToHash);
+            // On hash change (browser back/forward)
+            window.addEventListener('hashchange', navigateToHash);
+
+            // Override HTMX push-url to use hash instead
+            document.body.addEventListener('htmx:beforeHistoryUpdate', function(e) {
+              var newPath = e.detail.history.path || '';
+              if (newPath && newPath !== '/') {
+                e.preventDefault();
+                history.pushState({}, '', '#' + newPath);
+              } else if (newPath === '/') {
+                e.preventDefault();
+                history.pushState({}, '', '#/');
+              }
+            });
             </script>
 
             </body>
@@ -510,6 +554,8 @@ final class DebugHtmlRenderer
     public function fileList(array $query = []): string
     {
         $pattern = $query['pattern'] ?? '';
+        $limit = max(1, (int) ($query['limit'] ?? self::DEFAULT_LIMIT));
+        $offset = max(0, (int) ($query['offset'] ?? 0));
 
         $tabs = <<<'HTML'
             <div class="nav-tabs">
@@ -549,37 +595,50 @@ final class DebugHtmlRenderer
             return $tabs . $breadcrumb . $searchForm . '<div class="empty">No files found.</div>';
         }
 
-        $rows = '';
-        foreach (array_slice($uris, 0, 200) as $i => $uri) {
-            $num = $i + 1;
-            $encodedUri = $this->e($uri);
-            $urlUri = urlencode($uri);
-            $shortName = basename(parse_url($uri, \PHP_URL_PATH) ?: $uri);
-
+        // Collect index counts for all URIs and sort by count desc
+        $fileData = [];
+        foreach ($uris as $uri) {
             $indexEntries = $this->storage->findByUri($uri);
-            $indexCount = count($indexEntries);
+            $fileData[] = ['uri' => $uri, 'indexCount' => count($indexEntries)];
+        }
+        usort($fileData, static fn(array $a, array $b): int => $b['indexCount'] <=> $a['indexCount']);
+
+        $total = count($fileData);
+        $pageFiles = array_slice($fileData, $offset, $limit);
+
+        $rows = '';
+        foreach ($pageFiles as $i => $file) {
+            $num = $offset + $i + 1;
+            $encodedUri = $this->e($file['uri']);
+            $urlUri = urlencode($file['uri']);
+            $shortName = basename(parse_url($file['uri'], \PHP_URL_PATH) ?: $file['uri']);
 
             $rows .= <<<HTML
                 <tr class="clickable" hx-get="/views/files/{$urlUri}" hx-target="#content" hx-push-url="/files/{$urlUri}">
                   <td class="num">{$num}</td>
                   <td class="key">{$this->e($shortName)}</td>
                   <td class="uri">{$encodedUri}</td>
-                  <td class="count">{$indexCount}</td>
+                  <td class="count" data-sort="{$file['indexCount']}">{$file['indexCount']}</td>
                 </tr>
                 HTML;
         }
 
-        $total = count($uris);
+        $filePagination = $this->filesPagination($pattern, $offset, $limit, $total);
 
         return <<<HTML
             {$tabs}
             {$breadcrumb}
             {$searchForm}
-            <table>
-              <tr><th>#</th><th>File</th><th>URI</th><th>Indexes</th></tr>
+            <table id="files-table">
+              <tr>
+                <th>#</th>
+                <th class="sortable" onclick="sortTable(document.getElementById('files-table'), 1, 'text')">File</th>
+                <th class="sortable" onclick="sortTable(document.getElementById('files-table'), 2, 'text')">URI</th>
+                <th class="sortable desc" onclick="sortTable(document.getElementById('files-table'), 3, 'num')">Indexes</th>
+              </tr>
               {$rows}
             </table>
-            <div class="pagination"><span class="info">{$total} files</span></div>
+            {$filePagination}
             HTML;
     }
 
@@ -602,6 +661,7 @@ final class DebugHtmlRenderer
         }
 
         $sections = '';
+        $accId = 0;
         foreach ($indexEntries as $indexKey => $entries) {
             $encodedIndex = $this->e($indexKey);
             $urlIndex = urlencode($indexKey);
@@ -618,16 +678,27 @@ final class DebugHtmlRenderer
                     HTML;
             }
 
-            $moreNote = $count > 50 ? "<div class=\"hint\">Showing 50 of {$count} entries</div>" : '';
+            $moreNote = $count > 50
+                ? "<div class=\"hint\" style=\"padding:4px 16px\">Showing 50 of {$count} entries</div>"
+                : '';
+            $id = 'acc-' . $accId++;
 
             $sections .= <<<HTML
-                <div class="section">
-                  <div class="label"><a hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-push-url="/indexes/{$urlIndex}">{$encodedIndex}</a> ({$count} entries)</div>
-                  <table>
-                    <tr><th>Key</th></tr>
-                    {$keyItems}
-                  </table>
-                  {$moreNote}
+                <div class="accordion">
+                  <div class="accordion-header" onclick="this.classList.toggle('open')">
+                    <span class="arrow">&#9654;</span>
+                    <span class="accordion-title">
+                      <a hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-push-url="/indexes/{$urlIndex}" onclick="event.stopPropagation()">{$encodedIndex}</a>
+                      <span class="count" style="margin-left:8px">{$count}</span>
+                    </span>
+                  </div>
+                  <div class="accordion-body" id="{$id}">
+                    <table>
+                      <tr><th>Key</th></tr>
+                      {$keyItems}
+                    </table>
+                    {$moreNote}
+                  </div>
                 </div>
                 HTML;
         }
@@ -642,7 +713,7 @@ final class DebugHtmlRenderer
                 <div class="label">URI</div>
                 <pre>{$encodedUri}</pre>
               </div>
-              <div class="hint">{$totalIndexes} indexes, {$totalEntries} entries total</div>
+              <div class="hint" style="margin-bottom:12px">{$totalIndexes} indexes, {$totalEntries} entries total</div>
               {$sections}
             </div>
             HTML;
@@ -708,6 +779,33 @@ final class DebugHtmlRenderer
 
         $nextBtn = $nextOffset < $total
             ? "<a hx-get=\"/views/indexes/{$urlIndex}/keys?offset={$nextOffset}&limit={$limit}{$patternParam}\" hx-target=\"#content\" hx-push-url=\"true\">Next →</a>"
+            : '<span class="btn-disabled">Next →</span>';
+
+        return <<<HTML
+            <div class="pagination">
+              {$prevBtn}
+              <span class="info">{$from}–{$to} of {$total}</span>
+              {$nextBtn}
+            </div>
+            HTML;
+    }
+
+    private function filesPagination(string $pattern, int $offset, int $limit, int $total): string
+    {
+        $patternParam = $pattern !== '' ? '&pattern=' . urlencode($pattern) : '';
+
+        $prevOffset = max(0, $offset - $limit);
+        $nextOffset = $offset + $limit;
+
+        $from = $offset + 1;
+        $to = min($offset + $limit, $total);
+
+        $prevBtn = $offset > 0
+            ? "<a hx-get=\"/views/files?offset={$prevOffset}&limit={$limit}{$patternParam}\" hx-target=\"#content\" hx-push-url=\"true\">← Prev</a>"
+            : '<span class="btn-disabled">← Prev</span>';
+
+        $nextBtn = $nextOffset < $total
+            ? "<a hx-get=\"/views/files?offset={$nextOffset}&limit={$limit}{$patternParam}\" hx-target=\"#content\" hx-push-url=\"true\">Next →</a>"
             : '<span class="btn-disabled">Next →</span>';
 
         return <<<HTML

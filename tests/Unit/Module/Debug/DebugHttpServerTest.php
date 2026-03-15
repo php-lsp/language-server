@@ -282,11 +282,12 @@ final class DebugHttpServerTest extends TestCase
 
     // --- 404 ---
 
-    #[TestDox('unknown path returns 404')]
-    public function testUnknownPath(): void
+    #[TestDox('unknown path returns layout for hash routing')]
+    public function testUnknownPathReturnsLayout(): void
     {
         $response = $this->request('GET', '/unknown');
-        $this->assertSame(404, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('<!DOCTYPE html>', (string) $response->getBody());
     }
 
     #[TestDox('unknown API sub-action returns 404')]

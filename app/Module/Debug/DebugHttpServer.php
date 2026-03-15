@@ -51,8 +51,7 @@ class DebugHttpServer
         $method = $request->getMethod();
 
         return match (true) {
-            // HTML views (HTMX fragments + full page)
-            $path === '/' => $this->htmlResponse($this->renderer->layout()),
+            // HTML views (HTMX fragments)
             $path === '/views/indexes' => $this->htmlResponse($this->renderer->indexList()),
             $path === '/views/search' => $this->htmlResponse($this->renderer->globalSearch($query)),
             $path === '/views/files' => $this->htmlResponse($this->renderer->fileList($query)),
@@ -73,7 +72,8 @@ class DebugHttpServer
             $path === '/api/autocomplete/uris' => $this->jsonResponse($this->apiAutocompleteUris($query)),
             $path === '/api/batch' && $method === 'POST' => $this->handleBatch($request),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
-            default => $this->htmlResponse('<div class="empty">Not found.</div>', 404),
+            // Full page — always return layout (hash routing handles the rest)
+            default => $this->htmlResponse($this->renderer->layout()),
         };
     }
 

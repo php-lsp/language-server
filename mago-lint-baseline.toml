@@ -124,12 +124,12 @@ count = 1
 file = "app/Module/Debug/DebugHtmlRenderer.php"
 code = "halstead"
 message = "Method has a high halstead effort"
-count = 1
+count = 2
 
 [[issues]]
 file = "app/Module/Debug/DebugHtmlRenderer.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (3.41)."
+message = "Class has a high kan defect score (3.6400000000000006)."
 count = 1
 
 [[issues]]
@@ -142,19 +142,13 @@ count = 1
 file = "app/Module/Debug/DebugHtmlRenderer.php"
 code = "literal-named-argument"
 message = "Literal argument `0` should be passed as a named argument for clarity."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Module/Debug/DebugHtmlRenderer.php"
 code = "literal-named-argument"
 message = "Literal argument `1` should be passed as a named argument for clarity."
 count = 2
-
-[[issues]]
-file = "app/Module/Debug/DebugHtmlRenderer.php"
-code = "literal-named-argument"
-message = "Literal argument `200` should be passed as a named argument for clarity."
-count = 1
 
 [[issues]]
 file = "app/Module/Debug/DebugHtmlRenderer.php"

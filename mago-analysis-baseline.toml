@@ -968,6 +968,18 @@ count = 4
 
 [[issues]]
 file = "app/Module/Debug/DebugHtmlRenderer.php"
+code = "imprecise-type"
+message = "Type `array` in parameter `$a` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHtmlRenderer.php"
+code = "imprecise-type"
+message = "Type `array` in parameter `$b` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHtmlRenderer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
