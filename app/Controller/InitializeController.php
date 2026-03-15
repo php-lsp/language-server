@@ -10,17 +10,28 @@ use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeActionOptions;
 use Lsp\Protocol\Type\CompletionOptions;
+use Lsp\Protocol\Type\DeclarationOptions;
+use Lsp\Protocol\Type\DefinitionOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
+use Lsp\Protocol\Type\DocumentFormattingOptions;
+use Lsp\Protocol\Type\DocumentHighlightOptions;
+use Lsp\Protocol\Type\DocumentRangeFormattingOptions;
+use Lsp\Protocol\Type\DocumentSymbolOptions;
+use Lsp\Protocol\Type\HoverOptions;
+use Lsp\Protocol\Type\ImplementationOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
+use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\RenameOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
 use Lsp\Protocol\Type\SignatureHelpOptions;
 use Lsp\Protocol\Type\TextDocumentSyncKind;
+use Lsp\Protocol\Type\TypeDefinitionOptions;
 use Lsp\Protocol\Type\WorkspaceFolder;
 use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
 use Lsp\Protocol\Type\WorkspaceOptions;
+use Lsp\Protocol\Type\WorkspaceSymbolOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\Project\ProjectFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -50,33 +61,33 @@ final class InitializeController
                 completionProvider: new CompletionOptions(
                     triggerCharacters: ['.', ':', '<', '\'', '"', '`'],
                 ),
-                hoverProvider: true,
+                hoverProvider: new HoverOptions(),
                 signatureHelpProvider: new SignatureHelpOptions(
                     triggerCharacters: ['(', ',', ':', ' '],
                 ),
-                declarationProvider: true,
-                definitionProvider: true,
-                typeDefinitionProvider: true,
-                implementationProvider: true,
-                documentHighlightProvider: true,
-                documentFormattingProvider: true,
-                documentRangeFormattingProvider: true,
+                declarationProvider: new DeclarationOptions(),
+                definitionProvider: new DefinitionOptions(),
+                typeDefinitionProvider: new TypeDefinitionOptions(),
+                implementationProvider: new ImplementationOptions(),
+                documentHighlightProvider: new DocumentHighlightOptions(),
+                documentFormattingProvider: new DocumentFormattingOptions(),
+                documentRangeFormattingProvider: new DocumentRangeFormattingOptions(),
                 codeActionProvider: new CodeActionOptions(
                     codeActionKinds: [
                         'quickfix',
                         'source.organizeImports',
                     ],
                 ),
-                referencesProvider: true,
+                referencesProvider: new ReferenceOptions(),
                 renameProvider: new RenameOptions(
                     prepareProvider: true,
                 ),
-                documentSymbolProvider: true,
+                documentSymbolProvider: new DocumentSymbolOptions(),
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
                 ),
-                workspaceSymbolProvider: true,
+                workspaceSymbolProvider: new WorkspaceSymbolOptions(),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(
                         supported: true,
