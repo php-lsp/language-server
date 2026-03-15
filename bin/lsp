@@ -76,6 +76,25 @@ if (!in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed', 'micro'], true)) {
 
 
 // -----------------------------------------------------------------------------
+//  Load Environment Variables
+// -----------------------------------------------------------------------------
+
+(static function (): void {
+    if (!class_exists(\Symfony\Component\Dotenv\Dotenv::class)) {
+        return;
+    }
+
+    $projectDir = dirname(__DIR__);
+    $envFile = $projectDir . '/.env';
+
+    if (is_file($envFile)) {
+        (new \Symfony\Component\Dotenv\Dotenv())->usePutenv()->bootEnv($envFile);
+    }
+})();
+
+
+
+// -----------------------------------------------------------------------------
 //  Execute An Application
 // -----------------------------------------------------------------------------
 

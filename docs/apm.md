@@ -43,12 +43,22 @@ composer install
 
 ### 3. Start the LSP server with APM enabled
 
-Set the `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable to point to the
-OTLP HTTP endpoint (SigNoz collector listens on port `4318` by default):
+Edit `.env.local` (or `.env`) to set the OTLP endpoint:
+
+```dotenv
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+```
+
+Then start the server:
+
+```bash
+php ./bin/lsp serve App\\Application --port=5007
+```
+
+Alternatively, pass the variable inline:
 
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
-OTEL_SERVICE_NAME=php-lsp \
   php ./bin/lsp serve App\\Application --port=5007
 ```
 
@@ -59,15 +69,28 @@ every LSP request handled by the server.
 
 ## Configuration
 
-All configuration is done via environment variables:
+All configuration is done via environment variables defined in `.env`.
+To override values locally, create a `.env.local` file (git-ignored):
+
+```bash
+cp .env.example .env.local
+# Edit .env.local with your settings
+```
 
 | Variable | Default | Description |
 |---|---|---|
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | _(empty — APM disabled)_ | OTLP HTTP endpoint URL (e.g. `http://localhost:4318`) |
 | `OTEL_SERVICE_NAME` | `php-lsp` | Service name displayed in the APM dashboard |
+| `APP_LOGGER_NAME` | `php-lsp` | Monolog logger channel name |
+| `BUGGREGATOR_HOST` | `127.0.0.1:9913` | Buggregator trap server address |
 
 When `OTEL_EXPORTER_OTLP_ENDPOINT` is empty or not set, APM is completely
 disabled and a no-op tracer is used — **zero overhead**.
+
+**Environment file precedence** (Symfony Dotenv):
+1. Shell environment variables (highest priority — never overwritten)
+2. `.env.local` — local overrides (git-ignored)
+3. `.env` — committed defaults
 
 ## Architecture
 

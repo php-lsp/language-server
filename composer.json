@@ -17,8 +17,13 @@
     ],
     "require": {
         "php": "^8.4",
+        "guzzlehttp/psr7": "^2.7",
         "monolog/monolog": "^3.8",
         "nikic/php-parser": "^5.6",
+        "open-telemetry/api": "^1.1",
+        "open-telemetry/exporter-otlp": "^1.1",
+        "open-telemetry/sdk": "^1.1",
+        "php-http/guzzle7-adapter": "^1.0",
         "php-lsp/bridge-hydrator-type-lang": "^1.0",
         "php-lsp/bridge-server-react": "^1.0",
         "php-lsp/ext-document-manager": "^1.0",
@@ -26,15 +31,11 @@
         "php-lsp/protocol": "^1.0",
         "php-lsp/workspace": "^1.0",
         "phpstan/phpstan": "^2.1",
-        "guzzlehttp/psr7": "^2.7",
-        "open-telemetry/api": "^1.1",
-        "open-telemetry/exporter-otlp": "^1.1",
-        "open-telemetry/sdk": "^1.1",
-        "php-http/guzzle7-adapter": "^1.0",
         "react/async": "^4.3",
         "react/filesystem": "0.2.x-dev",
         "react/http": "^1.11",
-        "react/promise-timer": "^1.11"
+        "react/promise-timer": "^1.11",
+        "symfony/dotenv": "^6.4|^7.0"
     },
     "autoload": {
         "psr-4": {

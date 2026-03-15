@@ -1,10 +1,6 @@
 parameters:
-  # OTLP endpoint for trace export (e.g. http://localhost:4318 for SigNoz/Jaeger)
-  # Leave empty to disable APM tracing (uses NoopTracer).
-  env(OTEL_EXPORTER_OTLP_ENDPOINT): ''
+  # Defaults are defined in .env; override via .env.local or shell environment.
   app.telemetry.endpoint: '%env(OTEL_EXPORTER_OTLP_ENDPOINT)%'
-
-  env(OTEL_SERVICE_NAME): 'php-lsp'
   app.telemetry.service_name: '%env(OTEL_SERVICE_NAME)%'
 
 services:

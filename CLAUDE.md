@@ -105,8 +105,12 @@ app/
 config/
 ├── services.yaml              # Main DI config (imports services/*.yaml)
 └── services/                  # controllers.yaml, listeners.yaml, logger.yaml, telemetry.yaml
+docker/
+└── signoz/                    # Docker Compose for SigNoz APM
 tests/
 └── Unit/                      # PHPUnit unit tests
+.env                           # Default environment variables (committed)
+.env.example                   # Environment variable reference template
 ```
 
 ## Architecture
@@ -165,6 +169,7 @@ Available contributor types and their DI tags:
 - `phpstan/phpstan` — PHPStan for type resolution (used by TypeSystem module)
 - `carthage-software/mago` — Mago PHP linter, analyzer, and formatter
 - `open-telemetry/sdk` + `open-telemetry/exporter-otlp` — APM tracing via OpenTelemetry
+- `symfony/dotenv` — `.env` file loading for environment variable management
 
 ## Quality Constraints
 
