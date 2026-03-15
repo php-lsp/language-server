@@ -171,7 +171,8 @@ all of them pass. If any check fails — fix the issues and re-run everything.
 composer test
 ```
 
-All unit tests must pass. Never finish work with failing tests.
+**All** tests must pass — unit, functional, and E2E. Always run `composer test`
+(not just `composer test:unit`). Never finish work with failing tests.
 
 ### 2. Static analysis must pass (Mago)
 
@@ -208,7 +209,7 @@ If coverage is below 80%, write additional tests.
 
 After pushing, verify that **all** GitHub Actions workflows pass:
 
-- **tests** — unit tests (PHP 8.4 + 8.5, ubuntu + windows)
+- **tests** — all tests: unit, functional, E2E (PHP 8.4 + 8.5, ubuntu + windows)
 - **mago** — lint + analyze
 - **codestyle** — `mago format --check`
 - **coverage** — code coverage report
@@ -227,7 +228,7 @@ After completing any code change:
 3. `composer mago:lint` — verify linter passes
 4. `composer mago:analyze` — verify analyzer passes
 5. `composer mago:format:check` — verify formatting
-6. `composer test` — verify all tests pass
+6. `composer test` — verify **all** tests pass (unit + functional + E2E)
 7. For new features: check coverage >= 80%
 8. `/review-docs` — synchronize documentation with code changes
 9. `/review-architecture` — check dependency violations and coupling
