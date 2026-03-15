@@ -32,9 +32,7 @@ final class IndexingStatus
     {
         $this->indexing = false;
         $this->lastIndexedAt = microtime(true);
-        $this->lastDuration = $this->startedAt !== null
-            ? $this->lastIndexedAt - $this->startedAt
-            : null;
+        $this->lastDuration = $this->startedAt !== null ? $this->lastIndexedAt - $this->startedAt : null;
         $this->startedAt = null;
     }
 
@@ -47,9 +45,7 @@ final class IndexingStatus
             'indexing' => $this->indexing,
             'filesIndexed' => $this->filesIndexed,
             'lastIndexedAt' => $this->lastIndexedAt,
-            'lastDuration' => $this->lastDuration !== null
-                ? round($this->lastDuration, 3)
-                : null,
+            'lastDuration' => $this->lastDuration !== null ? round($this->lastDuration, 3) : null,
         ];
     }
 }

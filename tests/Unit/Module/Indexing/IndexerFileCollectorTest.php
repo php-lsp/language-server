@@ -64,4 +64,32 @@ final class IndexerFileCollectorTest extends TestCase
 
         $this->assertEmpty($files);
     }
+
+    #[TestDox('collects files from nested directories')]
+    public function testCollectsFromNestedDirectories(): void
+    {
+        $fsReaderFactory = $this->createMock(FilesystemReaderFactoryInterface::class);
+        $fileFactory = $this->createMock(FileFactoryInterface::class);
+
+        $fileA = VirtualFileStub::create('A.php');
+        $fileB = VirtualFileStub::create('B.php');
+        $subDir = VirtualFileStub::createDirectory('src', [$fileA, $fileB]);
+        $stubDir = VirtualFileStub::create('.git');
+        $fileFactory->method('create')->willReturn($stubDir);
+
+        $projectRef = new \ReflectionClass(Project::class);
+        $project = $this->createMock(Project::class);
+        $project->method('getIterator')->willReturn(new \ArrayIterator([$subDir]));
+        $projectRef->getProperty('uri')->setValue(
+            $project,
+            \Lsp\Workspace\Uri\Uri::createLocal('/tmp/project'),
+        );
+
+        $collector = new IndexerFileCollector($fsReaderFactory, $fileFactory);
+        $files = $collector->collect($project);
+
+        $this->assertCount(2, $files);
+        $this->assertSame('A.php', $files[0]->name);
+        $this->assertSame('B.php', $files[1]->name);
+    }
 }
