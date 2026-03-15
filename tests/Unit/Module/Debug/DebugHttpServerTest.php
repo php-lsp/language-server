@@ -290,6 +290,81 @@ final class DebugHttpServerTest extends TestCase
         $this->assertSame(404, $response->getStatusCode());
     }
 
+    // --- Global search view ---
+
+    #[TestDox('GET /views/search returns global search results')]
+    public function testViewGlobalSearch(): void
+    {
+        $response = $this->request('GET', '/views/search?pattern=Foo');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('App\\Foo', $body);
+        $this->assertStringContainsString('php.classes.fqn', $body);
+    }
+
+    #[TestDox('GET /views/search with empty pattern shows prompt')]
+    public function testViewGlobalSearchEmpty(): void
+    {
+        $response = $this->request('GET', '/views/search');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('Enter a search query', $body);
+    }
+
+    // --- Export API ---
+
+    #[TestDox('GET /api/export returns all index data as JSON')]
+    public function testApiExport(): void
+    {
+        $response = $this->request('GET', '/api/export');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('application/json', $response->getHeaderLine('Content-Type'));
+        $this->assertArrayHasKey('php.classes.fqn', $data);
+        $this->assertArrayHasKey('php.functions.fqn', $data);
+        $this->assertCount(3, $data['php.classes.fqn']);
+        $this->assertSame('App\\Foo', $data['php.classes.fqn'][0]['key']);
+    }
+
+    // --- Global search API ---
+
+    #[TestDox('GET /api/search returns results across all indexes')]
+    public function testApiGlobalSearch(): void
+    {
+        $response = $this->request('GET', '/api/search?pattern=Foo');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertGreaterThanOrEqual(1, $data['count']);
+        $this->assertSame('App\\Foo', $data['results'][0]['key']);
+        $this->assertSame('php.classes.fqn', $data['results'][0]['index']);
+    }
+
+    #[TestDox('GET /api/search auto-wraps pattern with wildcards')]
+    public function testApiGlobalSearchAutoWildcards(): void
+    {
+        $response = $this->request('GET', '/api/search?pattern=Controller');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame('*Controller*', $data['pattern']);
+        $this->assertGreaterThanOrEqual(1, $data['count']);
+    }
+
+    // --- Stats include memory ---
+
+    #[TestDox('GET /api/indexes includes memory usage in stats')]
+    public function testApiIndexesIncludesMemory(): void
+    {
+        $response = $this->request('GET', '/api/indexes');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertArrayHasKey('memory', $data['php.classes.fqn']);
+        $this->assertGreaterThan(0, $data['php.classes.fqn']['memory']);
+    }
+
     // --- CORS ---
 
     #[TestDox('API responses include CORS header')]

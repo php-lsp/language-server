@@ -27,6 +27,11 @@ final class DebugServerListener
 
         $this->debugServer->start($host, $debugPort);
 
+        $debugUrl = "http://{$host}:{$debugPort}";
+
+        // Print to console so user sees the address
+        fwrite(\STDERR, "Debug Index Inspector ({$debugUrl})\n");
+
         $this->logger->info('Debug HTTP server started at http://{host}:{port}', [
             'host' => $host,
             'port' => $debugPort,

@@ -47,10 +47,13 @@ class DebugHttpServer
             // HTML views (HTMX fragments + full page)
             $path === '/' => $this->htmlResponse($this->renderer->layout()),
             $path === '/views/indexes' => $this->htmlResponse($this->renderer->indexList()),
+            $path === '/views/search' => $this->htmlResponse($this->renderer->globalSearch($query)),
             str_starts_with($path, '/views/indexes/') => $this->routeView($path, $query),
 
             // JSON API (for curl / agents)
             $path === '/api/indexes' => $this->jsonResponse($this->apiIndexes()),
+            $path === '/api/export' => $this->jsonResponse($this->apiExport()),
+            $path === '/api/search' => $this->jsonResponse($this->apiGlobalSearch($query)),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
 
             default => $this->htmlResponse('<div class="empty">Not found.</div>', 404),
@@ -132,6 +135,60 @@ class DebugHttpServer
             'entries' => $this->jsonResponse($this->apiEntry($indexName, $actionParam ?? '')),
             default => $this->jsonResponse(['error' => "Unknown action: {$action}"], 404),
         };
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function apiExport(): array
+    {
+        $export = [];
+
+        foreach ($this->storage->getIndexKeys() as $indexKey) {
+            $entries = [];
+            foreach ($this->storage->read($indexKey) as $entry) {
+                $entries[] = [
+                    'key' => $entry->key,
+                    'value' => $this->serializeValue($entry->value),
+                    'uri' => $entry->uri,
+                ];
+            }
+            $export[$indexKey] = $entries;
+        }
+
+        return $export;
+    }
+
+    /**
+     * @param array<string, string> $query
+     * @return array<string, mixed>
+     */
+    private function apiGlobalSearch(array $query): array
+    {
+        $pattern = $query['pattern'] ?? '*';
+        $limit = max(1, (int) ($query['limit'] ?? 100));
+
+        // Auto-wrap pattern with wildcards if no glob chars present
+        if ($pattern !== '' && !str_contains($pattern, '*') && !str_contains($pattern, '?')) {
+            $pattern = '*' . $pattern . '*';
+        }
+
+        $results = [];
+
+        foreach ($this->storage->searchAll($pattern, $limit) as $hit) {
+            $results[] = [
+                'index' => $hit['index'],
+                'key' => $hit['key'],
+                'value' => $this->summarizeValue($hit['value']),
+                'uri' => $hit['uri'],
+            ];
+        }
+
+        return [
+            'pattern' => $pattern,
+            'count' => count($results),
+            'results' => $results,
+        ];
     }
 
     /**

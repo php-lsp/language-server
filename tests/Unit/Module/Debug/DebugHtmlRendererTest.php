@@ -195,4 +195,99 @@ final class DebugHtmlRendererTest extends TestCase
         $this->assertStringNotContainsString('<script>alert(1)</script>', $html);
         $this->assertStringContainsString('&lt;script&gt;', $html);
     }
+
+    // --- index list ---
+
+    #[TestDox('indexList shows memory usage for each index')]
+    public function testIndexListShowsMemory(): void
+    {
+        $html = $this->renderer->indexList();
+
+        $this->assertStringContainsString('Memory', $html);
+        $this->assertMatchesRegularExpression('/\\d+(\\.\\d+)?\\s*(B|KB|MB)/', $html);
+    }
+
+    #[TestDox('indexList contains global search form')]
+    public function testIndexListHasGlobalSearch(): void
+    {
+        $html = $this->renderer->indexList();
+
+        $this->assertStringContainsString('hx-get="/views/search"', $html);
+        $this->assertStringContainsString('delay:300ms', $html);
+    }
+
+    // --- global search ---
+
+    #[TestDox('globalSearch returns results across all indexes')]
+    public function testGlobalSearchFindsResults(): void
+    {
+        $html = $this->renderer->globalSearch(['pattern' => 'Foo']);
+
+        $this->assertStringContainsString('App\\Foo', $html);
+        $this->assertStringContainsString('php.classes.fqn', $html);
+    }
+
+    #[TestDox('globalSearch auto-wraps pattern with wildcards')]
+    public function testGlobalSearchAutoWildcards(): void
+    {
+        $html = $this->renderer->globalSearch(['pattern' => 'Controller']);
+
+        $this->assertStringContainsString('App\\Controller\\Home', $html);
+    }
+
+    #[TestDox('globalSearch shows empty message for no query')]
+    public function testGlobalSearchEmptyQuery(): void
+    {
+        $html = $this->renderer->globalSearch([]);
+
+        $this->assertStringContainsString('Enter a search query', $html);
+    }
+
+    #[TestDox('globalSearch shows no results message')]
+    public function testGlobalSearchNoResults(): void
+    {
+        $html = $this->renderer->globalSearch(['pattern' => 'NonExistentXYZ']);
+
+        $this->assertStringContainsString('No results found', $html);
+    }
+
+    // --- flexible search ---
+
+    #[TestDox('keysList auto-wraps pattern with wildcards when no glob chars')]
+    public function testKeysListAutoWildcards(): void
+    {
+        $html = $this->renderer->keysList('php.classes.fqn', ['pattern' => 'Controller']);
+
+        $this->assertStringContainsString('App\\Controller\\Home', $html);
+        $this->assertStringNotContainsString('App\\Foo', $html);
+    }
+
+    #[TestDox('keysList preserves explicit glob pattern')]
+    public function testKeysListExplicitGlob(): void
+    {
+        $html = $this->renderer->keysList('php.classes.fqn', ['pattern' => 'App\\*']);
+
+        $this->assertStringContainsString('App\\Foo', $html);
+        $this->assertStringContainsString('App\\Bar', $html);
+        $this->assertStringContainsString('App\\Controller\\Home', $html);
+    }
+
+    // --- layout ---
+
+    #[TestDox('layout contains export JSON button')]
+    public function testLayoutContainsExportButton(): void
+    {
+        $html = $this->renderer->layout();
+        $this->assertStringContainsString('/api/export', $html);
+        $this->assertStringContainsString('Export JSON', $html);
+    }
+
+    // --- debounce ---
+
+    #[TestDox('keysList search input has debounce trigger')]
+    public function testKeysListSearchHasDebounce(): void
+    {
+        $html = $this->renderer->keysList('php.classes.fqn');
+        $this->assertStringContainsString('delay:300ms', $html);
+    }
 }

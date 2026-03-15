@@ -122,6 +122,20 @@ class InMemoryStorage implements DebugStorageInterface
         return null;
     }
 
+    public function memoryUsage(string $indexKey): int
+    {
+        if (!array_key_exists($indexKey, $this->entries)) {
+            return 0;
+        }
+
+        $before = memory_get_usage();
+        $serialized = serialize($this->entries[$indexKey]);
+        $after = memory_get_usage();
+
+        // Use the serialized string length as a reasonable estimate
+        return \strlen($serialized);
+    }
+
     public function stats(): array
     {
         $result = [];
@@ -130,10 +144,37 @@ class InMemoryStorage implements DebugStorageInterface
             $result[$indexKey] = [
                 'key' => $indexKey,
                 'count' => \count($entries),
+                'memory' => $this->memoryUsage($indexKey),
             ];
         }
 
         return $result;
+    }
+
+    /**
+     * @return iterable<array{index: string, key: string, value: mixed, uri: string}>
+     */
+    public function searchAll(string $keyPattern, int $limit = 100): iterable
+    {
+        $count = 0;
+
+        foreach ($this->entries as $indexKey => $entries) {
+            foreach ($entries as $entry) {
+                if ($count >= $limit) {
+                    return;
+                }
+
+                if (\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
+                    yield [
+                        'index' => $indexKey,
+                        'key' => $entry->key,
+                        'value' => $entry->value,
+                        'uri' => $entry->uri,
+                    ];
+                    $count++;
+                }
+            }
+        }
     }
 
     private function updateSecondaryIndexes(string $indexKey, Entry $entry): void

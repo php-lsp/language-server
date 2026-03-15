@@ -37,9 +37,21 @@ interface DebugStorageInterface extends StorageInterface
     public function find(string $indexKey, string $entryKey): ?Entry;
 
     /**
+     * Estimate memory usage of a specific index in bytes.
+     */
+    public function memoryUsage(string $indexKey): int;
+
+    /**
      * Get summary stats for all indexes.
      *
-     * @return array<string, array{key: string, count: int}>
+     * @return array<string, array{key: string, count: int, memory: int}>
      */
     public function stats(): array;
+
+    /**
+     * Search across all indexes by key pattern.
+     *
+     * @return iterable<array{index: string, key: string, value: mixed, uri: string}>
+     */
+    public function searchAll(string $keyPattern, int $limit = 100): iterable;
 }

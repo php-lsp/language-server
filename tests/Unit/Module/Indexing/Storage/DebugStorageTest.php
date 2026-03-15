@@ -207,9 +207,73 @@ final class DebugStorageTest extends TestCase
         $this->assertArrayHasKey('php.classes.fqn', $stats);
         $this->assertSame('php.classes.fqn', $stats['php.classes.fqn']['key']);
         $this->assertSame(3, $stats['php.classes.fqn']['count']);
+        $this->assertArrayHasKey('memory', $stats['php.classes.fqn']);
+        $this->assertGreaterThan(0, $stats['php.classes.fqn']['memory']);
 
         $this->assertArrayHasKey('php.functions.fqn', $stats);
         $this->assertSame('php.functions.fqn', $stats['php.functions.fqn']['key']);
         $this->assertSame(1, $stats['php.functions.fqn']['count']);
+    }
+
+    // --- memoryUsage ---
+
+    #[TestDox('memoryUsage returns 0 for unknown index')]
+    public function testMemoryUsageUnknownIndex(): void
+    {
+        $storage = new InMemoryStorage();
+        $this->assertSame(0, $storage->memoryUsage('nonexistent'));
+    }
+
+    #[TestDox('memoryUsage returns positive value for populated index')]
+    public function testMemoryUsagePositive(): void
+    {
+        $storage = $this->createStorage();
+        $this->assertGreaterThan(0, $storage->memoryUsage('php.classes.fqn'));
+    }
+
+    // --- searchAll ---
+
+    #[TestDox('searchAll finds entries across all indexes')]
+    public function testSearchAllFindsAcrossIndexes(): void
+    {
+        $storage = $this->createStorage();
+        $results = iterator_to_array($storage->searchAll('App\\*'));
+
+        $this->assertCount(4, $results);
+
+        $indexes = array_unique(array_column($results, 'index'));
+        $this->assertCount(2, $indexes);
+    }
+
+    #[TestDox('searchAll respects limit')]
+    public function testSearchAllRespectsLimit(): void
+    {
+        $storage = $this->createStorage();
+        $results = iterator_to_array($storage->searchAll('App\\*', 2));
+
+        $this->assertCount(2, $results);
+    }
+
+    #[TestDox('searchAll returns empty for no matches')]
+    public function testSearchAllNoMatches(): void
+    {
+        $storage = $this->createStorage();
+        $results = iterator_to_array($storage->searchAll('Vendor\\*'));
+
+        $this->assertSame([], $results);
+    }
+
+    #[TestDox('searchAll result contains index, key, value, uri')]
+    public function testSearchAllResultStructure(): void
+    {
+        $storage = $this->createStorage();
+        $results = iterator_to_array($storage->searchAll('App\\Foo'));
+
+        $this->assertNotEmpty($results);
+        $hit = $results[0];
+        $this->assertArrayHasKey('index', $hit);
+        $this->assertArrayHasKey('key', $hit);
+        $this->assertArrayHasKey('value', $hit);
+        $this->assertArrayHasKey('uri', $hit);
     }
 }

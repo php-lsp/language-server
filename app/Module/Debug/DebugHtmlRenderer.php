@@ -34,6 +34,9 @@ final class DebugHtmlRenderer
   .header { background: #161b22; border-bottom: 1px solid #30363d; padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
   .header h1 { font-size: 18px; color: #f0f6fc; }
   .header .badge { background: #238636; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
+  .header .spacer { flex: 1; }
+  .header .btn { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 6px 14px; color: #c9d1d9; cursor: pointer; font-size: 13px; text-decoration: none; }
+  .header .btn:hover { background: #30363d; text-decoration: none; }
 
   .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
 
@@ -57,7 +60,9 @@ final class DebugHtmlRenderer
   .value { font-family: monospace; color: #7ee787; }
   .uri { font-family: monospace; color: #8b949e; font-size: 12px; }
   .count { color: #d2a8ff; font-weight: bold; }
+  .memory { color: #8b949e; font-size: 12px; font-family: monospace; }
   .num { color: #8b949e; }
+  .index-tag { background: #1f2937; border: 1px solid #30363d; border-radius: 4px; padding: 1px 6px; font-size: 11px; color: #8b949e; font-family: monospace; }
 
   .detail { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; }
   .detail pre { background: #0d1117; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: #c9d1d9; white-space: pre-wrap; word-break: break-all; }
@@ -71,6 +76,7 @@ final class DebugHtmlRenderer
   .pagination .info { color: #8b949e; font-size: 13px; }
 
   .empty { color: #8b949e; padding: 24px; text-align: center; font-style: italic; }
+  .hint { color: #6e7681; font-size: 12px; margin-top: 4px; }
   .htmx-indicator { display: none; }
   .htmx-request .htmx-indicator { display: inline; }
   .htmx-request.htmx-indicator { display: inline; }
@@ -81,6 +87,8 @@ final class DebugHtmlRenderer
 <div class="header">
   <h1><a hx-get="/views/indexes" hx-target="#content" hx-push-url="/" style="color:#f0f6fc">LSP Debug</a></h1>
   <span class="badge">Index Inspector</span>
+  <span class="spacer"></span>
+  <a class="btn" href="/api/export" target="_blank">Export JSON</a>
 </div>
 
 <div class="container">
@@ -100,28 +108,117 @@ HTML;
 
         $breadcrumb = '<div class="breadcrumb">Indexes</div>';
 
+        // Global search form
+        $searchForm = <<<'HTML'
+        <form class="search-form" hx-get="/views/search" hx-target="#content" hx-push-url="true">
+          <input type="text" name="pattern" placeholder="Search across all indexes (e.g. Controller, App\Foo...)"
+                 hx-get="/views/search" hx-target="#content" hx-trigger="keyup changed delay:300ms" hx-push-url="true">
+          <button type="submit">Search</button>
+        </form>
+        <div class="hint">Wildcards are added automatically. Type any part of a key to search.</div>
+        HTML;
+
         if ($stats === []) {
-            return $breadcrumb . '<div class="empty">No indexes registered yet.</div>';
+            return $breadcrumb . $searchForm . '<div class="empty">No indexes registered yet.</div>';
         }
 
         $rows = '';
         foreach ($stats as $info) {
             $encodedKey = $this->e($info['key']);
             $urlKey = urlencode($info['key']);
+            $memoryFormatted = $this->formatBytes($info['memory']);
             $rows .= <<<HTML
             <tr class="clickable" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">
               <td class="key">{$encodedKey}</td>
               <td class="count">{$info['count']}</td>
+              <td class="memory">{$memoryFormatted}</td>
             </tr>
             HTML;
         }
 
         return <<<HTML
         {$breadcrumb}
+        {$searchForm}
         <table>
-          <tr><th>Index Key</th><th>Entries</th></tr>
+          <tr><th>Index Key</th><th>Entries</th><th>Memory</th></tr>
           {$rows}
         </table>
+        HTML;
+    }
+
+    /**
+     * @param array<string, string> $query
+     */
+    public function globalSearch(array $query): string
+    {
+        $pattern = $query['pattern'] ?? '';
+
+        $breadcrumb = <<<'HTML'
+        <div class="breadcrumb">
+          <a hx-get="/views/indexes" hx-target="#content" hx-push-url="/">Indexes</a>
+          <span class="sep">›</span>
+          Search
+        </div>
+        HTML;
+
+        $encodedPattern = $this->e($pattern);
+
+        $searchForm = <<<HTML
+        <form class="search-form" hx-get="/views/search" hx-target="#content" hx-push-url="true">
+          <input type="text" name="pattern" placeholder="Search across all indexes..."
+                 value="{$encodedPattern}"
+                 hx-get="/views/search" hx-target="#content" hx-trigger="keyup changed delay:300ms" hx-push-url="true">
+          <button type="submit">Search</button>
+        </form>
+        <div class="hint">Wildcards are added automatically. Type any part of a key to search.</div>
+        HTML;
+
+        if ($pattern === '') {
+            return $breadcrumb . $searchForm . '<div class="empty">Enter a search query.</div>';
+        }
+
+        // Auto-wrap with wildcards if no glob chars
+        $searchPattern = $pattern;
+        if (!str_contains($searchPattern, '*') && !str_contains($searchPattern, '?')) {
+            $searchPattern = '*' . $searchPattern . '*';
+        }
+
+        $results = [];
+        foreach ($this->storage->searchAll($searchPattern, 100) as $hit) {
+            $results[] = $hit;
+        }
+
+        if ($results === []) {
+            return $breadcrumb . $searchForm . '<div class="empty">No results found.</div>';
+        }
+
+        $rows = '';
+        foreach ($results as $i => $hit) {
+            $num = $i + 1;
+            $encodedKey = $this->e($hit['key']);
+            $encodedIndex = $this->e($hit['index']);
+            $urlIndex = urlencode($hit['index']);
+            $urlKey = urlencode($hit['key']);
+            $rows .= <<<HTML
+            <tr class="clickable" hx-get="/views/indexes/{$urlIndex}/entries/{$urlKey}" hx-target="#content" hx-push-url="/indexes/{$urlIndex}/entries/{$urlKey}">
+              <td class="num">{$num}</td>
+              <td class="key">{$encodedKey}</td>
+              <td><span class="index-tag">{$encodedIndex}</span></td>
+              <td class="uri">{$this->e($hit['uri'])}</td>
+            </tr>
+            HTML;
+        }
+
+        $count = count($results);
+
+        return <<<HTML
+        {$breadcrumb}
+        {$searchForm}
+        <table>
+          <tr><th>#</th><th>Key</th><th>Index</th><th>URI</th></tr>
+          {$rows}
+        </table>
+        <div class="pagination"><span class="info">{$count} results</span></div>
         HTML;
     }
 
@@ -134,9 +231,15 @@ HTML;
         $limit = max(1, (int) ($query['limit'] ?? self::DEFAULT_LIMIT));
         $offset = max(0, (int) ($query['offset'] ?? 0));
 
+        // Auto-wrap with wildcards if no glob chars
+        $searchPattern = $pattern;
+        if ($searchPattern !== '' && !str_contains($searchPattern, '*') && !str_contains($searchPattern, '?')) {
+            $searchPattern = '*' . $searchPattern . '*';
+        }
+
         $keys = [];
         foreach ($this->storage->read($indexName) as $entry) {
-            if ($pattern !== '' && !fnmatch($pattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
+            if ($searchPattern !== '' && !fnmatch($searchPattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
                 continue;
             }
             $keys[] = $entry->key;
@@ -159,9 +262,11 @@ HTML;
 
         $searchForm = <<<HTML
         <form class="search-form" hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-push-url="true">
-          <input type="text" name="pattern" placeholder="Glob pattern (e.g. App\Controller\*)" value="{$encodedPattern}">
+          <input type="text" name="pattern" placeholder="Filter keys (e.g. Controller, Service...)" value="{$encodedPattern}"
+                 hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-trigger="keyup changed delay:300ms" hx-push-url="true">
           <button type="submit">Search</button>
         </form>
+        <div class="hint">Wildcards are added automatically. Type any part of a key to search.</div>
         HTML;
 
         if ($pageKeys === []) {
@@ -262,6 +367,18 @@ HTML;
           {$nextBtn}
         </div>
         HTML;
+    }
+
+    private function formatBytes(int $bytes): string
+    {
+        if ($bytes < 1024) {
+            return $bytes . ' B';
+        }
+        if ($bytes < 1048576) {
+            return round($bytes / 1024, 1) . ' KB';
+        }
+
+        return round($bytes / 1048576, 1) . ' MB';
     }
 
     private function formatValue(mixed $value): string
