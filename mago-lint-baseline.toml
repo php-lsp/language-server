@@ -1,12 +1,6 @@
 variant = "loose"
 
 [[issues]]
-file = "app/Controller/InitializeController.php"
-code = "literal-named-argument"
-message = "Literal argument `2` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
 file = "app/Controller/TextDocument/DocumentSymbolController.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."

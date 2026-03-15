@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Notification;
 
 /**
- * Результат отправки уведомления
+ * Notification send result.
  */
 final class Result
 {

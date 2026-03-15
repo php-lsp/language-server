@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller;
 
 use App\Controller\InitializedController;
+use App\Module\Notification\ActiveConnectionProvider;
 use App\Module\Notification\ServerNotificationSender;
 use App\Tests\TestCase;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
 use Lsp\Protocol\Type\InitializedParams;
-use Lsp\Server\ConnectionProviderInterface;
-use Lsp\Server\ConnectionStore;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -24,7 +23,7 @@ final class InitializedControllerTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->atLeastOnce())->method('info');
 
-        $connectionProvider = new ConnectionStore();
+        $connectionProvider = new ActiveConnectionProvider();
         $resultProvider = $this->createMock(ResultProviderInterface::class);
         $resultProvider->method('getResult')->willReturn([]);
 

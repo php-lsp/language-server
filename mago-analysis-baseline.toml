@@ -1,18 +1,6 @@
 variant = "loose"
 
 [[issues]]
-file = "app/Controller/CancelRequestController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `App\Core\Cancellation\CancellationTokenRegistry::cancel`: expected `int|string`, but found `nonnull`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/CancelRequestController.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
 file = "app/Controller/InitializeController.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #1 of `App\Module\Indexing\Indexer::index`: expected `Lsp\Workspace\Project\Project`, but provided type `Lsp\Workspace\Project\ProjectInterface` is less specific.'
@@ -34,18 +22,6 @@ count = 1
 file = "app/Controller/InitializedController.php"
 code = "unused-parameter"
 message = "Parameter `$initialized` is never used."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CodeActionController.php"
-code = "imprecise-type"
-message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CodeActionController.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\CodeAction\CodeActionContributor>`, but got `array<array-key, mixed>`.'
 count = 1
 
 [[issues]]
@@ -122,9 +98,39 @@ count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PhpParser\Error::getendcolumn`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PhpParser\Error::getstartcolumn`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
 code = "non-existent-method"
 message = 'Method `open` does not exist on type `Lsp\Extension\DocumentManager\Editor\EditorInterface`.'
 count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int(-2)|non-negative-int`.'
+count = 2
+
+[[issues]]
+file = "app/Controller/TextDocument/DiagnosticController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 2
 
 [[issues]]
 file = "app/Controller/TextDocument/DiagnosticController.php"
@@ -136,12 +142,6 @@ count = 1
 file = "app/Controller/TextDocument/DiagnosticController.php"
 code = "possibly-null-argument"
 message = 'Argument #1 of method `App\Module\PsiFile\PHPPsiFileParser::parse` is possibly `null`, but parameter type `Lsp\Extension\DocumentManager\Editor\Document\Document` does not accept it.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DiagnosticController.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `app\module\psifile\tree::errorrange` is possibly `null`, but parameter type `Lsp\Extension\DocumentManager\Editor\Document\Document` does not accept it.'
 count = 1
 
 [[issues]]
@@ -277,60 +277,6 @@ message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type
 count = 1
 
 [[issues]]
-file = "app/Controller/TextDocument/ImplementationController.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/ImplementationController.php"
-code = "imprecise-type"
-message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/ImplementationController.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\Implementation\ImplementationContributor>`, but got `array<array-key, mixed>`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RangeFormattingController.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #2 of `exec`: expected `array<array-key, mixed>|null`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RangeFormattingController.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #3 of `exec`: expected `int|int`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RangeFormattingController.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `non-negative-int`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RangeFormattingController.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `non-negative-int`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RangeFormattingController.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$exitCode`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/RangeFormattingController.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$output`."
-count = 1
-
-[[issues]]
 file = "app/Controller/TextDocument/ReferencesController.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
@@ -370,24 +316,6 @@ count = 1
 file = "app/Controller/TextDocument/SignatureHelpController.php"
 code = "invalid-property-assignment-value"
 message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\Signature\SignatureContributor>`, but got `array<array-key, mixed>`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/TypeDefinitionController.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/TypeDefinitionController.php"
-code = "imprecise-type"
-message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/TypeDefinitionController.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\TypeDefinition\TypeDefinitionContributor>`, but got `array<array-key, mixed>`.'
 count = 1
 
 [[issues]]
@@ -431,48 +359,6 @@ file = "app/Core/Contracts/Documentation/DocumentationConsumer.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$results` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
-
-[[issues]]
-file = "app/Module/CodeAction/ImportSymbolCodeActionContributor.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `array{}|non-empty-list<mixed>` is less specific than the declared return type `list<string>` for function `app\module\codeaction\importsymbolcodeactioncontributor::findmatchingsymbols` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "app/Module/CodeAction/ImportSymbolCodeActionContributor.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `App\Module\CodeAction\ImportSymbolCodeActionContributor::getshortname`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "app/Module/CodeAction/ImportSymbolCodeActionContributor.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "app/Module/CodeAction/ImportSymbolCodeActionContributor.php"
-code = "mixed-property-access"
-message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "app/Module/CodeAction/ImportSymbolCodeActionContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 2
-
-[[issues]]
-file = "app/Module/CodeAction/RemoveUnusedImportCodeActionContributor.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "app/Module/CodeAction/RemoveUnusedImportCodeActionContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 2
 
 [[issues]]
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
@@ -521,24 +407,6 @@ file = "app/Module/Completion/ClassMemberCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 11
-
-[[issues]]
-file = "app/Module/Completion/ClassMemberCompletionContributor.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `app\module\completion\classmembercompletioncontributor::resolvevariabletype`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/ClassMemberCompletionContributor.php"
-code = "non-existent-class-like"
-message = 'Class, Interface, or Trait `PHPStan\Type\ObjectType` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/ClassMemberCompletionContributor.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Type\ObjectType` does not exist.'
-count = 1
 
 [[issues]]
 file = "app/Module/Completion/ClassMemberCompletionContributor.php"
@@ -807,13 +675,25 @@ count = 3
 [[issues]]
 file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
 code = "null-argument"
-message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
+message = 'Argument #2 of method `App\Module\Declaration\ClassConstantDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
 count = 1
 
 [[issues]]
 file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -921,13 +801,25 @@ count = 2
 [[issues]]
 file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
 code = "null-argument"
-message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
+message = 'Argument #2 of method `App\Module\Declaration\GlobalConstantDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
 count = 1
 
 [[issues]]
 file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -939,13 +831,25 @@ count = 3
 [[issues]]
 file = "app/Module/Declaration/PropertyDeclarationContributor.php"
 code = "null-argument"
-message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
+message = 'Argument #2 of method `App\Module\Declaration\PropertyDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
 count = 1
 
 [[issues]]
 file = "app/Module/Declaration/PropertyDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/PropertyDeclarationContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -1303,12 +1207,6 @@ message = 'Redundant condition: variable `$variable` (type `PhpParser\Node\Expr\
 count = 1
 
 [[issues]]
-file = "app/Module/Implementation/InterfaceImplementationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Data/NodeTypeExtractor.php"
 code = "possibly-null-operand"
 message = "Possibly null right operand used in string concatenation (type `null|string`)."
@@ -1334,12 +1232,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
-code = "invalid-property-assignment-value"
-message = "Invalid type for property `$ignoredDirs`: expected `list<string>`, but got `non-empty-array<non-negative-int, string>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
 code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
 count = 1
@@ -1348,12 +1240,6 @@ count = 1
 file = "app/Module/Indexing/Indexer.php"
 code = "mixed-property-type-coercion"
 message = 'A value with a less specific type `array<array-key, mixed>` is being assigned to property `$$indexers` (array<array-key, App\Core\Contracts\Indexing\IndexerInterface<mixed>>).'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "possibly-false-operand"
-message = "Possibly false right operand used in string concatenation (type `false|string`)."
 count = 1
 
 [[issues]]
@@ -1724,21 +1610,9 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "missing-return-type"
-message = "Function `arrow function` is missing a return type hint."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 3
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "possibly-undefined-variable"
-message = "Variable `$entries` might not have been defined on all execution paths leading to this point."
-count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
@@ -1857,6 +1731,18 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
 code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int(-2)|non-negative-int`.'
+count = 2
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 2
+
+[[issues]]
+file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
+code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\publishdiagnosticsparams::__construct`: expected `list<Lsp\Protocol\Type\Diagnostic>`, but possibly received `list<Lsp\Protocol\Type\Diagnostic>|non-empty-array<array-key, Lsp\Protocol\Type\Diagnostic>`.'
 count = 1
 
@@ -1894,18 +1780,6 @@ count = 1
 file = "app/Module/PsiFile/PHPPsiFileParser.php"
 code = "possibly-null-argument"
 message = 'Argument #1 of method `PhpParser\NodeTraverser::traverse` is possibly `null`, but parameter type `array<array-key, PhpParser\Node>` does not accept it.'
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/PositionResolver.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/PositionResolver.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -1966,7 +1840,7 @@ count = 1
 file = "app/Module/PsiFile/Tree.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int(-2)|non-negative-int`.'
-count = 4
+count = 2
 
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"
@@ -1978,7 +1852,7 @@ count = 1
 file = "app/Module/PsiFile/Tree.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 4
+count = 2
 
 [[issues]]
 file = "app/Module/References/ClassConstantReferenceContributor.php"
@@ -2038,78 +1912,6 @@ count = 1
 file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "non-existent-method"
 message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `array{}|non-empty-list<mixed>` is less specific than the declared return type `list<string>` for function `app\module\typedefinition\typedefinitiontypecontributor::extractclassnames` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "mixed-property-access"
-message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 2
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `PHPStan\Type\Type`.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "non-existent-class-like"
-message = 'Class, Interface, or Trait `PHPStan\Type\ObjectType` does not exist.'
-count = 4
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "non-existent-class-like"
-message = 'Class, Interface, or Trait `PHPStan\Type\UnionType` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "non-existent-method"
-message = 'Method `getclassname` does not exist on type `PHPStan\Type\ObjectType`.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Type\ObjectType` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `PHPStan\Type\UnionType` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "null-argument"
-message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "unknown-iterator-type"
-message = "Cannot determine the type of the expression provided to `foreach`."
 count = 1
 
 [[issues]]

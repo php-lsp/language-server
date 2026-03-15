@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Module\Indexing\Indexer;
-use App\Module\Notification\ServerNotificationSender;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeActionOptions;
@@ -44,7 +43,6 @@ final class InitializeController
         private readonly Indexer $indexer,
         private readonly ProjectFactoryInterface $projectFactory,
         private readonly ProjectManager $projectManager,
-        private ServerNotificationSender $notificationSender,
     ) {}
 
     public function __invoke(InitializeParams $request): InitializeResult
@@ -107,14 +105,6 @@ final class InitializeController
         $project = $this->projectFactory->create($folder->uri, $folder->name);
         $this->projectManager->setProject($project);
 
-        $start = microtime(true);
-        $this->logger->info('Indexing project: ' . $folder->uri);
-
         $this->indexer->index($project);
-
-        $message = 'Indexing finished in ' . round(microtime(true) - $start, 2) . ' seconds';
-
-        $this->logger->info($message);
-        $this->notificationSender->showMessage($message);
     }
 }
