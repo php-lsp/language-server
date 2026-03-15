@@ -14,6 +14,7 @@ use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
+use Override;
 
 #[AsCompletionContributor]
 final class ConstantCompletionContributor implements CompletionContributor
@@ -22,6 +23,7 @@ final class ConstantCompletionContributor implements CompletionContributor
         private readonly IndexLookup $indexLookup,
     ) {}
 
+    #[Override]
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
         $element = $context->currentNode();

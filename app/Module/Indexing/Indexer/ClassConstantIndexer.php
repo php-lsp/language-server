@@ -9,6 +9,7 @@ use App\Module\Indexing\Data\ConstantData;
 use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\Enum_;
@@ -21,11 +22,13 @@ use PhpParser\Node\Stmt\Trait_;
 #[AsIndexer]
 class ClassConstantIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.classConstants.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $classLikes = Tree::childrenOfTypes(

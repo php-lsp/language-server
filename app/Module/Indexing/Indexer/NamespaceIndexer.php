@@ -8,6 +8,7 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\Indexing\Data\NamespaceData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Namespace_;
 
 /**
@@ -16,11 +17,13 @@ use PhpParser\Node\Stmt\Namespace_;
 #[AsIndexer]
 class NamespaceIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.namespaces.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $namespaces = Tree::childrenOfType($phpFile->ast, Namespace_::class);

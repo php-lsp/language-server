@@ -20,6 +20,7 @@ use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
+use Override;
 use PhpParser\Node;
 
 #[AsDeclarationContributor]
@@ -30,6 +31,7 @@ final class ClassDeclarationContributor implements DeclarationContributor
         private readonly InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
     {
         $editor = $context->editor;
@@ -59,15 +61,15 @@ final class ClassDeclarationContributor implements DeclarationContributor
         } elseif ($node = Tree::parentOfType($element, Node\Stmt\Class_::class)) {
             if ($node->extends === $element) {
                 $className = $node->extends->toString();
-            } elseif (in_array($element, $node->implements, true)) {
+            } elseif (in_array($element, $node->implements, strict: true)) {
                 $className = $element->toString();
             }
         } elseif ($node = Tree::parentOfType($element, Node\Stmt\Interface_::class)) {
-            if (in_array($element, $node->extends, true)) {
+            if (in_array($element, $node->extends, strict: true)) {
                 $className = $element->toString();
             }
         } elseif ($node = Tree::parentOfType($element, Node\Stmt\TraitUse::class)) {
-            if (in_array($element, $node->traits, true)) {
+            if (in_array($element, $node->traits, strict: true)) {
                 $className = $element->toString();
             }
         }

@@ -9,6 +9,7 @@ use App\Module\Indexing\Data\EnumData;
 use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Enum_;
 
 /**
@@ -17,11 +18,13 @@ use PhpParser\Node\Stmt\Enum_;
 #[AsIndexer]
 class EnumIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.enums.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $enums = Tree::childrenOfType($phpFile->ast, Enum_::class);

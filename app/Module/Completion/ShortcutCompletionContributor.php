@@ -12,11 +12,13 @@ use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 use Lsp\Protocol\Type\InsertTextFormat;
+use Override;
 use PhpParser\Node;
 
 #[AsCompletionContributor]
 final class ShortcutCompletionContributor implements CompletionContributor
 {
+    #[Override]
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
         $element = $context->currentNode();

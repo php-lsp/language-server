@@ -23,7 +23,7 @@ class PHPPsiFile
         if (is_int($position)) {
             $visitor = new NodeFinder();
 
-            return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
+            return $visitor->find($this->ast->children, static function (Node $node) use ($position) {
                 return $node->getStartFilePos() <= $position && $position <= $node->getEndFilePos();
             });
         }
@@ -32,7 +32,7 @@ class PHPPsiFile
 
             $visitor = new NodeFinder();
 
-            return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
+            return $visitor->find($this->ast->children, function (Node $node) use ($position, $line) {
                 if ($node->getStartLine() <= $line && $line <= $node->getEndLine()) {
                     //                $length = $node->getEndFilePos() - $node->getStartFilePos();
                     $startColumn = $this->toColumn($this->ast->document, $node->getStartFilePos());
@@ -54,7 +54,9 @@ class PHPPsiFile
     {
         $nodes = $this->findAtPosition($position);
 
-        return end($nodes) ?: null;
+        $last = end($nodes);
+
+        return $last !== false ? $last : null;
     }
 
     private function toColumn(Document $document, int $pos): int
@@ -64,7 +66,8 @@ class PHPPsiFile
             throw new \RuntimeException('Invalid position information');
         }
 
-        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
+        $needle = "\n";
+        $lineStartPos = strrpos($text, $needle, $pos - strlen($text));
         if (false === $lineStartPos) {
             $lineStartPos = -1;
         }

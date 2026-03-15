@@ -13,13 +13,14 @@ use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Infrastructure\Symfony\LSPCompilerPass;
 use Lsp\Extension\DocumentManager\DocumentManagerExtension;
 use Lsp\Kernel\LanguageServerKernel;
-use Psr\Log\LoggerInterface;
+use Override;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class Application extends LanguageServerKernel
 {
-    public const ATTRIBUTES = [
+    /** @var array<class-string, string> */
+    public const array ATTRIBUTES = [
         AsIndexer::class => 'lsp.indexers',
         AsCompletionContributor::class => 'lsp.completionContributors',
         AsReferenceContributor::class => 'lsp.referenceContributors',
@@ -28,6 +29,7 @@ final class Application extends LanguageServerKernel
         AsSignatureContributor::class => 'lsp.signatureContributors',
     ];
 
+    #[Override]
     protected function build(ContainerBuilder $container): void
     {
         parent::build($container);

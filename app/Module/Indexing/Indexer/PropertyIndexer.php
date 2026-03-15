@@ -10,6 +10,7 @@ use App\Module\Indexing\Data\PropertyData;
 use App\Module\Indexing\Data\Visibility;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -22,11 +23,13 @@ use PhpParser\Node\Stmt\Trait_;
 #[AsIndexer]
 class PropertyIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.properties.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $classLikes = Tree::childrenOfTypes($phpFile->ast, Class_::class, Trait_::class);

@@ -16,6 +16,7 @@ use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
+use Override;
 use PhpParser\Node;
 
 #[AsReferenceContributor]
@@ -26,6 +27,7 @@ final class MethodReferenceContributor implements ReferenceContributor
         private readonly InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(ReferenceContext $context, ReferenceConsumer $consumer): void
     {
         $file = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);

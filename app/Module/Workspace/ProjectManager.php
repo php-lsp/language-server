@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Module\Workspace;
 
 use Lsp\Workspace\Project\Project;

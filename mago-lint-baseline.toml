@@ -1,12 +1,6 @@
 variant = "loose"
 
 [[issues]]
-file = "app/Application.php"
-code = "no-redundant-use"
-message = "Unused import: `LoggerInterface`."
-count = 1
-
-[[issues]]
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "literal-named-argument"
 message = "Literal argument `1.0` should be passed as a named argument for clarity."
@@ -16,12 +10,6 @@ count = 1
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "prefer-static-closure"
 message = "This closure does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DiagnosticController.php"
-code = "prefer-static-closure"
-message = "This arrow function does not use `$this` and should be declared static."
 count = 1
 
 [[issues]]
@@ -67,30 +55,6 @@ message = "Class has a high kan defect score (2.55)."
 count = 1
 
 [[issues]]
-file = "app/Core/Contracts/Indexing/IndexerInterface.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Core/Contracts/Signature/SignatureContext.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Infrastructure/Symfony/LSPCompilerPass.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/ClassConstantCompletionContributor.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
 file = "app/Module/Completion/ClassMemberCompletionContributor.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -113,18 +77,6 @@ file = "app/Module/Completion/EnumCaseCompletionContributor.php"
 code = "prefer-early-continue"
 message = "Consider using early continue pattern to reduce nesting."
 count = 1
-
-[[issues]]
-file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/VariableCompletionContributor.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
 
 [[issues]]
 file = "app/Module/Completion/VariableCompletionContributor.php"
@@ -158,12 +110,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 3
-
-[[issues]]
-file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "no-assign-in-condition"
 message = "Avoid assignments in conditions."
 count = 8
@@ -193,27 +139,9 @@ message = "Class has a high kan defect score (1.9800000000000002)."
 count = 1
 
 [[issues]]
-file = "app/Module/Documentation/ConstantDocumentationContributor.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
 file = "app/Module/Documentation/MethodDocumentationContributor.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
-code = "prefer-static-closure"
-message = "This arrow function does not use `$this` and should be declared static."
 count = 1
 
 [[issues]]
@@ -247,36 +175,6 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/IndexLookup.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -286,30 +184,6 @@ count = 1
 file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
 code = "kan-defect"
 message = "Class has a high kan defect score (2.02)."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/Entry.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
 count = 1
 
 [[issues]]
@@ -337,66 +211,12 @@ message = "Parameter list is too long."
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Storage/JsonSerializer.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/JsonSerializer.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/SerializerInterface.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/StorageInterface.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/FifoCache.php"
-code = "literal-named-argument"
-message = "Literal argument `0` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
 file = "app/Module/PsiFile/FifoCache.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 1
 
 [[issues]]
-file = "app/Module/PsiFile/FifoCache.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
-
-[[issues]]
-file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
-code = "identity-comparison"
-message = "Use identity inequality `!==` instead of inequality comparison `!=`."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
-code = "inline-variable-return"
-message = "Variable assignment can be inlined into the return statement."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
-code = "prefer-static-closure"
-message = "This arrow function does not use `$this` and should be declared static."
-count = 1
-
-[[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
 code = "inline-variable-return"
 message = "Variable assignment can be inlined into the return statement."
@@ -404,20 +224,8 @@ count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
-code = "literal-named-argument"
-message = 'Literal argument `"\n"` should be passed as a named argument for clarity.'
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/PHPPsiFile.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/PHPPsiFile.php"
-code = "prefer-static-closure"
-message = "This closure does not use `$this` and should be declared static."
+code = "prefer-arrow-function"
+message = "This closure can be simplified to a more concise arrow function."
 count = 1
 
 [[issues]]
@@ -434,32 +242,8 @@ count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"
-code = "literal-named-argument"
-message = 'Literal argument `"\n"` should be passed as a named argument for clarity.'
-count = 3
-
-[[issues]]
-file = "app/Module/PsiFile/Tree.php"
-code = "literal-named-argument"
-message = "Literal argument `0` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/Tree.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/Tree.php"
 code = "no-assign-in-condition"
 message = "Avoid assignments in conditions."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/Tree.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
 count = 1
 
 [[issues]]
@@ -496,10 +280,4 @@ count = 1
 file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "kan-defect"
 message = "Class has a high kan defect score (2.79)."
-count = 1
-
-[[issues]]
-file = "app/Module/Workspace/ProjectManager.php"
-code = "strict-types"
-message = "Missing `declare(strict_types=1);` statement at the beginning of the file."
 count = 1

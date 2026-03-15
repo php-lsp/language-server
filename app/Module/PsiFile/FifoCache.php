@@ -35,7 +35,7 @@ final class FifoCache
      */
     public function set(string $key, mixed $value, bool $preventDeletion = false): void
     {
-        if (isset($this->cache[$key])) {
+        if (array_key_exists($key, $this->cache)) {
             $this->cache[$key] = $value;
 
             return;
@@ -53,7 +53,7 @@ final class FifoCache
 
     public function has(string $key): bool
     {
-        return isset($this->cache[$key]);
+        return array_key_exists($key, $this->cache);
     }
 
     public function remove(string $key): void
@@ -80,7 +80,7 @@ final class FifoCache
     {
         $evictCount = max(1, (int) ceil($this->maxSize * $this->evictionPercent));
 
-        $keysToRemove = array_slice($this->queue, 0, $evictCount);
+        $keysToRemove = array_slice($this->queue, offset: 0, length: $evictCount);
 
         foreach ($keysToRemove as $key) {
             unset($this->cache[$key]);

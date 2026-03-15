@@ -6,6 +6,7 @@ namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\PsiFile\PHPPsiFile;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -17,16 +18,17 @@ use PhpParser\NodeFinder;
  */
 class FunctionCallUsageIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.functionCallUsages';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $finder = new NodeFinder();
 
-        /** @var Node\Expr\FuncCall[] $calls */
         $calls = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\FuncCall::class);
 
         $results = [];

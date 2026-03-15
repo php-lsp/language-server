@@ -8,7 +8,8 @@ use Lsp\Protocol\Type\CompletionItemKind;
 
 final class KeywordDefinitions
 {
-    public const CONTROL_FLOW = [
+    /** @var list<string> */
+    public const array CONTROL_FLOW = [
         'if',
         'else',
         'elseif',
@@ -39,7 +40,8 @@ final class KeywordDefinitions
         'match', // PHP 8.0+
     ];
 
-    public const DECLARATION = [
+    /** @var list<string> */
+    public const array DECLARATION = [
         'class',
         'interface',
         'trait',
@@ -51,7 +53,8 @@ final class KeywordDefinitions
         'const',
     ];
 
-    public const MODIFIER = [
+    /** @var list<string> */
+    public const array MODIFIER = [
         'public',
         'protected',
         'private',
@@ -62,7 +65,8 @@ final class KeywordDefinitions
         'var',
     ];
 
-    public const TYPE = [
+    /** @var list<string> */
+    public const array TYPE = [
         'extends',
         'implements',
         'instanceof',
@@ -75,7 +79,8 @@ final class KeywordDefinitions
         'global',
     ];
 
-    public const LANGUAGE_CONSTRUCT = [
+    /** @var list<string> */
+    public const array LANGUAGE_CONSTRUCT = [
         'die',
         'echo',
         'empty',
@@ -88,7 +93,8 @@ final class KeywordDefinitions
         '__halt_compiler',
     ];
 
-    public const OPERATOR = [
+    /** @var list<string> */
+    public const array OPERATOR = [
         'and',
         'or',
         'xor',
@@ -98,7 +104,8 @@ final class KeywordDefinitions
         'require_once',
     ];
 
-    public const MAGIC_CONSTANT = [
+    /** @var list<string> */
+    public const array MAGIC_CONSTANT = [
         '__CLASS__',
         '__DIR__',
         '__FILE__',

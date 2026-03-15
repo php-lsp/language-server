@@ -13,6 +13,7 @@ use App\Module\Indexing\Indexer\GlobalConstantIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node;
 
 #[AsDocumentationContributor]
@@ -23,6 +24,7 @@ final class ConstantDocumentationContributor implements DocumentationContributor
         private readonly InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(DocumentationContext $context, DocumentationConsumer $consumer): void
     {
         $file = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);
@@ -64,7 +66,7 @@ final class ConstantDocumentationContributor implements DocumentationContributor
             $parent = Tree::parent($element);
             if ($parent instanceof Node\Expr\ConstFetch) {
                 $constName = $element->toString();
-                if (in_array(strtolower($constName), ['true', 'false', 'null'], true)) {
+                if (in_array(strtolower($constName), ['true', 'false', 'null'], strict: true)) {
                     return;
                 }
 

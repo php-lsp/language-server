@@ -104,10 +104,12 @@ class Tree
 
         $result = [];
         foreach ($classes as $class) {
-            if ($node instanceof $class) {
-                $result[] = $node;
-                break;
+            if (!$node instanceof $class) {
+                continue;
             }
+
+            $result[] = $node;
+            break;
         }
 
         $children = self::getNodeChildren($node);
@@ -156,7 +158,8 @@ class Tree
             throw new \RuntimeException('Invalid position information');
         }
 
-        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
+        $needle = "\n";
+        $lineStartPos = strrpos($text, $needle, $pos - strlen($text));
         if (false === $lineStartPos) {
             $lineStartPos = -1;
         }
@@ -174,9 +177,10 @@ class Tree
             throw new \RuntimeException('Invalid position information');
         }
 
-        $line = substr_count($text, "\n", 0, $pos);
+        $needle = "\n";
+        $line = substr_count($text, $needle, offset: 0, length: $pos);
 
-        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
+        $lineStartPos = strrpos($text, $needle, $pos - strlen($text));
         if (false === $lineStartPos) {
             $lineStartPos = -1;
         }
@@ -212,6 +216,6 @@ class Tree
             return (string) $element;
         }
 
-        return '-----' . var_export($element, true) . '-----';
+        return '-----' . var_export($element, return: true) . '-----';
     }
 }

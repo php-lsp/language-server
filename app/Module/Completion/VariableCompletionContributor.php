@@ -11,12 +11,14 @@ use App\Core\Contracts\Completion\CompletionContributor;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
 #[AsCompletionContributor]
 final class VariableCompletionContributor implements CompletionContributor
 {
+    #[Override]
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
         $element = $context->currentNode();
@@ -45,7 +47,7 @@ final class VariableCompletionContributor implements CompletionContributor
         foreach ($scope->params as $param) {
             if ($param->var instanceof Node\Expr\Variable && is_string($param->var->name)) {
                 $name = $param->var->name;
-                if (isset($seen[$name])) {
+                if (array_key_exists($name, $seen)) {
                     continue;
                 }
                 $seen[$name] = true;
@@ -71,7 +73,7 @@ final class VariableCompletionContributor implements CompletionContributor
                 continue;
             }
             $name = $variable->name;
-            if (isset($seen[$name])) {
+            if (array_key_exists($name, $seen)) {
                 continue;
             }
             $seen[$name] = true;

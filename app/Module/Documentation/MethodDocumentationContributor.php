@@ -12,6 +12,7 @@ use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node;
 
 #[AsDocumentationContributor]
@@ -22,6 +23,7 @@ final class MethodDocumentationContributor implements DocumentationContributor
         private readonly InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(DocumentationContext $context, DocumentationConsumer $consumer): void
     {
         $file = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);

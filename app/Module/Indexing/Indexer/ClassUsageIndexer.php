@@ -6,6 +6,7 @@ namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\PsiFile\PHPPsiFile;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -17,16 +18,17 @@ use PhpParser\NodeFinder;
  */
 class ClassUsageIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.classUsages';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $finder = new NodeFinder();
 
-        /** @var Node\Name\FullyQualified[] $names */
         $names = $finder->findInstanceOf($phpFile->ast->children, Node\Name\FullyQualified::class);
 
         $results = [];

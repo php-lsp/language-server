@@ -40,7 +40,7 @@ final class DiagnosticController
         $root = $this->fileParser->parse($document);
 
         $result = array_map(
-            fn(Error $error) => new Diagnostic(
+            static fn(Error $error) => new Diagnostic(
                 range: new Range(
                     start: new Position($error->getStartLine() - 1, $error->getStartColumn($document->getContents())),
                     end: new Position($error->getEndLine() - 1, $error->getEndColumn($document->getContents())),
