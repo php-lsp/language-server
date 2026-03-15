@@ -33,7 +33,6 @@
         }
     },
     "require-dev": {
-        "behat/behat": "^3.16",
         "buggregator/trap": "^1.13",
         "carthage-software/mago": "^1.14",
         "php-lsp/protocol-generator": "^1.0",
@@ -56,9 +55,8 @@
         "build:run": ["run"]
     },
     "scripts-descriptions": {
-        "test": "Runs all types of tests in turn",
+        "test": "Runs all tests",
         "test:unit": "Runs unit tests only",
-        "test:feature": "Runs functional tests only",
         "mago:lint": "Runs Mago linter with baseline",
         "mago:analyze": "Runs Mago analyzer with baseline",
         "mago:fix": "Applies Mago auto-fixes to source code",
@@ -71,9 +69,8 @@
         "build:prepare": "Prepare local environment for binary compilation"
     },
     "scripts": {
-        "test": ["@test:unit", "@test:feature"],
+        "test": "@test:unit",
         "test:unit": "phpunit --testdox",
-        "test:feature": "behat --format pretty",
         "mago:lint": "mago lint --baseline mago-lint-baseline.toml",
         "mago:analyze": "mago analyze --baseline mago-analysis-baseline.toml",
         "mago:fix": "mago lint --fix --potentially-unsafe --format-after-fix",

@@ -19,9 +19,8 @@ diagnostics) to IDEs and editors via the LSP standard.
 php ./bin/lsp serve App\\Application --port=5007
 
 # Tests
-composer test              # Run all tests (unit + feature)
-composer test:unit         # PHPUnit only
-composer test:feature      # Behat only
+composer test              # Run all tests
+composer test:unit         # PHPUnit unit tests
 
 # Code quality
 composer mago:lint         # Mago linter (with baseline)
@@ -75,9 +74,7 @@ config/
 ├── services.yaml              # Main DI config (imports services/*.yaml)
 └── services/                  # controllers.yaml, listeners.yaml, logger.yaml
 tests/
-├── Unit/                      # PHPUnit tests
-├── Feature/                   # Behat feature files
-└── Context/                   # Behat contexts (Assert/, Provider/, Support/)
+└── Unit/                      # PHPUnit unit tests
 ```
 
 ## Architecture
@@ -131,21 +128,77 @@ Available contributor types and their DI tags:
 - `phpstan/phpstan` — PHPStan for type resolution (used by TypeSystem module)
 - `carthage-software/mago` — Mago PHP linter, analyzer, and formatter
 
-## Pre-commit Checklist
+## Quality Constraints
 
-Before every commit you **must** run the following commands and ensure they
-pass without errors:
+These constraints are **mandatory**. Work is **not considered complete** until
+all of them pass. If any check fails — fix the issues and re-run everything.
+
+### 1. Tests must pass
 
 ```shell
-composer mago:format       # Auto-fix code formatting
-composer mago:lint         # Run Mago linter (must pass)
-composer mago:analyze      # Run Mago analyzer (must pass)
+composer test
 ```
 
-If linter or analyzer report new issues that are not in the baseline, fix
-them before committing. Do **not** regenerate baselines to hide new issues —
-only run `composer mago:baseline` when intentionally resolving existing
-baseline entries.
+All unit tests must pass. Never finish work with failing tests.
+
+### 2. Static analysis must pass (Mago)
+
+```shell
+composer mago:lint         # Linter (with baseline)
+composer mago:analyze      # Analyzer (with baseline)
+```
+
+Fix all new issues reported by Mago. Do **not** regenerate baselines to hide
+new issues — only run `composer mago:baseline` when intentionally resolving
+existing baseline entries.
+
+### 3. Code style must pass (Mago)
+
+```shell
+composer mago:format       # Auto-fix formatting
+composer mago:format:check # Verify (dry-run)
+```
+
+Always run `composer mago:format` before committing. Verify with
+`composer mago:format:check`.
+
+### 4. Code coverage >= 80% for new features
+
+When writing new features, code coverage must be at least 80%:
+
+```shell
+php -dpcov.enabled=1 vendor/bin/phpunit --coverage-text
+```
+
+If coverage is below 80%, write additional tests.
+
+### 5. CI must be green
+
+After pushing, verify that **all** GitHub Actions workflows pass:
+
+- **tests** — unit tests (PHP 8.4 + 8.5, ubuntu + windows)
+- **mago** — lint + analyze
+- **codestyle** — `mago format --check`
+- **coverage** — code coverage report
+- **security** — `composer audit`
+
+Check CI status with `gh run list` or in the PR. If any workflow fails,
+fix the issue locally and push again. Work is not done until CI is fully green.
+
+### Workflow
+
+After completing any code change:
+
+1. `composer mago:fix` — auto-fix lint issues
+2. `composer mago:format` — auto-fix formatting
+3. `composer mago:lint` — verify linter passes
+4. `composer mago:analyze` — verify analyzer passes
+5. `composer mago:format:check` — verify formatting
+6. `composer test` — verify all tests pass
+7. For new features: check coverage >= 80%
+8. Push and verify all CI workflows are green
+
+If **any** step fails — fix and repeat from step 1.
 
 ## Guidelines
 
@@ -163,8 +216,7 @@ baseline entries.
 - See [config/services.yaml](config/services.yaml) and subdirectories for
   service registration details.
 - See [mago.toml](mago.toml) for Mago linter, analyzer, and formatter configuration.
-- See [phpunit.xml](phpunit.xml) and [behat.yaml](behat.yaml) for test
-  configuration.
+- See [phpunit.xml](phpunit.xml) for test configuration.
 - See [docs/codespaces.md](docs/codespaces.md) for GitHub Codespaces setup
   and troubleshooting guide.
 - See [docs/features.md](docs/features.md) for the feature roadmap, LSP
