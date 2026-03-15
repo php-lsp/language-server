@@ -4,26 +4,30 @@ declare(strict_types=1);
 
 namespace App\Module\Notification;
 
+use App\Core\Contracts\Notification\ProgressNotifierInterface;
 use Lsp\Protocol\Type\ProgressParams;
 use Lsp\Protocol\Type\WorkDoneProgressBegin;
 use Lsp\Protocol\Type\WorkDoneProgressCreateParams;
 use Lsp\Protocol\Type\WorkDoneProgressEnd;
 use Lsp\Protocol\Type\WorkDoneProgressReport;
+use Override;
 
-final class ProgressNotifier
+final class ProgressNotifier implements ProgressNotifierInterface
 {
     public function __construct(
         private readonly ServerNotificationSender $sender,
     ) {}
 
-    public function create(#[\SensitiveParameter] string $token): Result
+    #[Override]
+    public function create(#[\SensitiveParameter] string $token): void
     {
-        return $this->sender->sendRawNotification(
+        $this->sender->sendRawNotification(
             method: 'window/workDoneProgress/create',
             parameters: new WorkDoneProgressCreateParams(token: $token),
         );
     }
 
+    #[Override]
     public function begin(
         #[\SensitiveParameter]
         string $token,
@@ -31,8 +35,8 @@ final class ProgressNotifier
         ?string $message = null,
         ?int $percentage = null,
         ?bool $cancellable = null,
-    ): Result {
-        return $this->sender->sendRawNotification(
+    ): void {
+        $this->sender->sendRawNotification(
             method: '$/progress',
             parameters: new ProgressParams(
                 token: $token,
@@ -47,14 +51,15 @@ final class ProgressNotifier
         );
     }
 
+    #[Override]
     public function report(
         #[\SensitiveParameter]
         string $token,
         ?string $message = null,
         ?int $percentage = null,
         ?bool $cancellable = null,
-    ): Result {
-        return $this->sender->sendRawNotification(
+    ): void {
+        $this->sender->sendRawNotification(
             method: '$/progress',
             parameters: new ProgressParams(
                 token: $token,
@@ -81,9 +86,10 @@ final class ProgressNotifier
         return max(0, min(100, $percentage));
     }
 
-    public function end(#[\SensitiveParameter] string $token, ?string $message = null): Result
+    #[Override]
+    public function end(#[\SensitiveParameter] string $token, ?string $message = null): void
     {
-        return $this->sender->sendRawNotification(
+        $this->sender->sendRawNotification(
             method: '$/progress',
             parameters: new ProgressParams(
                 token: $token,

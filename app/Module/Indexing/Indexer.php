@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Module\Indexing;
 
 use App\Core\Contracts\Indexing\IndexerInterface;
+use App\Core\Contracts\Notification\ProgressNotifierInterface;
 use App\Module\Indexing\Storage\StorageInterface;
-use App\Module\Notification\ProgressNotifier;
 use Lsp\Workspace\File\VirtualFileInterface;
 use Lsp\Workspace\Project\Project;
 use Psr\Log\LoggerInterface;
@@ -28,7 +28,7 @@ final class Indexer
         private StorageInterface $storage,
         private LoggerInterface $logger,
         private IndexerFileCollector $fileCollector,
-        private ProgressNotifier $progressNotifier,
+        private ProgressNotifierInterface $progressNotifier,
         private readonly IndexingStatus $indexingStatus,
     ) {
         $this->indexers = iterator_to_array($indexers);
