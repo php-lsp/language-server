@@ -169,6 +169,18 @@ message = "Class has a high kan defect score (2.02)."
 count = 1
 
 [[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
 file = "app/Module/Indexing/Storage/IndexData/ClassData.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
@@ -194,6 +206,18 @@ count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/FifoCache.php"
+code = "literal-named-argument"
+message = "Literal argument `1` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
 count = 1
@@ -207,13 +231,31 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (2.89)."
+message = "Class has a high kan defect score (3.4200000000000004)."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "literal-named-argument"
+message = 'Literal argument `"\n"` should be passed as a named argument for clarity.'
 count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"
 code = "no-assign-in-condition"
 message = "Avoid assignments in conditions."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]

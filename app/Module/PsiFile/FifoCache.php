@@ -59,7 +59,10 @@ final class FifoCache
     public function remove(string $key): void
     {
         unset($this->cache[$key]);
-        $this->queue = array_values(array_diff($this->queue, [$key]));
+        $index = array_search($key, $this->queue, true);
+        if ($index !== false) {
+            array_splice($this->queue, $index, 1);
+        }
     }
 
     public function clear(): void
