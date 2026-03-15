@@ -42,7 +42,7 @@ final class IndexKeysController
             $key = $entry->key;
 
             if (isset($params->pattern) && $params->pattern !== '') {
-                if (!\fnmatch($params->pattern, (string) $key, \FNM_CASEFOLD)) {
+                if (!\fnmatch($params->pattern, (string) $key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
                     continue;
                 }
             }

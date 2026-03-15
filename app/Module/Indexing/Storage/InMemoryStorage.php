@@ -101,7 +101,7 @@ class InMemoryStorage implements DebugStorageInterface
         }
 
         foreach ($this->entries[$indexKey] as $entry) {
-            if (\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD)) {
+            if (\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
                 yield $entry;
             }
         }
