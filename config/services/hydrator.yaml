@@ -1,0 +1,10 @@
+
+services:
+  App\Hydrator\TypeLangMapper:
+    autowire: true
+
+  Lsp\Contracts\Hydrator\HydratorInterface:
+    alias: App\Hydrator\TypeLangMapper
+
+  Lsp\Contracts\Hydrator\ExtractorInterface:
+    alias: App\Hydrator\TypeLangMapper
