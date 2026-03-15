@@ -1,16 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
+use App\Module\Indexing\Data\FunctionData;
+use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use PhpParser\Node\Stmt\Function_;
 
-#[AsIndexer]
 /**
- * @implements AbstractPhpIndexer<list<string, int>>
+ * @extends AbstractPhpIndexer<FunctionData>
  */
+#[AsIndexer]
 class FunctionIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
@@ -24,9 +28,15 @@ class FunctionIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($functions as $function) {
-            $functionName = $function->namespacedName->toString();
-            // todo: using name as a keys isn't correct, only debug purposes
-            $results[$functionName] = [$functionName, $function->getStartFilePos()];
+            $fqn = $function->namespacedName?->toString() ?? $function->name->toString();
+
+            $results[$fqn] = new FunctionData(
+                fqn: $fqn,
+                startPosition: $function->getStartFilePos(),
+                endPosition: $function->getEndFilePos(),
+                returnType: NodeTypeExtractor::typeToString($function->returnType),
+                parameters: NodeTypeExtractor::extractParameters($function),
+            );
         }
 
         return $results;

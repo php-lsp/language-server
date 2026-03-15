@@ -7,6 +7,8 @@ namespace App\Tests\Unit\Module\Declaration;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\ClassMethodDeclarationContributor;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Data\Visibility;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -67,7 +69,10 @@ final class ClassMethodDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php \Foo::bar();');
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Foo' => ['bar' => true, 'baz' => true]],
+                'file:///def.php' => ['Foo' => [
+                    new MethodData('bar', 'Foo', 0, 30, Visibility::Public, true, false, null, []),
+                    new MethodData('baz', 'Foo', 31, 60, Visibility::Public, true, false, null, []),
+                ]],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);

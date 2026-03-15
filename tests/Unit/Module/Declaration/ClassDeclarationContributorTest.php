@@ -7,6 +7,9 @@ namespace App\Tests\Unit\Module\Declaration;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\ClassDeclarationContributor;
+use App\Module\Indexing\Data\ClassData;
+use App\Module\Indexing\Data\InterfaceData;
+use App\Module\Indexing\Data\TraitData;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -68,7 +71,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php new \Foo();');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 50, false, false, false, null, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
@@ -96,7 +99,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar extends \Foo {}');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 50, false, false, false, null, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
@@ -122,7 +125,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar implements \Baz {}');
         $lookup = IndexTestHelper::createLookup([
             'php.interfaces.fqn' => [
-                'file:///iface.php' => ['Baz'],
+                'file:///iface.php' => ['Baz' => new InterfaceData('Baz', 0, 50, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
@@ -139,7 +142,6 @@ final class ClassDeclarationContributorTest extends TestCase
         $consumer = new DeclarationConsumer();
         $contributor->contribute($context, $consumer);
 
-        // Interface index stores values differently, may or may not match
         $this->assertIsArray($consumer->results);
     }
 
@@ -149,7 +151,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php \Foo::BAR;');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 50, false, false, false, null, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
@@ -175,7 +177,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar { public function baz(): \Foo {} }');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 50, false, false, false, null, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
@@ -201,7 +203,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php interface Bar extends \Foo {}');
         $lookup = IndexTestHelper::createLookup([
             'php.interfaces.fqn' => [
-                'file:///iface.php' => ['Foo' => 'Foo'],
+                'file:///iface.php' => ['Foo' => new InterfaceData('Foo', 0, 50, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
@@ -227,7 +229,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php class Bar { use \Foo; }');
         $lookup = IndexTestHelper::createLookup([
             'php.traits.fqn' => [
-                'file:///trait.php' => ['Foo' => 'Foo'],
+                'file:///trait.php' => ['Foo' => new TraitData('Foo', 0, 50)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
@@ -253,7 +255,7 @@ final class ClassDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php function bar(\Foo $x) {}');
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///def.php' => ['Foo' => 'Foo'],
+                'file:///def.php' => ['Foo' => new ClassData('Foo', 0, 50, false, false, false, null, [])],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);

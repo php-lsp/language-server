@@ -8,6 +8,7 @@ use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
+use App\Module\Indexing\Data\MethodData;
 use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
@@ -30,7 +31,6 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
         $editor = $context->editor;
         $file = $this->fileManager->findPsiFile($editor, $context->textDocumentIdentifier);
         if ($file === null) {
-            //            dump('file is null', $context->textDocumentIdentifier);
             return;
         }
 
@@ -54,14 +54,20 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
             if ($value->key !== $className) {
                 continue;
             }
-            if (!isset($value->value[$methodName])) {
-                continue;
-            }
 
-            $consumer(new Location(
-                uri: $value->uri,
-                range: $startRange,
-            ));
+            /** @var list<MethodData> $methods */
+            $methods = $value->value;
+
+            foreach ($methods as $method) {
+                if ($method->name !== $methodName) {
+                    continue;
+                }
+
+                $consumer(new Location(
+                    uri: $value->uri,
+                    range: $startRange,
+                ));
+            }
         }
     }
 }

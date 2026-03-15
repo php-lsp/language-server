@@ -6,6 +6,8 @@ namespace App\Tests\Unit\Module\Signature;
 
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
+use App\Module\Indexing\Data\FunctionData;
+use App\Module\Indexing\Data\ParameterData;
 use App\Module\Signature\FunctionSignatureContributor;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -44,25 +46,15 @@ final class FunctionSignatureContributorTest extends TestCase
     public function testFindsSignatureForNoParamFunction(): void
     {
         $callerFile = PsiFileFactory::fromCode('<?php myFunc();');
-        // Function with return type, no params, with docblock
-        $defCode = "<?php\n/** Doc */\nfunction myFunc(): void {}";
-        $defFile = PsiFileFactory::fromCode($defCode);
-
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
-        $fileManager->method('findPsiFile')->willReturnCallback(function ($editor, $identifier) use ($callerFile, $defFile) {
-            if ($identifier->uri === 'file:///def.php') {
-                return $defFile;
-            }
-            return $callerFile;
-        });
-
-        $funcStartPos = strpos($defCode, 'function');
 
         $lookup = IndexTestHelper::createLookup([
             'php.functions.fqn' => [
-                'file:///def.php' => ['myFunc' => ['myFunc', $funcStartPos]],
+                'file:///def.php' => ['myFunc' => new FunctionData('myFunc', 0, 30, 'void', [])],
             ],
         ]);
+
+        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager->method('findPsiFile')->willReturn($callerFile);
 
         $contributor = new FunctionSignatureContributor($fileManager, $lookup);
 
@@ -88,7 +80,7 @@ final class FunctionSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.functions.fqn' => [
-                'file:///def.php' => ['otherFunc' => ['otherFunc', 0]],
+                'file:///def.php' => ['otherFunc' => new FunctionData('otherFunc', 0, 30, null, [])],
             ],
         ]);
 

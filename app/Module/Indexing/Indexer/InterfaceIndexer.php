@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
+use App\Module\Indexing\Data\InterfaceData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use PhpParser\Node\Stmt\Interface_;
 
-#[AsIndexer]
 /**
- * @implements \App\Core\Contracts\Indexing\IndexerInterface<string>
+ * @extends AbstractPhpIndexer<InterfaceData>
  */
+#[AsIndexer]
 class InterfaceIndexer extends AbstractPhpIndexer
 {
     public static function getKey(): string
@@ -26,7 +27,23 @@ class InterfaceIndexer extends AbstractPhpIndexer
 
         $results = [];
         foreach ($interfaces as $interface) {
-            $results[] = $interface->namespacedName->toString();
+            if ($interface->name === null) {
+                continue;
+            }
+
+            $fqn = $interface->namespacedName?->toString() ?? $interface->name->toString();
+
+            $extends = [];
+            foreach ($interface->extends as $ext) {
+                $extends[] = $ext->toString();
+            }
+
+            $results[$fqn] = new InterfaceData(
+                fqn: $fqn,
+                startPosition: $interface->getStartFilePos(),
+                endPosition: $interface->getEndFilePos(),
+                extends: $extends,
+            );
         }
 
         return $results;

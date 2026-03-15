@@ -6,6 +6,8 @@ namespace App\Tests\Unit\Module\Signature;
 
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Data\Visibility;
 use App\Module\Signature\MethodSignatureContributor;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -80,7 +82,9 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Foo' => ['bar']],
+                'file:///def.php' => ['Foo' => [
+                    new MethodData('bar', 'Foo', 0, 70, Visibility::Public, false, false, 'void', []),
+                ]],
             ],
         ]);
 
@@ -113,7 +117,10 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///test.php' => ['Foo' => ['bar', 'baz']],
+                'file:///test.php' => ['Foo' => [
+                    new MethodData('bar', 'Foo', 0, 50, Visibility::Public, false, false, 'string', []),
+                    new MethodData('baz', 'Foo', 51, 100, Visibility::Public, false, false, null, []),
+                ]],
             ],
         ]);
 
@@ -144,7 +151,9 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Other' => ['bar']],
+                'file:///def.php' => ['Other' => [
+                    new MethodData('bar', 'Other', 0, 50, Visibility::Public, false, false, null, []),
+                ]],
             ],
         ]);
 
@@ -181,7 +190,9 @@ final class MethodSignatureContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Foo' => ['bar']],
+                'file:///def.php' => ['Foo' => [
+                    new MethodData('bar', 'Foo', 0, 60, Visibility::Public, false, false, 'void', []),
+                ]],
             ],
         ]);
 

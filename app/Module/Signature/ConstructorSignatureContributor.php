@@ -8,6 +8,8 @@ use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
 use App\Core\Contracts\Signature\SignatureContributor;
+use App\Module\Indexing\Data\ClassData;
+use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
@@ -40,7 +42,9 @@ final class ConstructorSignatureContributor implements SignatureContributor
         }
 
         foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
-            if ($entry->value !== $className) {
+            /** @var ClassData $data */
+            $data = $entry->value;
+            if ($data->fqn !== $className) {
                 continue;
             }
 
@@ -113,7 +117,7 @@ final class ConstructorSignatureContributor implements SignatureContributor
         $params = [];
         $paramLabels = [];
         foreach ($constructor->params as $param) {
-            $typeStr = FunctionSignatureContributor::typeToString($param->type);
+            $typeStr = NodeTypeExtractor::typeToString($param->type) ?? '';
             $varName = $param->var instanceof Node\Expr\Variable && is_string($param->var->name)
                 ? $param->var->name
                 : 'unknown';

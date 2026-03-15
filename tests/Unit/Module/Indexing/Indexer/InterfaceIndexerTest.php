@@ -4,39 +4,62 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Module\Indexing\Indexer;
 
+use App\Module\Indexing\Data\InterfaceData;
 use App\Module\Indexing\Indexer\InterfaceIndexer;
-use App\Tests\Support\IndexerTestHelper;
-use App\Tests\Support\PsiFileFactory;
 use App\Tests\TestCase;
+use App\Tests\Unit\Module\Indexing\IndexerTestHelper;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\TestDox;
 
 #[Group('unit')]
 final class InterfaceIndexerTest extends TestCase
 {
-    #[TestDox('getKey returns correct key')]
     public function testGetKey(): void
     {
         $this->assertSame('php.interfaces.fqn', InterfaceIndexer::getKey());
     }
 
-    #[TestDox('indexes interface names from PHP file')]
-    public function testIndexesInterfaces(): void
+    public function testIndexSimpleInterface(): void
     {
-        $psiFile = PsiFileFactory::fromCode('<?php interface Foo {} interface Bar {}');
-        $results = IndexerTestHelper::indexInternal(InterfaceIndexer::class, $psiFile);
+        $code = '<?php interface Foo {}';
+        $results = IndexerTestHelper::runIndexer(new InterfaceIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertCount(2, $results);
-        $this->assertContains('Foo', $results);
-        $this->assertContains('Bar', $results);
+        $this->assertCount(1, $results);
+        $this->assertArrayHasKey('Foo', $results);
+        $this->assertInstanceOf(InterfaceData::class, $results['Foo']);
+        $this->assertSame('Foo', $results['Foo']->fqn);
+        $this->assertSame([], $results['Foo']->extends);
     }
 
-    #[TestDox('returns empty for file without interfaces')]
-    public function testReturnsEmptyWhenNoInterfaces(): void
+    public function testIndexNamespacedInterface(): void
     {
-        $psiFile = PsiFileFactory::fromCode('<?php class Foo {}');
-        $results = IndexerTestHelper::indexInternal(InterfaceIndexer::class, $psiFile);
+        $code = '<?php namespace App\\Contracts; interface Repository {}';
+        $results = IndexerTestHelper::runIndexer(new InterfaceIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertEmpty($results);
+        $this->assertArrayHasKey('App\\Contracts\\Repository', $results);
+    }
+
+    public function testIndexInterfaceWithExtends(): void
+    {
+        $code = '<?php interface Child extends Parent1, Parent2 {}';
+        $results = IndexerTestHelper::runIndexer(new InterfaceIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
+
+        $this->assertSame(['Parent1', 'Parent2'], $results['Child']->extends);
+    }
+
+    public function testIndexMultipleInterfaces(): void
+    {
+        $code = '<?php interface A {} interface B {} interface C {}';
+        $results = IndexerTestHelper::runIndexer(new InterfaceIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
+
+        $this->assertCount(3, $results);
+    }
+
+    public function testPositionsAreRecorded(): void
+    {
+        $code = '<?php interface Foo {}';
+        $results = IndexerTestHelper::runIndexer(new InterfaceIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
+
+        $this->assertGreaterThanOrEqual(0, $results['Foo']->startPosition);
+        $this->assertGreaterThan($results['Foo']->startPosition, $results['Foo']->endPosition);
     }
 }
