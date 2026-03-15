@@ -41,6 +41,7 @@
         "carthage-software/mago": "^1.14",
         "php-lsp/protocol-generator": "^1.0",
         "phpunit/phpunit": "^10.5|^11.5",
+        "symfony/process": "^8.0",
         "symfony/var-dumper": "^6.4|^7.0"
     },
     "autoload-dev": {
@@ -62,6 +63,7 @@
     "scripts-descriptions": {
         "test": "Runs all tests",
         "test:unit": "Runs unit tests only",
+        "test:functional": "Runs functional tests (server boot)",
         "test:e2e": "Runs E2E playground tests (starts real LSP server)",
         "mago:lint": "Runs Mago linter with baseline",
         "mago:analyze": "Runs Mago analyzer with baseline",
@@ -75,8 +77,9 @@
         "build:prepare": "Prepare local environment for binary compilation"
     },
     "scripts": {
-        "test": "@test:unit",
-        "test:unit": "phpunit --testdox",
+        "test": "phpunit --testdox",
+        "test:unit": "phpunit --testdox --testsuite unit",
+        "test:functional": "phpunit --testdox --testsuite functional",
         "test:e2e": "phpunit --testdox --testsuite playground",
         "mago:lint": "mago lint --baseline mago-lint-baseline.toml",
         "mago:analyze": "mago analyze --baseline mago-analysis-baseline.toml",

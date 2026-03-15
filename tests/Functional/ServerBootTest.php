@@ -6,6 +6,7 @@ namespace App\Tests\Functional;
 
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Process\Process;
 
 /**
  * Functional tests that verify the LSP server boots correctly.
@@ -25,85 +26,62 @@ final class ServerBootTest extends TestCase
     #[TestDox('server boots successfully without explicit kernel argument')]
     public function test_server_boots_default(): void
     {
-        $this->assertServerBoots('php %s serve --port=0');
+        $this->assertServerBoots([\PHP_BINARY, self::BIN_PATH, 'serve', '--port=0']);
     }
 
     #[TestDox('server boots successfully with explicit kernel in prod')]
     public function test_server_boots_explicit_kernel_prod(): void
     {
-        $this->assertServerBoots('php %s serve App\\\\Application --env=prod --port=0');
+        $this->assertServerBoots([\PHP_BINARY, self::BIN_PATH, 'serve', 'App\\Application', '--env=prod', '--port=0']);
     }
 
     #[TestDox('server boots successfully with explicit kernel in dev')]
     public function test_server_boots_explicit_kernel_dev(): void
     {
-        $this->assertServerBoots('php %s serve App\\\\Application --env=dev --port=0');
+        $this->assertServerBoots([\PHP_BINARY, self::BIN_PATH, 'serve', 'App\\Application', '--env=dev', '--port=0']);
     }
 
     /**
-     * @param string $commandTemplate Command template with %s placeholder for bin path
+     * @param list<string> $command
      */
-    private function assertServerBoots(string $commandTemplate): void
+    private function assertServerBoots(array $command): void
     {
-        $rootDir = realpath(__DIR__ . '/../../');
-        $command = sprintf(
-            $commandTemplate . ' --root=%s 2>&1',
-            escapeshellarg(self::BIN_PATH),
-            escapeshellarg($rootDir),
+        $rootDir = \realpath(__DIR__ . '/../../');
+        $command[] = '--root=' . $rootDir;
+
+        $process = new Process(
+            command: $command,
+            cwd: $rootDir,
+            timeout: null,
         );
 
-        $descriptorSpec = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w'],
-        ];
+        $process->start();
 
-        $process = proc_open($command, $descriptorSpec, $pipes);
-        $this->assertIsResource($process, 'Failed to start server process');
+        $deadline = \microtime(true) + self::BOOT_TIMEOUT;
 
-        fclose($pipes[0]);
-
-        stream_set_blocking($pipes[1], false);
-        stream_set_blocking($pipes[2], false);
-
-        $output = '';
-        $deadline = microtime(true) + self::BOOT_TIMEOUT;
-
-        while (microtime(true) < $deadline) {
-            $stdout = fread($pipes[1], 8192);
-            $stderr = fread($pipes[2], 8192);
-
-            if ($stdout !== false) {
-                $output .= $stdout;
-            }
-            if ($stderr !== false) {
-                $output .= $stderr;
-            }
-
-            $status = proc_get_status($process);
-            if (!$status['running']) {
-                // Process exited — check if it crashed.
-                fclose($pipes[1]);
-                fclose($pipes[2]);
-                proc_close($process);
+        while (\microtime(true) < $deadline) {
+            if (!$process->isRunning()) {
+                $exitCode = $process->getExitCode();
 
                 $this->assertSame(
                     0,
-                    $status['exitcode'],
-                    "Server process crashed with exit code {$status['exitcode']}.\nOutput:\n{$output}",
+                    $exitCode,
+                    \sprintf(
+                        "Server process crashed with exit code %d.\nOutput:\n%s\n%s",
+                        $exitCode ?? -1,
+                        $process->getOutput(),
+                        $process->getErrorOutput(),
+                    ),
                 );
 
                 return;
             }
 
-            usleep(100_000);
+            \usleep(100_000);
         }
 
         // Process still running after timeout — server booted successfully.
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-        proc_terminate($process, 15);
-        proc_close($process);
+        $process->stop(1.0);
 
         $this->assertTrue(true, 'Server stayed alive for ' . self::BOOT_TIMEOUT . 's — boot successful');
     }

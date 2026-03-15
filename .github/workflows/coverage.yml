@@ -14,8 +14,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  coverage:
-    name: Code Coverage
+  unit-coverage:
+    name: Unit Test Coverage
     runs-on: ubuntu-latest
     steps:
       - name: Set Git To Use LF
@@ -51,8 +51,194 @@ jobs:
           max_attempts: 5
           command: composer update --prefer-dist --no-interaction --no-progress
 
-      - name: Run Tests with Coverage
-        run: php -dpcov.enabled=1 vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-text | tee coverage-output.txt
+      - name: Run Unit Tests with Coverage
+        run: php -dpcov.enabled=1 vendor/bin/phpunit --testsuite unit --coverage-clover=coverage-unit.xml
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-unit
+          path: coverage-unit.xml
+
+  functional-coverage:
+    name: Functional Test Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Git To Use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: sockets
+          coverage: pcov
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Composer Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-8.4-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-8.4-composer-
+
+      - name: Install Dependencies
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run Functional Tests with Coverage
+        run: php -dpcov.enabled=1 vendor/bin/phpunit --testsuite functional --coverage-clover=coverage-functional.xml
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-functional
+          path: coverage-functional.xml
+
+  e2e-coverage:
+    name: E2E Test Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Git To Use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: sockets
+          coverage: pcov
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Composer Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-8.4-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-8.4-composer-
+
+      - name: Install Dependencies
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run E2E Tests with Coverage
+        run: php -dpcov.enabled=1 vendor/bin/phpunit --testsuite playground --coverage-clover=coverage-e2e.xml
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-e2e
+          path: coverage-e2e.xml
+
+  report:
+    name: Coverage Report
+    runs-on: ubuntu-latest
+    needs: [ unit-coverage, functional-coverage, e2e-coverage ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download All Coverage Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: phpcov
+
+      - name: Merge Coverage Reports
+        run: |
+          mkdir -p coverage-merged
+          # Convert clover XML files to a combined text report
+          # Use php to merge clover XML coverage
+          php -r '
+          $files = glob("coverage-*.xml");
+          if (count($files) === 0) { echo "No coverage files found\n"; exit(1); }
+
+          $mergedLines = [];
+          $mergedCoveredLines = [];
+          $totalStatements = 0;
+          $coveredStatements = 0;
+
+          foreach ($files as $file) {
+              $xml = simplexml_load_file($file);
+              if ($xml === false) continue;
+
+              foreach ($xml->project->file ?? [] as $fileNode) {
+                  $fileName = (string)$fileNode["name"];
+                  foreach ($fileNode->line ?? [] as $line) {
+                      $lineNum = (int)$line["num"];
+                      $count = (int)$line["count"];
+                      $type = (string)$line["type"];
+                      if ($type !== "stmt") continue;
+
+                      $key = $fileName . ":" . $lineNum;
+                      if (!isset($mergedLines[$key])) {
+                          $mergedLines[$key] = 0;
+                          $totalStatements++;
+                      }
+                      if ($mergedLines[$key] === 0 && $count > 0) {
+                          $coveredStatements++;
+                      }
+                      $mergedLines[$key] = max($mergedLines[$key], $count);
+                  }
+              }
+
+              // Also check nested package/file structure
+              foreach ($xml->project->package ?? [] as $package) {
+                  foreach ($package->file ?? [] as $fileNode) {
+                      $fileName = (string)$fileNode["name"];
+                      foreach ($fileNode->line ?? [] as $line) {
+                          $lineNum = (int)$line["num"];
+                          $count = (int)$line["count"];
+                          $type = (string)$line["type"];
+                          if ($type !== "stmt") continue;
+
+                          $key = $fileName . ":" . $lineNum;
+                          if (!isset($mergedLines[$key])) {
+                              $mergedLines[$key] = 0;
+                              $totalStatements++;
+                          }
+                          if ($mergedLines[$key] === 0 && $count > 0) {
+                              $coveredStatements++;
+                          }
+                          $mergedLines[$key] = max($mergedLines[$key], $count);
+                      }
+                  }
+              }
+          }
+
+          $percentage = $totalStatements > 0 ? round(($coveredStatements / $totalStatements) * 100, 2) : 0;
+          echo "Lines: " . $percentage . "% (" . $coveredStatements . "/" . $totalStatements . ")\n";
+          file_put_contents("coverage-output.txt", "Lines: " . $percentage . "%\n");
+          '
 
       - name: Extract Coverage Percentage
         id: coverage
@@ -88,7 +274,7 @@ jobs:
           message: |
             ## Code Quality Report
 
-            ### Coverage
+            ### Coverage (merged: unit + functional + e2e)
 
             | Metric | Value |
             |--------|-------|

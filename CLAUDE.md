@@ -20,8 +20,10 @@ the LSP standard.
 php ./bin/lsp serve App\\Application --port=5007
 
 # Tests
-composer test              # Run all tests
-composer test:unit         # PHPUnit unit tests
+composer test              # Run all tests (unit + functional + e2e)
+composer test:unit         # PHPUnit unit tests only
+composer test:functional   # Functional tests (server boot)
+composer test:e2e          # E2E playground tests (starts real LSP server)
 
 # Code quality
 composer mago:lint         # Mago linter (with baseline)
