@@ -53,10 +53,12 @@ final class MethodSignatureContributor implements SignatureContributor
             $methods = $entry->value;
             $found = false;
             foreach ($methods as $method) {
-                if ($method->name === $methodName) {
-                    $found = true;
-                    break;
+                if ($method->name !== $methodName) {
+                    continue;
                 }
+
+                $found = true;
+                break;
             }
             if (!$found) {
                 continue;
