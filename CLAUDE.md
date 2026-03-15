@@ -61,7 +61,8 @@ app/
 │       ├── PrepareRenameController.php
 │       ├── DiagnosticController.php
 │       └── ...
-├── Core/Cancellation/         # CancellationToken, CancellationTokenRegistry
+├── Core/UriHelper.php         # URI → file path conversion utility
+├── Core/Cancellation/         # CancellationToken, CancellationTokenRegistry (with auto-eviction)
 ├── Core/Contracts/            # Plugin interfaces and attributes
 │   ├── CodeAction/            # CodeActionContributor, AsCodeActionContributor
 │   ├── Completion/            # CompletionContributor, AsCompletionContributor

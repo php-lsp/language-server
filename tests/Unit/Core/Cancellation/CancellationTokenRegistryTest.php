@@ -56,4 +56,50 @@ final class CancellationTokenRegistryTest extends TestCase
 
         $this->assertTrue($token->isCancelled());
     }
+
+    #[TestDox('cancel also removes the token from registry')]
+    public function testCancelRemovesToken(): void
+    {
+        $registry = new CancellationTokenRegistry();
+        $registry->create(1);
+
+        $this->assertSame(1, $registry->count());
+
+        $registry->cancel(1);
+
+        $this->assertSame(0, $registry->count());
+    }
+
+    #[TestDox('evicts oldest tokens when exceeding max capacity')]
+    public function testEvictsOldestTokens(): void
+    {
+        $registry = new CancellationTokenRegistry();
+
+        for ($i = 0; $i < 1000; $i++) {
+            $registry->create($i);
+        }
+
+        $this->assertSame(1000, $registry->count());
+
+        $registry->create(1001);
+
+        $this->assertLessThanOrEqual(1000, $registry->count());
+    }
+
+    #[TestDox('count returns number of active tokens')]
+    public function testCount(): void
+    {
+        $registry = new CancellationTokenRegistry();
+
+        $this->assertSame(0, $registry->count());
+
+        $registry->create(1);
+        $registry->create(2);
+
+        $this->assertSame(2, $registry->count());
+
+        $registry->remove(1);
+
+        $this->assertSame(1, $registry->count());
+    }
 }

@@ -153,6 +153,66 @@ final class TreeTest extends TestCase
         $this->assertCount(1, $classes);
     }
 
+    #[TestDox('toLspLine converts 1-based to 0-based')]
+    public function testToLspLine(): void
+    {
+        $this->assertSame(0, Tree::toLspLine(1));
+        $this->assertSame(4, Tree::toLspLine(5));
+        $this->assertSame(99, Tree::toLspLine(100));
+    }
+
+    #[TestDox('toParserLine converts 0-based to 1-based')]
+    public function testToParserLine(): void
+    {
+        $this->assertSame(1, Tree::toParserLine(0));
+        $this->assertSame(5, Tree::toParserLine(4));
+        $this->assertSame(100, Tree::toParserLine(99));
+    }
+
+    #[TestDox('toLspLine and toParserLine are inverse operations')]
+    public function testLspParserLineRoundTrip(): void
+    {
+        for ($i = 1; $i <= 10; $i++) {
+            $this->assertSame($i, Tree::toParserLine(Tree::toLspLine($i)));
+        }
+    }
+
+    #[TestDox('nodeStartLine returns 0-based line for node')]
+    public function testNodeStartLine(): void
+    {
+        $psiFile = PsiFileFactory::fromCode("<?php\nclass Foo {}");
+
+        $classes = Tree::childrenOfType($psiFile->ast, Node\Stmt\Class_::class);
+        $startLine = Tree::nodeStartLine($classes[0]);
+
+        $this->assertSame(1, $startLine);
+    }
+
+    #[TestDox('nodeEndLine returns 0-based line for node')]
+    public function testNodeEndLine(): void
+    {
+        $psiFile = PsiFileFactory::fromCode("<?php\nclass Foo {\n}");
+
+        $classes = Tree::childrenOfType($psiFile->ast, Node\Stmt\Class_::class);
+        $endLine = Tree::nodeEndLine($classes[0]);
+
+        $this->assertSame(2, $endLine);
+    }
+
+    #[TestDox('errorRange converts php-parser Error to LSP Range')]
+    public function testErrorRange(): void
+    {
+        $document = PsiFileFactory::document("<?php\nclass { }");
+        $root = PsiFileFactory::getParser()->parse($document);
+
+        $this->assertNotEmpty($root->errors);
+
+        $range = Tree::errorRange($root->errors[0], $document);
+
+        $this->assertGreaterThanOrEqual(0, $range->start->line);
+        $this->assertGreaterThanOrEqual(0, $range->start->character);
+    }
+
     #[TestDox('childrenOfTypes returns empty for null')]
     public function testChildrenOfTypesNull(): void
     {

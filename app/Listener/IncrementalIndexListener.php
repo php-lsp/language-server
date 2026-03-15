@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listener;
 
 use App\Core\Event\Document\DocumentSaved;
+use App\Core\UriHelper;
 use App\Module\Indexing\Indexer;
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Workspace\File\FileFactoryInterface;
@@ -36,7 +37,7 @@ final class IncrementalIndexListener
         }
 
         try {
-            $filePath = $this->uriToPath($uriString);
+            $filePath = UriHelper::toFilePath($uriString);
             if ($filePath === null || !file_exists($filePath)) {
                 return;
             }
@@ -51,14 +52,5 @@ final class IncrementalIndexListener
                 'error' => $e->getMessage(),
             ]);
         }
-    }
-
-    private function uriToPath(string $uri): ?string
-    {
-        if (str_starts_with($uri, 'file://')) {
-            return substr($uri, offset: 7);
-        }
-
-        return null;
     }
 }

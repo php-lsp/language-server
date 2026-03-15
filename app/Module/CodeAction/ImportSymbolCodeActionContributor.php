@@ -8,10 +8,6 @@ use App\Core\Contracts\CodeAction\AsCodeActionContributor;
 use App\Core\Contracts\CodeAction\CodeActionConsumer;
 use App\Core\Contracts\CodeAction\CodeActionContext;
 use App\Core\Contracts\CodeAction\CodeActionContributor;
-use App\Module\Indexing\Data\ClassData;
-use App\Module\Indexing\Data\FunctionData;
-use App\Module\Indexing\Data\InterfaceData;
-use App\Module\Indexing\Data\TraitData;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\Indexer\FunctionIndexer;
 use App\Module\Indexing\Indexer\InterfaceIndexer;
@@ -122,12 +118,12 @@ final class ImportSymbolCodeActionContributor implements CodeActionContributor
         if ($useNodes !== []) {
             $lastUse = end($useNodes);
 
-            return new Position($lastUse->getEndLine(), 0);
+            return new Position(Tree::nodeEndLine($lastUse) + 1, 0);
         }
 
         $namespaceNodes = Tree::childrenOfType($file->ast, Node\Stmt\Namespace_::class);
         if ($namespaceNodes !== []) {
-            return new Position($namespaceNodes[0]->getStartLine(), 0);
+            return new Position(Tree::nodeStartLine($namespaceNodes[0]) + 1, 0);
         }
 
         return new Position(1, 0);
@@ -139,36 +135,14 @@ final class ImportSymbolCodeActionContributor implements CodeActionContributor
     private function findMatchingSymbols(string $shortName): array
     {
         $matches = [];
+        $indexers = [ClassIndexer::class, InterfaceIndexer::class, TraitIndexer::class, FunctionIndexer::class];
 
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
-            /** @var ClassData $data */
-            $data = $entry->value;
-            if ($this->getShortName($data->fqn) === $shortName) {
-                $matches[] = $data->fqn;
-            }
-        }
-
-        foreach ($this->indexLookup->findByKey(InterfaceIndexer::class) as $entry) {
-            /** @var InterfaceData $data */
-            $data = $entry->value;
-            if ($this->getShortName($data->fqn) === $shortName) {
-                $matches[] = $data->fqn;
-            }
-        }
-
-        foreach ($this->indexLookup->findByKey(TraitIndexer::class) as $entry) {
-            /** @var TraitData $data */
-            $data = $entry->value;
-            if ($this->getShortName($data->fqn) === $shortName) {
-                $matches[] = $data->fqn;
-            }
-        }
-
-        foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $entry) {
-            /** @var FunctionData $data */
-            $data = $entry->value;
-            if ($this->getShortName($data->fqn) === $shortName) {
-                $matches[] = $data->fqn;
+        foreach ($indexers as $indexerClass) {
+            foreach ($this->indexLookup->findByKey($indexerClass) as $entry) {
+                $fqn = $entry->value->fqn;
+                if ($this->getShortName($fqn) === $shortName) {
+                    $matches[] = $fqn;
+                }
             }
         }
 

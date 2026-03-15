@@ -32,7 +32,7 @@ class PHPPsiFile implements PsiFileInterface
             );
         }
         if ($position instanceof Position) {
-            $line = $position->line + 1;
+            $line = Tree::toParserLine($position->line);
 
             $visitor = new NodeFinder();
 

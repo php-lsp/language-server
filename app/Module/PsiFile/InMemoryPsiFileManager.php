@@ -12,9 +12,7 @@ use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Diagnostic;
 use Lsp\Protocol\Type\DiagnosticSeverity;
-use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\PublishDiagnosticsParams;
-use Lsp\Protocol\Type\Range;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
 use Lsp\Rpc\Message\Notification;
 use Lsp\Workspace\Uri\Uri;
@@ -58,13 +56,7 @@ class InMemoryPsiFileManager implements PsiFileManagerInterface
                 uri: $uri,
                 diagnostics: array_map(
                     static fn(Error $error) => new Diagnostic(
-                        range: new Range(
-                            start: new Position(
-                                $error->getStartLine() - 1,
-                                $error->getStartColumn($document->getContents()),
-                            ),
-                            end: new Position($error->getEndLine() - 1, $error->getEndColumn($document->getContents())),
-                        ),
+                        range: Tree::errorRange($error, $document),
                         message: $error->getMessage(),
                         severity: DiagnosticSeverity::Error,
                     ),

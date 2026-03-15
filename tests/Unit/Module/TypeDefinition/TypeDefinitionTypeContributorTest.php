@@ -15,6 +15,7 @@ use App\Module\TypeSystem\TypeResult;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
+use App\Tests\Support\PsiFileFactory;
 use App\Tests\TestCase;
 use Lsp\Protocol\Type\Location;
 use PHPUnit\Framework\Attributes\Group;
@@ -26,6 +27,20 @@ use PHPStan\Type\UnionType;
 #[Group('unit')]
 final class TypeDefinitionTypeContributorTest extends TestCase
 {
+    private function createContributor(
+        TypeResolverInterface $typeResolver,
+        \App\Module\Indexing\IndexLookup $lookup,
+        ?\App\Module\PsiFile\PHPPsiFile $returnedPsiFile = null,
+    ): TypeDefinitionTypeContributor {
+        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager->method('findPsiFile')->willReturn($returnedPsiFile);
+
+        $docIdFactory = MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class);
+        $docIdFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier());
+
+        return new TypeDefinitionTypeContributor($typeResolver, $lookup, $fileManager, $docIdFactory);
+    }
+
     #[TestDox('returns empty when type resolver returns null')]
     public function testReturnsEmptyWhenNoType(): void
     {
@@ -33,7 +48,7 @@ final class TypeDefinitionTypeContributorTest extends TestCase
         $typeResolver->method('resolveAtPosition')->willReturn(null);
 
         $lookup = IndexTestHelper::createLookup();
-        $contributor = new TypeDefinitionTypeContributor($typeResolver, $lookup);
+        $contributor = $this->createContributor($typeResolver, $lookup);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new TypeDefinitionContext(
@@ -57,7 +72,7 @@ final class TypeDefinitionTypeContributorTest extends TestCase
         $typeResolver->method('resolveAtPosition')->willReturn($typeResult);
 
         $lookup = IndexTestHelper::createLookup();
-        $contributor = new TypeDefinitionTypeContributor($typeResolver, $lookup);
+        $contributor = $this->createContributor($typeResolver, $lookup);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new TypeDefinitionContext(
@@ -80,13 +95,15 @@ final class TypeDefinitionTypeContributorTest extends TestCase
         $typeResolver = MockHelper::mock(TypeResolverInterface::class);
         $typeResolver->method('resolveAtPosition')->willReturn($typeResult);
 
+        $psiFile = PsiFileFactory::fromCode('<?php namespace App; class Foo {}');
+
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///foo.php' => ['App\\Foo' => new ClassData('App\\Foo', 0, 50, false, false, false, null, [])],
+                'file:///foo.php' => ['App\\Foo' => new ClassData('App\\Foo', 21, 50, false, false, false, null, [])],
             ],
         ]);
 
-        $contributor = new TypeDefinitionTypeContributor($typeResolver, $lookup);
+        $contributor = $this->createContributor($typeResolver, $lookup, $psiFile);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new TypeDefinitionContext(
@@ -111,13 +128,15 @@ final class TypeDefinitionTypeContributorTest extends TestCase
         $typeResolver = MockHelper::mock(TypeResolverInterface::class);
         $typeResolver->method('resolveAtPosition')->willReturn($typeResult);
 
+        $psiFile = PsiFileFactory::fromCode('<?php namespace App; interface FooInterface {}');
+
         $lookup = IndexTestHelper::createLookup([
             'php.interfaces.fqn' => [
-                'file:///iface.php' => ['App\\FooInterface' => new InterfaceData('App\\FooInterface', 0, 50, [])],
+                'file:///iface.php' => ['App\\FooInterface' => new InterfaceData('App\\FooInterface', 21, 50, [])],
             ],
         ]);
 
-        $contributor = new TypeDefinitionTypeContributor($typeResolver, $lookup);
+        $contributor = $this->createContributor($typeResolver, $lookup, $psiFile);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new TypeDefinitionContext(
@@ -141,13 +160,15 @@ final class TypeDefinitionTypeContributorTest extends TestCase
         $typeResolver = MockHelper::mock(TypeResolverInterface::class);
         $typeResolver->method('resolveAtPosition')->willReturn($typeResult);
 
+        $psiFile = PsiFileFactory::fromCode('<?php namespace App; enum Status: string {}');
+
         $lookup = IndexTestHelper::createLookup([
             'php.enums.fqn' => [
-                'file:///enum.php' => ['App\\Status' => new EnumData('App\\Status', 0, 50, 'string', [])],
+                'file:///enum.php' => ['App\\Status' => new EnumData('App\\Status', 21, 50, 'string', [])],
             ],
         ]);
 
-        $contributor = new TypeDefinitionTypeContributor($typeResolver, $lookup);
+        $contributor = $this->createContributor($typeResolver, $lookup, $psiFile);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new TypeDefinitionContext(
@@ -172,13 +193,15 @@ final class TypeDefinitionTypeContributorTest extends TestCase
         $typeResolver = MockHelper::mock(TypeResolverInterface::class);
         $typeResolver->method('resolveAtPosition')->willReturn($typeResult);
 
+        $psiFile = PsiFileFactory::fromCode('<?php namespace App; class Foo {}');
+
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///foo.php' => ['App\\Foo' => new ClassData('App\\Foo', 0, 50, false, false, false, null, [])],
+                'file:///foo.php' => ['App\\Foo' => new ClassData('App\\Foo', 21, 50, false, false, false, null, [])],
             ],
         ]);
 
-        $contributor = new TypeDefinitionTypeContributor($typeResolver, $lookup);
+        $contributor = $this->createContributor($typeResolver, $lookup, $psiFile);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new TypeDefinitionContext(
@@ -203,7 +226,7 @@ final class TypeDefinitionTypeContributorTest extends TestCase
 
         $lookup = IndexTestHelper::createLookup();
 
-        $contributor = new TypeDefinitionTypeContributor($typeResolver, $lookup);
+        $contributor = $this->createContributor($typeResolver, $lookup);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new TypeDefinitionContext(

@@ -67,8 +67,9 @@ final class RemoveUnusedImportCodeActionContributor implements CodeActionContrib
                     continue;
                 }
 
-                $startLine = $useStatement->getStartLine() - 1;
-                $endLine = $useStatement->getEndLine();
+                $startLine = Tree::nodeStartLine($useStatement);
+                // Go one line past the end to include the trailing newline
+                $endLine = Tree::nodeEndLine($useStatement) + 1;
 
                 $consumer(new CodeAction(
                     title: 'Remove unused import: ' . $use->name->toString(),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
 
+use App\Core\UriHelper;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\DocumentRangeFormattingParams;
@@ -31,27 +32,29 @@ final class RangeFormattingController
         }
 
         $originalContent = $document->getContents();
-        $filePath = $this->uriToPath($params->textDocument->uri);
+        $filePath = UriHelper::toFilePath($params->textDocument->uri);
         if ($filePath === null) {
             return null;
         }
 
-        $lines = explode("\n", $originalContent);
-        $startLine = $params->range->start->line;
-        $endLine = $params->range->end->line;
-
-        $rangeLines = array_slice($lines, $startLine, $endLine - $startLine + 1);
-        $rangeContent = implode("\n", $rangeLines);
-
-        $wrappedContent = "<?php\n" . $rangeContent;
-        $formatted = $this->runFormatter($filePath, $wrappedContent);
-
-        if ($formatted === null) {
+        $formatted = $this->runFormatter($filePath, $originalContent);
+        if ($formatted === null || $formatted === $originalContent) {
             return [];
         }
 
-        $formattedContent = preg_replace(pattern: '/^<\?php\n/', replacement: '', subject: $formatted);
-        if ($formattedContent === $rangeContent) {
+        $originalLines = explode("\n", $originalContent);
+        $formattedLines = explode("\n", $formatted);
+
+        $startLine = $params->range->start->line;
+        $endLine = min($params->range->end->line, count($originalLines) - 1);
+
+        $originalRange = array_slice($originalLines, $startLine, $endLine - $startLine + 1);
+        $formattedRange = array_slice($formattedLines, $startLine, $endLine - $startLine + 1);
+
+        $originalRangeText = implode("\n", $originalRange);
+        $formattedRangeText = implode("\n", $formattedRange);
+
+        if ($originalRangeText === $formattedRangeText) {
             return [];
         }
 
@@ -59,20 +62,11 @@ final class RangeFormattingController
             new TextEdit(
                 range: new Range(
                     start: new Position($startLine, 0),
-                    end: new Position($endLine, strlen($lines[$endLine] ?? '')),
+                    end: new Position($endLine, strlen($originalLines[$endLine] ?? '')),
                 ),
-                newText: $formattedContent,
+                newText: $formattedRangeText,
             ),
         ];
-    }
-
-    private function uriToPath(string $uri): ?string
-    {
-        if (str_starts_with($uri, 'file://')) {
-            return substr($uri, offset: 7);
-        }
-
-        return null;
     }
 
     private function runFormatter(string $filePath, string $content): ?string
@@ -85,15 +79,20 @@ final class RangeFormattingController
         try {
             file_put_contents($tempFile, $content);
 
+            $magoPath = $this->findMagoBinary($filePath);
             $command = sprintf(
-                'php-cs-fixer fix %s --using-cache=no --quiet 2>/dev/null'
-                . ' || phpcbf --standard=PSR12 %s 2>/dev/null'
-                . ' || true',
-                escapeshellarg($tempFile),
+                '%s format %s 2>/dev/null',
+                escapeshellarg($magoPath),
                 escapeshellarg($tempFile),
             );
 
             exec($command, $output, $exitCode);
+
+            if ($exitCode !== 0) {
+                $this->logger->warning('Mago format exited with code {code}', ['code' => $exitCode]);
+
+                return null;
+            }
 
             $result = file_get_contents($tempFile);
 
@@ -107,5 +106,20 @@ final class RangeFormattingController
                 unlink($tempFile);
             }
         }
+    }
+
+    private function findMagoBinary(string $filePath): string
+    {
+        $dir = dirname($filePath);
+        $vendorBin = $dir . '/vendor/bin/mago';
+        while ($dir !== '/' && $dir !== '') {
+            if (file_exists($vendorBin)) {
+                return $vendorBin;
+            }
+            $dir = dirname($dir);
+            $vendorBin = $dir . '/vendor/bin/mago';
+        }
+
+        return 'mago';
     }
 }

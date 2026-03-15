@@ -8,14 +8,15 @@ use App\Core\Contracts\TypeDefinition\AsTypeDefinitionContributor;
 use App\Core\Contracts\TypeDefinition\TypeDefinitionConsumer;
 use App\Core\Contracts\TypeDefinition\TypeDefinitionContext;
 use App\Core\Contracts\TypeDefinition\TypeDefinitionContributor;
-use App\Module\Indexing\Data\ClassData;
-use App\Module\Indexing\Data\EnumData;
-use App\Module\Indexing\Data\InterfaceData;
+use App\Module\Document\DocumentIdentifierFactoryInterface;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\Indexer\EnumIndexer;
 use App\Module\Indexing\Indexer\InterfaceIndexer;
 use App\Module\Indexing\IndexLookup;
+use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\Tree;
 use App\Module\TypeSystem\TypeResolverInterface;
+use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
@@ -29,6 +30,8 @@ final class TypeDefinitionTypeContributor implements TypeDefinitionContributor
     public function __construct(
         private readonly TypeResolverInterface $typeResolver,
         private readonly IndexLookup $indexLookup,
+        private readonly InMemoryPsiFileManager $fileManager,
+        private readonly DocumentIdentifierFactoryInterface $documentIdentifierFactory,
     ) {}
 
     #[Override]
@@ -47,7 +50,7 @@ final class TypeDefinitionTypeContributor implements TypeDefinitionContributor
         $classNames = $this->extractClassNames($typeResult->type);
 
         foreach ($classNames as $className) {
-            $this->findTypeDeclaration($className, $consumer);
+            $this->findTypeDeclaration($className, $context->editor, $consumer);
         }
     }
 
@@ -73,39 +76,40 @@ final class TypeDefinitionTypeContributor implements TypeDefinitionContributor
         return $classNames;
     }
 
-    private function findTypeDeclaration(string $className, TypeDefinitionConsumer $consumer): void
+    private function findTypeDeclaration(
+        string $className,
+        EditorInterface $editor,
+        TypeDefinitionConsumer $consumer,
+    ): void {
+        $indexers = [ClassIndexer::class, InterfaceIndexer::class, EnumIndexer::class];
+
+        foreach ($indexers as $indexerClass) {
+            foreach ($this->indexLookup->findByKey($indexerClass) as $entry) {
+                if ($entry->value->fqn !== $className) {
+                    continue;
+                }
+
+                $range = $this->resolveRange($entry->uri, $entry->value->startPosition, $editor);
+                $consumer(new Location(uri: $entry->uri, range: $range));
+
+                return;
+            }
+        }
+    }
+
+    private function resolveRange(string $uri, int $startPosition, EditorInterface $editor): Range
     {
+        $textDocumentIdentifier = $this->documentIdentifierFactory->create($uri);
+        $source = $this->fileManager->findPsiFile($editor, $textDocumentIdentifier);
+        if ($source !== null) {
+            [$line, $column] = Tree::toLineColumn($source->ast->document, $startPosition);
+            $position = new Position($line, $column);
+
+            return new Range($position, $position);
+        }
+
         $zeroPosition = new Position(0, 0);
-        $defaultRange = new Range($zeroPosition, $zeroPosition);
 
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
-            /** @var ClassData $data */
-            $data = $entry->value;
-            if ($data->fqn === $className) {
-                $consumer(new Location(uri: $entry->uri, range: $defaultRange));
-
-                return;
-            }
-        }
-
-        foreach ($this->indexLookup->findByKey(InterfaceIndexer::class) as $entry) {
-            /** @var InterfaceData $data */
-            $data = $entry->value;
-            if ($data->fqn === $className) {
-                $consumer(new Location(uri: $entry->uri, range: $defaultRange));
-
-                return;
-            }
-        }
-
-        foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $entry) {
-            /** @var EnumData $data */
-            $data = $entry->value;
-            if ($data->fqn === $className) {
-                $consumer(new Location(uri: $entry->uri, range: $defaultRange));
-
-                return;
-            }
-        }
+        return new Range($zeroPosition, $zeroPosition);
     }
 }

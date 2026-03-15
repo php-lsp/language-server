@@ -6,6 +6,7 @@ namespace App\Module\TypeSystem;
 
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\SourceFileRoot;
+use App\Module\PsiFile\Tree;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
@@ -121,7 +122,7 @@ final class TypeResolver implements TypeResolverInterface
 
         $filePath = UriHelper::toFilePath($textDocumentIdentifier->uri);
 
-        $targetLine = $position->line + 1;
+        $targetLine = Tree::toParserLine($position->line);
         $foundType = null;
 
         /** @var array<Node\Stmt> $stmts */
