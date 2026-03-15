@@ -25,7 +25,10 @@
         "php-lsp/kernel": "^1.0",
         "php-lsp/protocol": "^1.0",
         "php-lsp/workspace": "^1.0",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "react/async": "^4.3",
+        "react/filesystem": "0.2.x-dev",
+        "react/promise-timer": "^1.11"
     },
     "autoload": {
         "psr-4": {
@@ -51,12 +54,14 @@
         "mago:baseline": ["baseline", "mago-baseline"],
         "mago:format": ["format", "fmt", "cs", "codestyle"],
         "test:unit": ["phpunit", "unit"],
+        "test:e2e": ["e2e", "playground"],
         "build:prod": ["build"],
         "build:run": ["run"]
     },
     "scripts-descriptions": {
         "test": "Runs all tests",
         "test:unit": "Runs unit tests only",
+        "test:e2e": "Runs E2E playground tests (starts real LSP server)",
         "mago:lint": "Runs Mago linter with baseline",
         "mago:analyze": "Runs Mago analyzer with baseline",
         "mago:fix": "Applies Mago auto-fixes to source code",
@@ -71,6 +76,7 @@
     "scripts": {
         "test": "@test:unit",
         "test:unit": "phpunit --testdox",
+        "test:e2e": "phpunit --testdox --testsuite playground",
         "mago:lint": "mago lint --baseline mago-lint-baseline.toml",
         "mago:analyze": "mago analyze --baseline mago-analysis-baseline.toml",
         "mago:fix": "mago lint --fix --potentially-unsafe --format-after-fix",
