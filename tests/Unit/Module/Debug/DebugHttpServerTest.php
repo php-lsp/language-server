@@ -4,12 +4,21 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Module\Debug;
 
+use App\Core\Contracts\Notification\ProgressNotifierInterface;
 use App\Module\Debug\DebugHtmlRenderer;
 use App\Module\Debug\DebugHttpServer;
+use App\Module\Indexing\Indexer;
+use App\Module\Indexing\IndexerFileCollector;
+use App\Module\Indexing\IndexingStatus;
 use App\Module\Indexing\Storage\InMemoryStorage;
+use App\Module\Workspace\ProjectManager;
 use App\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
+use Psr\Log\NullLogger;
+use Lsp\Workspace\File\FilesystemReader\EmptyFilesystemReader;
+use Lsp\Workspace\Project\Project;
+use Lsp\Workspace\Uri\Uri;
 use React\Http\Message\Response;
 use React\Http\Message\ServerRequest;
 
@@ -554,6 +563,126 @@ final class DebugHttpServerTest extends TestCase
         $body = (string) $response->getBody();
         $this->assertStringContainsString('file:///src/Foo.php', $body);
         $this->assertStringContainsString('php.classes.fqn', $body);
+    }
+
+    // --- Reindex API ---
+
+    private function createIndexer(): Indexer
+    {
+        return new Indexer(
+            [],
+            $this->storage,
+            new NullLogger(),
+            $this->createMock(IndexerFileCollector::class),
+            $this->createMock(ProgressNotifierInterface::class),
+            new IndexingStatus(),
+        );
+    }
+
+    private function createServerWithIndexer(?ProjectManager $projectManager = null): DebugHttpServer
+    {
+        return new DebugHttpServer(
+            $this->storage,
+            new DebugHtmlRenderer($this->storage),
+            $this->createIndexer(),
+            $projectManager,
+        );
+    }
+
+    private function invokeRequest(DebugHttpServer $server, string $method, string $uri, ?array $body = null): Response
+    {
+        $handleRequest = new \ReflectionMethod($server, 'handleRequest');
+        $bodyStr = $body !== null ? json_encode($body) : '';
+        $headers = $body !== null ? ['Content-Type' => 'application/json'] : [];
+        $request = new ServerRequest($method, $uri, $headers, $bodyStr);
+
+        /** @var Response */
+        return $handleRequest->invoke($server, $request);
+    }
+
+    #[TestDox('POST /api/reindex without indexer service returns 503')]
+    public function testReindexWithoutIndexerService(): void
+    {
+        $response = $this->postJson('/api/reindex', []);
+
+        $this->assertSame(503, $response->getStatusCode());
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertArrayHasKey('error', $data);
+    }
+
+    #[TestDox('POST /api/reindex with null project returns 503')]
+    public function testReindexWithNullProject(): void
+    {
+        $projectManager = new ProjectManager();
+        $server = $this->createServerWithIndexer($projectManager);
+
+        $response = $this->invokeRequest($server, 'POST', '/api/reindex', []);
+
+        $this->assertSame(503, $response->getStatusCode());
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertStringContainsString('not initialized', $data['error']);
+    }
+
+    #[TestDox('POST /api/reindex all with valid project succeeds')]
+    public function testReindexAllWithProject(): void
+    {
+        $projectManager = new ProjectManager();
+        $projectManager->setProject(new Project(
+            name: 'test',
+            uri: new Uri('/tmp/test-project', 'file'),
+            filesystem: new EmptyFilesystemReader(),
+        ));
+        $server = $this->createServerWithIndexer($projectManager);
+
+        $response = $this->invokeRequest($server, 'POST', '/api/reindex', []);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertSame('ok', $data['status']);
+        $this->assertSame('all', $data['indexer']);
+    }
+
+    #[TestDox('POST /api/reindex with unknown indexer key returns 404')]
+    public function testReindexUnknownIndexer(): void
+    {
+        $projectManager = new ProjectManager();
+        $projectManager->setProject(new Project(
+            name: 'test',
+            uri: new Uri('/tmp/test-project', 'file'),
+            filesystem: new EmptyFilesystemReader(),
+        ));
+        $server = $this->createServerWithIndexer($projectManager);
+
+        $response = $this->invokeRequest($server, 'POST', '/api/reindex', ['indexer' => 'nonexistent']);
+
+        $this->assertSame(404, $response->getStatusCode());
+        $data = json_decode((string) $response->getBody(), true);
+        $this->assertArrayHasKey('error', $data);
+        $this->assertArrayHasKey('available', $data);
+    }
+
+    // --- Indexers API ---
+
+    #[TestDox('GET /api/indexers returns empty list without indexer service')]
+    public function testApiIndexersWithoutIndexerService(): void
+    {
+        $response = $this->request('GET', '/api/indexers');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame([], $data);
+    }
+
+    #[TestDox('GET /api/indexers returns indexer keys when available')]
+    public function testApiIndexersWithIndexer(): void
+    {
+        $server = $this->createServerWithIndexer();
+
+        $response = $this->invokeRequest($server, 'GET', '/api/indexers');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertIsArray($data);
     }
 
     // --- CORS ---

@@ -10,7 +10,7 @@ class ProjectManager
 {
     private ?Project $project = null;
 
-    public function getProject(): Project
+    public function getProject(): ?Project
     {
         return $this->project;
     }

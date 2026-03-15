@@ -119,27 +119,34 @@ class DebugHttpServer
             return $this->jsonResponse(['error' => 'Indexer is not available'], 503);
         }
 
+        $project = $this->projectManager->getProject();
+        if ($project === null) {
+            return $this->jsonResponse(['error' => 'Project is not initialized. Open a workspace first.'], 503);
+        }
+
         $body = json_decode((string) $request->getBody(), true);
         $indexerKey = is_array($body) ? $body['indexer'] ?? null : null;
 
-        $project = $this->projectManager->getProject();
+        try {
+            if ($indexerKey !== null && $indexerKey !== '') {
+                $available = $this->indexer->getIndexerKeys();
+                if (!in_array($indexerKey, $available, true)) {
+                    return $this->jsonResponse([
+                        'error' => "Unknown indexer: {$indexerKey}",
+                        'available' => $available,
+                    ], 404);
+                }
+                $this->indexer->indexByKey($project, $indexerKey);
 
-        if ($indexerKey !== null && $indexerKey !== '') {
-            $available = $this->indexer->getIndexerKeys();
-            if (!in_array($indexerKey, $available, true)) {
-                return $this->jsonResponse([
-                    'error' => "Unknown indexer: {$indexerKey}",
-                    'available' => $available,
-                ], 404);
+                return $this->jsonResponse(['status' => 'ok', 'indexer' => $indexerKey]);
             }
-            $this->indexer->indexByKey($project, $indexerKey);
 
-            return $this->jsonResponse(['status' => 'ok', 'indexer' => $indexerKey]);
+            $this->indexer->index($project);
+
+            return $this->jsonResponse(['status' => 'ok', 'indexer' => 'all']);
+        } catch (\Throwable $e) {
+            return $this->jsonResponse(['error' => $e->getMessage()], 500);
         }
-
-        $this->indexer->index($project);
-
-        return $this->jsonResponse(['status' => 'ok', 'indexer' => 'all']);
     }
 
     /**
@@ -210,8 +217,17 @@ class DebugHttpServer
             return $this->jsonResponse(['error' => 'Reindexing is not available'], 503);
         }
 
-        $this->storage->clear($indexes);
-        $this->indexer->index($this->projectManager->getProject());
+        $project = $this->projectManager->getProject();
+        if ($project === null) {
+            return $this->jsonResponse(['error' => 'Project is not initialized. Open a workspace first.'], 503);
+        }
+
+        try {
+            $this->storage->clear($indexes);
+            $this->indexer->index($project);
+        } catch (\Throwable $e) {
+            return $this->jsonResponse(['error' => $e->getMessage()], 500);
+        }
 
         return $this->jsonResponse([
             'action' => 'reindex',

@@ -61,7 +61,13 @@ final class PHPStanBootstrap
             return $this->container;
         }
 
-        $projectPath = $this->projectManager->getProject()->path;
+        $project = $this->projectManager->getProject();
+
+        if ($project === null) {
+            throw new \RuntimeException('Cannot boot PHPStan: project is not initialized');
+        }
+
+        $projectPath = $project->path;
 
         $containerFactory = new ContainerFactory($projectPath);
         $this->container = $containerFactory->create(

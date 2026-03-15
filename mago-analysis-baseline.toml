@@ -2747,15 +2747,3 @@ file = "app/Module/TypeSystem/TypeResult.php"
 code = "non-existent-use-import"
 message = 'Imported class, interface, trait, or enum `PHPStan\Type\VerbosityLevel` does not exist.'
 count = 1
-
-[[issues]]
-file = "app/Module/Workspace/ProjectManager.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `app\module\workspace\projectmanager::getproject`: expected `Lsp\Workspace\Project\Project`, but found `Lsp\Workspace\Project\Project|null`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Workspace/ProjectManager.php"
-code = "nullable-return-statement"
-message = 'Function `app\module\workspace\projectmanager::getproject` is declared to return `Lsp\Workspace\Project\Project` but possibly returns a nullable value (inferred as `Lsp\Workspace\Project\Project|null`).'
-count = 1

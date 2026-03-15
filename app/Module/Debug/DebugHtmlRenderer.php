@@ -298,7 +298,7 @@ final class DebugHtmlRenderer
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(body)
-              }).then(r => r.json()).then(data => {
+              }).then(function(r) { return r.json(); }).then(function(data) {
                 if (data.status === 'ok') {
                   showToast('Reindexed: ' + (data.indexer || 'all'));
                   htmx.ajax('GET', '/views/indexes', {target: '#content'});
@@ -306,7 +306,7 @@ final class DebugHtmlRenderer
                 } else {
                   showToast(data.error || 'Reindex failed', 'error');
                 }
-              }).catch(function() { showToast('Request failed', 'error'); })
+              }).catch(function(e) { showToast('Request failed: ' + e.message, 'error'); })
               .finally(function() { btn.disabled = false; btn.textContent = 'Reindex'; });
             }
             </script>
