@@ -1,24 +1,6 @@
 variant = "loose"
 
 [[issues]]
-file = "app/Application.php"
-code = "missing-constant-type"
-message = "Class constant `ATTRIBUTES` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Application.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Application::build`.'
-count = 1
-
-[[issues]]
-file = "app/Application.php"
-code = "possibly-invalid-argument"
-message = '''Possible argument type mismatch for argument #1 of `Symfony\Component\DependencyInjection\ContainerBuilder::registerattributeforautoconfiguration`: expected `class-string<'T.symfony\component\dependencyinjection\containerbuilder::registerattributeforautoconfiguration() extends mixed>`, but possibly received `array-key`.'''
-count = 1
-
-[[issues]]
 file = "app/Controller/InitializeController.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #1 of `App\Module\Indexing\Indexer::index`: expected `Lsp\Workspace\Project\Project`, but provided type `Lsp\Workspace\Project\ProjectInterface` is less specific.'
@@ -428,18 +410,6 @@ count = 8
 
 [[issues]]
 file = "app/Core/Contracts/Completion/CompletionConsumer.php"
-code = "missing-constant-type"
-message = "Class constant `YIELD_EVERY` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Core/Contracts/Completion/CompletionConsumer.php"
-code = "missing-constant-type"
-message = "Class constant `YIELD_INTERVAL_MS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Core/Contracts/Completion/CompletionConsumer.php"
 code = "non-existent-function"
 message = 'Could not find definition for function `React\Async\delay` (also tried as `delay` in a broader scope).'
 count = 1
@@ -457,28 +427,10 @@ message = "Type `array` in parameter `$results` is imprecise, equivalent to `arr
 count = 1
 
 [[issues]]
-file = "app/Core/Contracts/PrefixMatcher/StrContainsMatcher.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`.'
-count = 1
-
-[[issues]]
-file = "app/Infrastructure/Symfony/LSPCompilerPass.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Infrastructure\Symfony\LSPCompilerPass::process`.'
-count = 1
-
-[[issues]]
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
 code = "invalid-operand"
 message = "Invalid type `never` for right operand in string concatenation."
 count = 2
-
-[[issues]]
-file = "app/Module/Completion/ClassConstantCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ClassConstantCompletionContributor::contribute`.'
-count = 1
 
 [[issues]]
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
@@ -497,12 +449,6 @@ file = "app/Module/Completion/ClassMemberCompletionContributor.php"
 code = "invalid-operand"
 message = "Invalid type `never` for right operand in string concatenation."
 count = 2
-
-[[issues]]
-file = "app/Module/Completion/ClassMemberCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ClassMemberCompletionContributor::contribute`.'
-count = 1
 
 [[issues]]
 file = "app/Module/Completion/ClassMemberCompletionContributor.php"
@@ -547,18 +493,6 @@ message = "Implicit conversion of `null` to empty string for left operand in str
 count = 2
 
 [[issues]]
-file = "app/Module/Completion/ClassesCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ClassesCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/ConstantCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ConstantCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
 file = "app/Module/Completion/ConstantCompletionContributor.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
@@ -580,12 +514,6 @@ count = 2
 file = "app/Module/Completion/ConstantCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/EnumCaseCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\EnumCaseCompletionContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -602,12 +530,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Completion/EnumCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\EnumCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/EnumCompletionContributor.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
 count = 1
@@ -628,18 +550,6 @@ count = 2
 file = "app/Module/Completion/EnumCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/FunctionCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\FunctionCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/InterfaceCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\InterfaceCompletionContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -664,60 +574,12 @@ count = 2
 file = "app/Module/Completion/InterfaceCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordDefinitions.php"
-code = "missing-constant-type"
-message = "Class constant `CONTROL_FLOW` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordDefinitions.php"
-code = "missing-constant-type"
-message = "Class constant `DECLARATION` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordDefinitions.php"
-code = "missing-constant-type"
-message = "Class constant `LANGUAGE_CONSTRUCT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordDefinitions.php"
-code = "missing-constant-type"
-message = "Class constant `MAGIC_CONSTANT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordDefinitions.php"
-code = "missing-constant-type"
-message = "Class constant `MODIFIER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordDefinitions.php"
-code = "missing-constant-type"
-message = "Class constant `OPERATOR` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordDefinitions.php"
-code = "missing-constant-type"
-message = "Class constant `TYPE` is missing a type hint."
 count = 1
 
 [[issues]]
 file = "app/Module/Completion/KeywordsCompletionContributor.php"
 code = "invalid-iterator"
 message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/KeywordsCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\KeywordsCompletionContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -736,12 +598,6 @@ count = 2
 file = "app/Module/Completion/KeywordsCompletionContributor.php"
 code = "mixed-operand"
 message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/NamespaceCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\NamespaceCompletionContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -788,12 +644,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Completion/ShortcutCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\ShortcutCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/ShortcutCompletionContributor.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `app\core\contracts\completion\completionconsumer::__invoke`: expected `Lsp\Protocol\Type\CompletionItem`, but found `mixed`.'
 count = 1
@@ -830,12 +680,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\SuperglobalsCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `lsp\protocol\type\completionitem::__construct`: expected `string`, but found `mixed`.'
 count = 1
@@ -844,12 +688,6 @@ count = 1
 file = "app/Module/Completion/SuperglobalsCompletionContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/TraitCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\TraitCompletionContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -878,12 +716,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Completion/UseStatementCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\UseStatementCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Completion/UseStatementCompletionContributor.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
 count = 4
@@ -899,18 +731,6 @@ file = "app/Module/Completion/UseStatementCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 4
-
-[[issues]]
-file = "app/Module/Completion/VariableCompletionContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Completion\VariableCompletionContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\ClassConstantDeclarationContributor::contribute`.'
-count = 1
 
 [[issues]]
 file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
@@ -940,12 +760,6 @@ count = 1
 file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/ClassDeclarationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\ClassDeclarationContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -998,12 +812,6 @@ count = 8
 
 [[issues]]
 file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\ClassMethodDeclarationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 2
@@ -1018,12 +826,6 @@ count = 2
 file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/FunctionDeclarationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\FunctionDeclarationContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -1070,12 +872,6 @@ count = 2
 
 [[issues]]
 file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\GlobalConstantDeclarationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 2
@@ -1106,12 +902,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Declaration/PropertyDeclarationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\PropertyDeclarationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/PropertyDeclarationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 3
@@ -1138,12 +928,6 @@ count = 1
 file = "app/Module/Declaration/PropertyDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/VariableDeclarationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Declaration\VariableDeclarationContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -1298,12 +1082,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Document\InMemoryDocumentIdentifierFactory::create`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
 code = "never-return"
 message = "Cannot return value with type 'never' from this function."
 count = 1
@@ -1342,12 +1120,6 @@ count = 1
 file = "app/Module/Document/LocalFileDocumentLoader.php"
 code = "match-arm-always-true"
 message = "This match arm is always true, making subsequent arms unreachable."
-count = 1
-
-[[issues]]
-file = "app/Module/Document/LocalFileDocumentLoader.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Document\LocalFileDocumentLoader::load`.'
 count = 1
 
 [[issues]]
@@ -1406,12 +1178,6 @@ count = 2
 
 [[issues]]
 file = "app/Module/Documentation/ClassDocumentationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\ClassDocumentationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/ClassDocumentationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 11
@@ -1424,32 +1190,14 @@ count = 3
 
 [[issues]]
 file = "app/Module/Documentation/ConstantDocumentationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\ConstantDocumentationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/ConstantDocumentationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 6
 
 [[issues]]
-file = "app/Module/Documentation/DocblockDocumentationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\DocblockDocumentationContributor::contribute`.'
-count = 1
-
-[[issues]]
 file = "app/Module/Documentation/FunctionDocumentationContributor.php"
 code = "invalid-operand"
 message = "Invalid type `never` for right operand in string concatenation."
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/FunctionDocumentationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\FunctionDocumentationContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -1496,12 +1244,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Documentation/MethodDocumentationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\MethodDocumentationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/MethodDocumentationContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1538,12 +1280,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\NodesTraceDocumentationContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
 code = "missing-return-type"
 message = "Function `arrow function` is missing a return type hint."
 count = 1
@@ -1553,12 +1289,6 @@ file = "app/Module/Documentation/PropertyDocumentationContributor.php"
 code = "impossible-condition"
 message = "This condition (type `null`) will always evaluate to false."
 count = 2
-
-[[issues]]
-file = "app/Module/Documentation/PropertyDocumentationContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Documentation\PropertyDocumentationContributor::contribute`.'
-count = 1
 
 [[issues]]
 file = "app/Module/Documentation/PropertyDocumentationContributor.php"
@@ -1628,12 +1358,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
-code = "invalid-argument"
-message = 'Invalid argument type for argument #3 of `App\Module\Indexing\Storage\StorageInterface::write`: expected `string`, but found `Lsp\Workspace\Uri\Uri`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
 code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
 count = 1
@@ -1676,18 +1400,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\AbstractPhpIndexer::index`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\AbstractPhpIndexer::supports`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/AbstractPhpIndexer.php"
 code = "possibly-null-argument"
 message = 'Argument #1 of method `App\Module\Indexing\Indexer\AbstractPhpIndexer::indexinternal` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
 count = 1
@@ -1696,18 +1408,6 @@ count = 1
 file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassConstantIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassConstantIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -1742,44 +1442,14 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassConstantUsageIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassConstantUsageIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
 code = "missing-template-parameter"
 message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantUsageIndexer.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$fetches`."
 count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -1814,18 +1484,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassMethodIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassMethodIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `app\module\indexing\data\methoddata::__construct`: expected `string`, but found `mixed`.'
 count = 1
@@ -1856,18 +1514,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassUsageIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\ClassUsageIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
 code = "missing-template-parameter"
 message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
 count = 1
@@ -1879,27 +1525,9 @@ message = "Assigning `mixed` type to a variable may lead to unexpected behavior.
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/ClassUsageIndexer.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$names`."
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Indexer/EnumIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/EnumIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\EnumIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/EnumIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\EnumIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -1934,44 +1562,14 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionCallUsageIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionCallUsageIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
 code = "missing-template-parameter"
 message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/FunctionCallUsageIndexer.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$calls`."
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/FunctionIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\FunctionIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -1981,33 +1579,9 @@ message = "Type `array` in return type of `indexInternal` is imprecise, equivale
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/GlobalConstantIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\GlobalConstantIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/GlobalConstantIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\GlobalConstantIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\InheritanceIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\InheritanceIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -2042,18 +1616,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\InterfaceIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\InterfaceIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/InterfaceIndexer.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `app\module\indexing\data\interfacedata::__construct`: expected `string`, but found `mixed`.'
 count = 1
@@ -2084,68 +1646,20 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\MethodCallUsageIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\MethodCallUsageIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
 code = "missing-template-parameter"
 message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractPhpIndexer`: expected 1, but found 0.'
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$instanceCalls`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/MethodCallUsageIndexer.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$staticCalls`."
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Indexer/NamespaceIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/NamespaceIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\NamespaceIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/NamespaceIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\NamespaceIndexer::indexInternal`.'
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\PropertyAccessUsageIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\PropertyAccessUsageIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -2155,33 +1669,9 @@ message = 'Too few template arguments for `App\Module\Indexing\Indexer\AbstractP
 count = 1
 
 [[issues]]
-file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$instanceAccesses`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyAccessUsageIndexer.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$staticAccesses`."
-count = 1
-
-[[issues]]
 file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\PropertyIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\PropertyIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -2212,18 +1702,6 @@ count = 1
 file = "app/Module/Indexing/Indexer/TraitIndexer.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `indexInternal` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/TraitIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\TraitIndexer::getKey`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/TraitIndexer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Indexer\TraitIndexer::indexInternal`.'
 count = 1
 
 [[issues]]
@@ -2264,24 +1742,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "invalid-argument"
-message = 'Invalid argument type for argument #1 of `app\module\indexing\storage\entry::__construct`: expected `string`, but found `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::read`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::write`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -2296,18 +1756,6 @@ count = 1
 file = "app/Module/Indexing/Storage/JsonSerializer.php"
 code = "invalid-return-statement"
 message = 'Invalid return type for function `app\module\indexing\storage\jsonserializer::serialize`: expected `string`, but found `false|string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/JsonSerializer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\JsonSerializer::deserialize`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Storage/JsonSerializer.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\JsonSerializer::serialize`.'
 count = 1
 
 [[issues]]
@@ -2414,12 +1862,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
-code = "possibly-null-operand"
-message = "Right operand in `!=` comparison might be `null` (type `int|null`)."
-count = 1
-
-[[issues]]
-file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
 code = "possibly-null-property-access"
 message = "Attempting to access a property on a possibly `null` value."
 count = 1
@@ -2433,8 +1875,14 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
 code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
@@ -2510,33 +1958,15 @@ count = 2
 
 [[issues]]
 file = "app/Module/References/ClassConstantReferenceContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\ClassConstantReferenceContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/References/ClassConstantReferenceContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 3
 
 [[issues]]
 file = "app/Module/References/ClassReferenceContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\ClassReferenceContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/References/ClassReferenceContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 2
-
-[[issues]]
-file = "app/Module/References/FunctionReferenceContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\FunctionReferenceContributor::contribute`.'
-count = 1
 
 [[issues]]
 file = "app/Module/References/FunctionReferenceContributor.php"
@@ -2546,20 +1976,8 @@ count = 2
 
 [[issues]]
 file = "app/Module/References/InterfaceReferenceContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\InterfaceReferenceContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/References/InterfaceReferenceContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "app/Module/References/MethodReferenceContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\MethodReferenceContributor::contribute`.'
 count = 1
 
 [[issues]]
@@ -2570,45 +1988,9 @@ count = 1
 
 [[issues]]
 file = "app/Module/References/PropertyReferenceContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\PropertyReferenceContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/References/PropertyReferenceContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 2
-
-[[issues]]
-file = "app/Module/References/VariableReferenceContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\References\VariableReferenceContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/References/VariableReferenceContributor.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$variables`."
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/ConstructorSignatureContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Signature\ConstructorSignatureContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/ConstructorSignatureContributor.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$classes`."
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/FunctionSignatureContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Signature\FunctionSignatureContributor::contribute`.'
-count = 1
 
 [[issues]]
 file = "app/Module/Signature/FunctionSignatureContributor.php"
@@ -2630,20 +2012,8 @@ count = 1
 
 [[issues]]
 file = "app/Module/Signature/MethodSignatureContributor.php"
-code = "missing-override-attribute"
-message = 'Missing `#[Override]` attribute on overriding method `App\Module\Signature\MethodSignatureContributor::contribute`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/MethodSignatureContributor.php"
 code = "non-existent-method"
 message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Signature/MethodSignatureContributor.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$classes`."
 count = 1
 
 [[issues]]
