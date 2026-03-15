@@ -75,7 +75,7 @@ final class CompletionController
                     return $consumer->results;
                 },
             )()->catch($onRejected),
-            1.0,
+            time: 1.0,
         )->catch($onRejected);
     }
 }

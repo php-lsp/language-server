@@ -764,9 +764,9 @@ count = 1
 
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 4
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `app\module\declaration\classdeclarationcontributor::resolveclassname`. Saw type `mixed`.'
+count = 3
 
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
@@ -790,25 +790,13 @@ count = 1
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 3
+count = 1
 
 [[issues]]
 file = "app/Module/Declaration/ClassDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
 count = 3
-
-[[issues]]
-file = "app/Module/Declaration/ClassDeclarationContributor.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of function `in_array` is possibly `null`, but parameter type `array<array-key, PhpParser\Node\Name|PhpParser\Node\Name\FullyQualified>` does not accept it.'
-count = 3
-
-[[issues]]
-file = "app/Module/Declaration/ClassDeclarationContributor.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 8
 
 [[issues]]
 file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
@@ -1754,6 +1742,12 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "match-not-exhaustive"
+message = "Non-exhaustive `match` expression: subject of type `bool` is not fully handled."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 3
@@ -1946,9 +1940,15 @@ count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"
+code = "match-not-exhaustive"
+message = "Non-exhaustive `match` expression: subject of type `bool` is not fully handled."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 3
+count = 4
 
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"

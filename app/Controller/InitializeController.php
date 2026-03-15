@@ -9,17 +9,9 @@ use App\Module\Notification\ServerNotificationSender;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionOptions;
-use Lsp\Protocol\Type\DeclarationOptions;
-use Lsp\Protocol\Type\DefinitionOptions;
 use Lsp\Protocol\Type\DiagnosticOptions;
-use Lsp\Protocol\Type\DocumentFormattingOptions;
-use Lsp\Protocol\Type\DocumentHighlightOptions;
-use Lsp\Protocol\Type\DocumentSymbolOptions;
-use Lsp\Protocol\Type\FileOperationOptions;
-use Lsp\Protocol\Type\FileOperationRegistrationOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
-use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\RenameOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
@@ -28,7 +20,6 @@ use Lsp\Protocol\Type\TextDocumentSyncKind;
 use Lsp\Protocol\Type\WorkspaceFolder;
 use Lsp\Protocol\Type\WorkspaceFoldersServerCapabilities;
 use Lsp\Protocol\Type\WorkspaceOptions;
-use Lsp\Protocol\Type\WorkspaceSymbolOptions;
 use Lsp\Router\Attribute\Route;
 use Lsp\Workspace\Project\ProjectFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -56,58 +47,30 @@ final class InitializeController
             capabilities: new ServerCapabilities(
                 textDocumentSync: TextDocumentSyncKind::Incremental,
                 completionProvider: new CompletionOptions(
-                    //                    triggerCharacters: [],
                     triggerCharacters: ['.', ':', '<', '\'', '"', '`'],
                 ),
                 hoverProvider: true,
-                //                codeLensProvider: new CodeLensOptions(
-                //                    resolveProvider: true,
-                //                ),
                 signatureHelpProvider: new SignatureHelpOptions(
                     triggerCharacters: ['(', ',', ':', ' '],
                 ),
-                declarationProvider: new DeclarationOptions(),
-                definitionProvider: new DefinitionOptions(),
-                documentHighlightProvider: new DocumentHighlightOptions(),
-                documentFormattingProvider: new DocumentFormattingOptions(),
-                referencesProvider: new ReferenceOptions(
-                    workDoneProgress: null,
-                ),
+                declarationProvider: true,
+                definitionProvider: true,
+                documentHighlightProvider: true,
+                documentFormattingProvider: true,
+                referencesProvider: true,
                 renameProvider: new RenameOptions(
                     prepareProvider: true,
                 ),
-                documentSymbolProvider: new DocumentSymbolOptions(),
+                documentSymbolProvider: true,
                 diagnosticProvider: new DiagnosticOptions(
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
-                    identifier: null,
-                    workDoneProgress: null,
                 ),
-                workspaceSymbolProvider: new WorkspaceSymbolOptions(),
+                workspaceSymbolProvider: true,
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(
                         supported: true,
                         changeNotifications: true,
-                    ),
-                    fileOperations: new FileOperationOptions(
-                        didCreate: new FileOperationRegistrationOptions(
-                            filters: [],
-                        ),
-                        willCreate: new FileOperationRegistrationOptions(
-                            filters: [],
-                        ),
-                        didRename: new FileOperationRegistrationOptions(
-                            filters: [],
-                        ),
-                        willRename: new FileOperationRegistrationOptions(
-                            filters: [],
-                        ),
-                        didDelete: new FileOperationRegistrationOptions(
-                            filters: [],
-                        ),
-                        willDelete: new FileOperationRegistrationOptions(
-                            filters: [],
-                        ),
                     ),
                 ),
             ),

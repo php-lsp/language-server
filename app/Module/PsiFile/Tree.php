@@ -20,10 +20,12 @@ class Tree
      */
     public static function parentOfType(?Node $node, string $class): ?object
     {
-        while ($node = $node?->getAttribute('parent')) {
+        $node = $node?->getAttribute('parent');
+        while ($node !== null) {
             if ($node instanceof $class) {
                 return $node;
             }
+            $node = $node->getAttribute('parent');
         }
 
         return null;
@@ -195,17 +197,20 @@ class Tree
     {
         $cacheKey = spl_object_id($document) . ':' . $document->version;
 
-        if (isset(self::$lineOffsetCache[$cacheKey])) {
+        if (array_key_exists($cacheKey, self::$lineOffsetCache)) {
             return self::$lineOffsetCache[$cacheKey];
         }
 
         $text = $document->getContents();
         $offsets = [0];
         $offset = 0;
+        $newline = "\n";
 
-        while (($pos = strpos($text, "\n", $offset)) !== false) {
+        $pos = strpos($text, $newline, $offset);
+        while ($pos !== false) {
             $offsets[] = $pos + 1;
             $offset = $pos + 1;
+            $pos = strpos($text, $newline, $offset);
         }
 
         self::$lineOffsetCache[$cacheKey] = $offsets;
@@ -235,11 +240,10 @@ class Tree
         $hi = count($offsets) - 1;
         while ($lo < $hi) {
             $mid = ($lo + $hi + 1) >> 1;
-            if ($offsets[$mid] <= $pos) {
-                $lo = $mid;
-            } else {
-                $hi = $mid - 1;
-            }
+            match ($offsets[$mid] <= $pos) {
+                true => $lo = $mid,
+                false => $hi = $mid - 1,
+            };
         }
 
         return [$lo, $pos - $offsets[$lo]];
@@ -271,6 +275,6 @@ class Tree
             return (string) $element;
         }
 
-        return '-----' . var_export($element, return: true) . '-----';
+        return $element->getType();
     }
 }

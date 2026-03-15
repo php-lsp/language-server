@@ -45,35 +45,7 @@ final class ClassDeclarationContributor implements DeclarationContributor
             return;
         }
 
-        $className = null;
-        if ($node = Tree::parentOfType($element, Node\Expr\ClassConstFetch::class)) {
-            $className = $node->class->toString();
-        } elseif ($node = Tree::parentOfType($element, Node\Expr\New_::class)) {
-            $className = $node->class->toString();
-        } elseif ($node = Tree::parentOfType($element, Node\Param::class)) {
-            $className = $node->type->toString();
-        } elseif ($node = Tree::parentOfType($element, Node\UseItem::class)) {
-            $className = $node->name->toString();
-        } elseif ($node = Tree::parentOfType($element, Node\Stmt\ClassMethod::class)) {
-            if ($node->returnType === $element) {
-                $className = $node->returnType->toString();
-            }
-        } elseif ($node = Tree::parentOfType($element, Node\Stmt\Class_::class)) {
-            if ($node->extends === $element) {
-                $className = $node->extends->toString();
-            } elseif (in_array($element, $node->implements, strict: true)) {
-                $className = $element->toString();
-            }
-        } elseif ($node = Tree::parentOfType($element, Node\Stmt\Interface_::class)) {
-            if (in_array($element, $node->extends, strict: true)) {
-                $className = $element->toString();
-            }
-        } elseif ($node = Tree::parentOfType($element, Node\Stmt\TraitUse::class)) {
-            if (in_array($element, $node->traits, strict: true)) {
-                $className = $element->toString();
-            }
-        }
-
+        $className = $this->resolveClassName($element);
         if ($className === null) {
             return;
         }
@@ -116,5 +88,55 @@ final class ClassDeclarationContributor implements DeclarationContributor
                 range: $defaultRange,
             ));
         }
+    }
+
+    private function resolveClassName(Node\Name\FullyQualified $element): ?string
+    {
+        $node = Tree::parentOfType($element, Node\Expr\ClassConstFetch::class);
+        if ($node !== null) {
+            return $node->class->toString();
+        }
+
+        $node = Tree::parentOfType($element, Node\Expr\New_::class);
+        if ($node !== null) {
+            return $node->class->toString();
+        }
+
+        $node = Tree::parentOfType($element, Node\Param::class);
+        if ($node !== null) {
+            return $node->type->toString();
+        }
+
+        $node = Tree::parentOfType($element, Node\UseItem::class);
+        if ($node !== null) {
+            return $node->name->toString();
+        }
+
+        $node = Tree::parentOfType($element, Node\Stmt\ClassMethod::class);
+        if ($node !== null && $node->returnType === $element) {
+            return $node->returnType->toString();
+        }
+
+        $node = Tree::parentOfType($element, Node\Stmt\Class_::class);
+        if ($node !== null) {
+            if ($node->extends === $element) {
+                return $node->extends->toString();
+            }
+            if (in_array($element, $node->implements, strict: true)) {
+                return $element->toString();
+            }
+        }
+
+        $node = Tree::parentOfType($element, Node\Stmt\Interface_::class);
+        if ($node !== null && in_array($element, $node->extends, strict: true)) {
+            return $element->toString();
+        }
+
+        $node = Tree::parentOfType($element, Node\Stmt\TraitUse::class);
+        if ($node !== null && in_array($element, $node->traits, strict: true)) {
+            return $element->toString();
+        }
+
+        return null;
     }
 }

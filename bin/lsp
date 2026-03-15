@@ -97,12 +97,23 @@ $app = new class extends Application {
     /** @return list<Command> */
     protected function getDefaultCommands(): array
     {
+        $defaultKernel = \App\Application::class;
+
+        $serve = new ServeCommand();
+        $serve->getDefinition()->getArgument('kernel')->setDefault($defaultKernel);
+
+        $cacheClear = new CacheClearCommand();
+        $cacheClear->getDefinition()->getArgument('kernel')->setDefault($defaultKernel);
+
+        $cacheWarmup = new CacheWarmupCommand();
+        $cacheWarmup->getDefinition()->getArgument('kernel')->setDefault($defaultKernel);
+
         return [
             new HelpCommand(),
             new ListCommand(),
-            new ServeCommand(),
-            new CacheClearCommand(),
-            new CacheWarmupCommand(),
+            $serve,
+            $cacheClear,
+            $cacheWarmup,
         ];
     }
 };

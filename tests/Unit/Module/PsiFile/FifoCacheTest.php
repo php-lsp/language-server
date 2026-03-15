@@ -93,11 +93,11 @@ final class FifoCacheTest extends TestCase
         $this->assertSame('new', $cache->get('key'));
     }
 
-    #[TestDox('preventDeletion keeps entry from eviction queue')]
-    public function testPreventDeletion(): void
+    #[TestDox('setPermanent keeps entry from eviction queue')]
+    public function testSetPermanent(): void
     {
         $cache = new FifoCache(2, 1.0);
-        $cache->set('protected', 'val', preventDeletion: true);
+        $cache->setPermanent('protected', 'val');
         $cache->set('normal', 'val2');
 
         // Trigger eviction — only queue entries are evicted
