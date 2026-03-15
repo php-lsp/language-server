@@ -38,7 +38,6 @@ final class ServerNotificationSender
         $connectionProvider = $this->connectionProvider;
         $reflection = new \ReflectionObject($connectionProvider);
         $connectionsProperty = $reflection->getProperty('connections');
-        $connectionsProperty->setAccessible(true);
         /**
          * @var \WeakMap<object, ConnectionInterface> $connections
          */
