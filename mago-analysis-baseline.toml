@@ -56,44 +56,14 @@ count = 2
 
 [[issues]]
 file = "app/Controller/TextDocument/CompletionController.php"
-code = "mixed-argument"
-message = "Cannot unpack argument of type `mixed` because it is not guaranteed to be iterable."
-count = 2
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `array_merge`: expected `array<array-key, mixed>`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "mixed-return-statement"
 message = 'Could not infer a precise return type for function `app\controller\textdocument\completioncontroller::runcontributor`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "non-existent-function"
-message = 'Could not find definition for function `React\Async\async` (also tried as `async` in a broader scope).'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "non-existent-function"
-message = 'Could not find definition for function `React\Async\await` (also tried as `await` in a broader scope).'
 count = 1
 
 [[issues]]
@@ -105,19 +75,13 @@ count = 1
 [[issues]]
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "non-existent-use-import"
-message = 'Imported function `React\Async\async` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "non-existent-use-import"
-message = 'Imported function `React\Async\await` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "non-existent-use-import"
 message = 'Imported function `React\Promise\Timer\timeout` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `array_merge`: expected `array<array-key, mixed>`, but possibly received `React\Promise\PromiseInterface<array<array-key, mixed>>|array<array-key, mixed>`.'
 count = 1
 
 [[issues]]
@@ -341,18 +305,6 @@ file = "app/Controller/WorkspaceSymbolController.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
 count = 8
-
-[[issues]]
-file = "app/Core/Contracts/Completion/CompletionConsumer.php"
-code = "non-existent-function"
-message = 'Could not find definition for function `React\Async\delay` (also tried as `delay` in a broader scope).'
-count = 1
-
-[[issues]]
-file = "app/Core/Contracts/Completion/CompletionConsumer.php"
-code = "non-existent-use-import"
-message = 'Imported function `React\Async\delay` does not exist.'
-count = 1
 
 [[issues]]
 file = "app/Core/Contracts/Documentation/DocumentationConsumer.php"
@@ -927,6 +879,12 @@ count = 1
 [[issues]]
 file = "app/Module/Document/LocalFileDocumentLoader.php"
 code = "mixed-argument"
+message = '''Invalid argument type for argument #1 of `React\Async\await`: expected `React\Promise\PromiseInterface<('T.react\async\await() extends mixed)>`, but found `mixed`.'''
+count = 1
+
+[[issues]]
+file = "app/Module/Document/LocalFileDocumentLoader.php"
+code = "mixed-argument"
 message = 'Invalid argument type for argument #2 of `Lsp\Extension\DocumentManager\Editor\Document\DocumentFactoryInterface::create`: expected `string`, but found `mixed`.'
 count = 1
 
@@ -946,18 +904,6 @@ count = 1
 file = "app/Module/Document/LocalFileDocumentLoader.php"
 code = "non-existent-class-like"
 message = 'Cannot find class, interface, enum, or type alias `React\Filesystem\AdapterInterface`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Document/LocalFileDocumentLoader.php"
-code = "non-existent-function"
-message = 'Could not find definition for function `React\Async\await` (also tried as `await` in a broader scope).'
-count = 1
-
-[[issues]]
-file = "app/Module/Document/LocalFileDocumentLoader.php"
-code = "non-existent-use-import"
-message = 'Imported function `React\Async\await` does not exist.'
 count = 1
 
 [[issues]]
@@ -1130,6 +1076,12 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
+code = "invalid-argument"
+message = '''Invalid argument type for argument #1 of `React\Async\async`: expected `(callable(('A1.react\async\async() extends mixed), ('A2.react\async\async() extends mixed), ('A3.react\async\async() extends mixed), ('A4.react\async\async() extends mixed), ('A5.react\async\async() extends mixed)): React\Promise\PromiseInterface<void>)`, but found `(closure(): void)`.'''
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
 code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
 count = 1
@@ -1138,30 +1090,6 @@ count = 1
 file = "app/Module/Indexing/Indexer.php"
 code = "mixed-property-type-coercion"
 message = 'A value with a less specific type `array<array-key, mixed>` is being assigned to property `$$indexers` (array<array-key, App\Core\Contracts\Indexing\IndexerInterface<mixed>>).'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "non-existent-function"
-message = 'Could not find definition for function `React\Async\async` (also tried as `async` in a broader scope).'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "non-existent-function"
-message = 'Could not find definition for function `React\Async\await` (also tried as `await` in a broader scope).'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "non-existent-use-import"
-message = 'Imported function `React\Async\async` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "non-existent-use-import"
-message = 'Imported function `React\Async\await` does not exist.'
 count = 1
 
 [[issues]]
@@ -1501,6 +1429,18 @@ message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 1
 
 [[issues]]
+file = "app/Module/Indexing/ParallelIndexer.php"
+code = "possibly-false-operand"
+message = "Left operand in arithmetic operation might be `false` (type `false|float|int`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/ParallelIndexer.php"
+code = "possibly-false-operand"
+message = "Right operand in arithmetic operation might be `false` (type `false|float|int`)."
+count = 1
+
+[[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "hidden-generator-return"
 message = 'The value returned by generator function `app\module\indexing\storage\inmemorystorage::read` may be inaccessible to callers.'
@@ -1585,6 +1525,66 @@ message = 'Possible argument type mismatch for argument #1 of `lsp\rpc\message\n
 count = 1
 
 [[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `app\module\parallel\task\fileindextask::parseast`: expected `list<PhpParser\Node>|null`, but found `array<array-key, PhpParser\Node>`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array{}|non-empty-list<mixed>` is less specific than the declared return type `list<string>` for function `app\module\parallel\task\fileindextask::extractinterfaces` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array{}|non-empty-list<mixed>` is less specific than the declared return type `list<string>` for function `app\module\parallel\task\fileindextask::extracttraits` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "less-specific-return-statement"
+message = 'Returned type `array<array-key, mixed>` is less specific than the declared return type `array<string, string>` for function `app\module\parallel\task\fileindextask::extractclasses`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "less-specific-return-statement"
+message = 'Returned type `array<array-key, non-empty-list<non-empty-string>>` is less specific than the declared return type `array<string, list<string>>` for function `app\module\parallel\task\fileindextask::extractclassmethods`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "mixed-array-index"
+message = "Invalid index type `mixed` used for array access on `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "mixed-array-index"
+message = "Invalid index type `mixed` used for array access on `array<array-key, non-empty-list<non-empty-string>>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/Parallel/Task/FileIndexTask.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 4
+
+[[issues]]
+file = "app/Module/Parallel/Task/WarmupTask.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Parallel\Task\WarmupTask::run`.'
+count = 1
+
+[[issues]]
 file = "app/Module/PsiFile/InMemoryPsiFileManager.php"
 code = "match-arm-always-true"
 message = "This match arm is always true, making subsequent arms unreachable."
@@ -1647,8 +1647,14 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
 code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
