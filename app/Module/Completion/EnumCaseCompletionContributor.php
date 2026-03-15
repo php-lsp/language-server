@@ -39,10 +39,12 @@ final class EnumCaseCompletionContributor implements CompletionContributor
             $name = $constFetch->class->toString();
             // Check if this name is an enum
             foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $entry) {
-                if ($entry->value->fqn === $name) {
-                    $enumName = $name;
-                    break;
+                if ($entry->value->fqn !== $name) {
+                    continue;
                 }
+
+                $enumName = $name;
+                break;
             }
         }
 

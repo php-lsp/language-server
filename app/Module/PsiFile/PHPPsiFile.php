@@ -23,9 +23,10 @@ class PHPPsiFile
         if (is_int($position)) {
             $visitor = new NodeFinder();
 
-            return $visitor->find($this->ast->children, static function (Node $node) use ($position) {
-                return $node->getStartFilePos() <= $position && $position <= $node->getEndFilePos();
-            });
+            return $visitor->find(
+                $this->ast->children,
+                static fn(Node $node) => $node->getStartFilePos() <= $position && $position <= $node->getEndFilePos(),
+            );
         }
         if ($position instanceof Position) {
             $line = $position->line + 1;
@@ -38,9 +39,7 @@ class PHPPsiFile
                     $startColumn = $this->toColumn($this->ast->document, $node->getStartFilePos());
                     $endColumn = $this->toColumn($this->ast->document, $node->getEndFilePos());
 
-                    $result = $startColumn <= $position->character && $position->character <= $endColumn;
-
-                    return $result;
+                    return $startColumn <= $position->character && $position->character <= $endColumn;
                 }
 
                 return false;

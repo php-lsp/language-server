@@ -45,24 +45,26 @@ final class VariableCompletionContributor implements CompletionContributor
 
         // Add parameters as completions
         foreach ($scope->params as $param) {
-            if ($param->var instanceof Node\Expr\Variable && is_string($param->var->name)) {
-                $name = $param->var->name;
-                if (array_key_exists($name, $seen)) {
-                    continue;
-                }
-                $seen[$name] = true;
-
-                $detail = '';
-                if ($param->type !== null) {
-                    $detail = Tree::toString($param->type);
-                }
-
-                $consumer(new CompletionItem(
-                    label: '$' . $name,
-                    kind: CompletionItemKind::VariableKind,
-                    detail: $detail,
-                ));
+            if (!($param->var instanceof Node\Expr\Variable && is_string($param->var->name))) {
+                continue;
             }
+
+            $name = $param->var->name;
+            if (array_key_exists($name, $seen)) {
+                continue;
+            }
+            $seen[$name] = true;
+
+            $detail = '';
+            if ($param->type !== null) {
+                $detail = Tree::toString($param->type);
+            }
+
+            $consumer(new CompletionItem(
+                label: '$' . $name,
+                kind: CompletionItemKind::VariableKind,
+                detail: $detail,
+            ));
         }
 
         // Find all variable assignments in scope
