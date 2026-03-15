@@ -14,6 +14,7 @@ use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
+use Override;
 use PhpParser\Node;
 
 #[AsCompletionContributor]
@@ -23,6 +24,7 @@ final class EnumCaseCompletionContributor implements CompletionContributor
         private readonly IndexLookup $indexLookup,
     ) {}
 
+    #[Override]
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
         $element = $context->currentNode();
@@ -37,10 +39,12 @@ final class EnumCaseCompletionContributor implements CompletionContributor
             $name = $constFetch->class->toString();
             // Check if this name is an enum
             foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $entry) {
-                if ($entry->value->fqn === $name) {
-                    $enumName = $name;
-                    break;
+                if ($entry->value->fqn !== $name) {
+                    continue;
                 }
+
+                $enumName = $name;
+                break;
             }
         }
 

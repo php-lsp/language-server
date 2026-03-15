@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Module\Indexing;
 
 use App\Core\Contracts\Indexing\IndexerInterface;

@@ -55,7 +55,7 @@ class InMemoryPsiFileManager
             $p = new PublishDiagnosticsParams(
                 uri: $uri,
                 diagnostics: array_map(
-                    fn(Error $error) => new Diagnostic(
+                    static fn(Error $error) => new Diagnostic(
                         range: new Range(
                             start: new Position(
                                 $error->getStartLine() - 1,
@@ -92,9 +92,7 @@ class InMemoryPsiFileManager
             //            );
         }
 
-        $psiFile = new PHPPsiFile($root);
-
-        return $psiFile;
+        return new PHPPsiFile($root);
     }
 
     public function findPsiFile(EditorInterface $editor, TextDocumentIdentifier $identifier): ?PHPPsiFile
@@ -102,7 +100,7 @@ class InMemoryPsiFileManager
         $psiFile = $this->cache->get($identifier->uri);
         if ($psiFile !== null) {
             $document = $editor->findByUriString($identifier->uri);
-            if ($psiFile->ast->document->version != $document->version) {
+            if ($psiFile->ast->document->version !== $document->version) {
                 $psiFile = null;
             }
         }

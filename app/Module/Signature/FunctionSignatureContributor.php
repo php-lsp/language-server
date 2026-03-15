@@ -14,6 +14,7 @@ use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use Lsp\Protocol\Type\ParameterInformation;
 use Lsp\Protocol\Type\SignatureInformation;
+use Override;
 use PhpParser\Node\Expr\FuncCall;
 
 #[AsSignatureContributor]
@@ -24,6 +25,7 @@ final class FunctionSignatureContributor implements SignatureContributor
         private readonly IndexLookup $indexLookup,
     ) {}
 
+    #[Override]
     public function contribute(SignatureContext $context, SignatureConsumer $consumer): void
     {
         $file = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);

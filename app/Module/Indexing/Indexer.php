@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Module\Indexing;
 
 use App\Core\Contracts\Indexing\IndexerInterface;
@@ -74,7 +76,7 @@ final class Indexer
             'imagick',
             'tests',
         ];
-        if (in_array($file->name, $ignored, true)) {
+        if (in_array($file->name, $ignored, strict: true)) {
             //            echo str_repeat('  ', $level) . '- ' . $file . " --- skipping ---\n";
             return;
         }
@@ -93,16 +95,18 @@ final class Indexer
     private function runIndexers(VirtualFileInterface $file): void
     {
         foreach ($this->indexers as $indexer) {
-            if ($indexer->supports($file)) {
-                await(
-                    async(function () use ($file, $indexer) {
-                        $key = $indexer::getKey();
-                        $map = $indexer->index($file);
-
-                        $this->storage->write($key, $map, $file->uri);
-                    })(),
-                );
+            if (!$indexer->supports($file)) {
+                continue;
             }
+
+            await(
+                async(function () use ($file, $indexer) {
+                    $key = $indexer::getKey();
+                    $map = $indexer->index($file);
+
+                    $this->storage->write($key, $map, (string) $file->uri);
+                })(),
+            );
         }
     }
 }

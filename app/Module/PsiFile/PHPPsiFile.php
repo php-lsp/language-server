@@ -23,24 +23,23 @@ class PHPPsiFile
         if (is_int($position)) {
             $visitor = new NodeFinder();
 
-            return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
-                return $node->getStartFilePos() <= $position && $position <= $node->getEndFilePos();
-            });
+            return $visitor->find(
+                $this->ast->children,
+                static fn(Node $node) => $node->getStartFilePos() <= $position && $position <= $node->getEndFilePos(),
+            );
         }
         if ($position instanceof Position) {
             $line = $position->line + 1;
 
             $visitor = new NodeFinder();
 
-            return $visitor->find($this->ast->children, function (Node $node) use ($position, &$line) {
+            return $visitor->find($this->ast->children, function (Node $node) use ($position, $line) {
                 if ($node->getStartLine() <= $line && $line <= $node->getEndLine()) {
                     //                $length = $node->getEndFilePos() - $node->getStartFilePos();
                     $startColumn = $this->toColumn($this->ast->document, $node->getStartFilePos());
                     $endColumn = $this->toColumn($this->ast->document, $node->getEndFilePos());
 
-                    $result = $startColumn <= $position->character && $position->character <= $endColumn;
-
-                    return $result;
+                    return $startColumn <= $position->character && $position->character <= $endColumn;
                 }
 
                 return false;
@@ -54,7 +53,9 @@ class PHPPsiFile
     {
         $nodes = $this->findAtPosition($position);
 
-        return end($nodes) ?: null;
+        $last = end($nodes);
+
+        return $last !== false ? $last : null;
     }
 
     private function toColumn(Document $document, int $pos): int
@@ -64,7 +65,8 @@ class PHPPsiFile
             throw new \RuntimeException('Invalid position information');
         }
 
-        $lineStartPos = strrpos($text, "\n", $pos - strlen($text));
+        $needle = "\n";
+        $lineStartPos = strrpos($text, $needle, $pos - strlen($text));
         if (false === $lineStartPos) {
             $lineStartPos = -1;
         }

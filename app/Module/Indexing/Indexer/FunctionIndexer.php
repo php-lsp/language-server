@@ -9,6 +9,7 @@ use App\Module\Indexing\Data\FunctionData;
 use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Function_;
 
 /**
@@ -17,11 +18,13 @@ use PhpParser\Node\Stmt\Function_;
 #[AsIndexer]
 class FunctionIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.functions.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $functions = Tree::childrenOfType($phpFile->ast, Function_::class);

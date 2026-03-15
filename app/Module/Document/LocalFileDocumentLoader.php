@@ -8,6 +8,7 @@ use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Extension\DocumentManager\Editor\Document\DocumentFactoryInterface;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
 use Lsp\Workspace\Uri\Uri;
+use Override;
 
 use function React\Async\await;
 
@@ -18,6 +19,7 @@ final class LocalFileDocumentLoader implements DocumentLoaderInterface
         private \React\Filesystem\AdapterInterface $adapter,
     ) {}
 
+    #[Override]
     public function load(Uri|TextDocumentIdentifier $identifier): Document
     {
         $uri = match (true) {

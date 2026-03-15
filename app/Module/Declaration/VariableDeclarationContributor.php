@@ -11,6 +11,7 @@ use App\Core\Contracts\Declaration\DeclarationContributor;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Location;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -21,6 +22,7 @@ final class VariableDeclarationContributor implements DeclarationContributor
         private readonly InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
     {
         $editor = $context->editor;

@@ -9,6 +9,7 @@ use App\Module\Indexing\Data\MethodData;
 use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Interface_;
@@ -20,11 +21,13 @@ use PhpParser\Node\Stmt\Trait_;
 #[AsIndexer]
 class ClassMethodIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.classMethods.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $classLikes = Tree::childrenOfTypes($phpFile->ast, Class_::class, Interface_::class, Trait_::class);

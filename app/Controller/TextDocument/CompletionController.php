@@ -69,7 +69,7 @@ final class CompletionController
 
         return timeout(
             async(
-                function () use ($contributor, $context, $consumer) {
+                static function () use ($contributor, $context, $consumer) {
                     $contributor->contribute($context, $consumer);
 
                     return $consumer->results;

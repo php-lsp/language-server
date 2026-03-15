@@ -16,6 +16,7 @@ use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
+use Override;
 use PhpParser\Node;
 
 #[AsDeclarationContributor]
@@ -26,6 +27,7 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
         private readonly InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(DeclarationContext $context, DeclarationConsumer $consumer): void
     {
         $editor = $context->editor;

@@ -11,12 +11,14 @@ use App\Core\Contracts\Completion\CompletionContributor;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
 #[AsCompletionContributor]
 final class VariableCompletionContributor implements CompletionContributor
 {
+    #[Override]
     public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
     {
         $element = $context->currentNode();
@@ -43,24 +45,26 @@ final class VariableCompletionContributor implements CompletionContributor
 
         // Add parameters as completions
         foreach ($scope->params as $param) {
-            if ($param->var instanceof Node\Expr\Variable && is_string($param->var->name)) {
-                $name = $param->var->name;
-                if (isset($seen[$name])) {
-                    continue;
-                }
-                $seen[$name] = true;
-
-                $detail = '';
-                if ($param->type !== null) {
-                    $detail = Tree::toString($param->type);
-                }
-
-                $consumer(new CompletionItem(
-                    label: '$' . $name,
-                    kind: CompletionItemKind::VariableKind,
-                    detail: $detail,
-                ));
+            if (!($param->var instanceof Node\Expr\Variable && is_string($param->var->name))) {
+                continue;
             }
+
+            $name = $param->var->name;
+            if (array_key_exists($name, $seen)) {
+                continue;
+            }
+            $seen[$name] = true;
+
+            $detail = '';
+            if ($param->type !== null) {
+                $detail = Tree::toString($param->type);
+            }
+
+            $consumer(new CompletionItem(
+                label: '$' . $name,
+                kind: CompletionItemKind::VariableKind,
+                detail: $detail,
+            ));
         }
 
         // Find all variable assignments in scope
@@ -71,7 +75,7 @@ final class VariableCompletionContributor implements CompletionContributor
                 continue;
             }
             $name = $variable->name;
-            if (isset($seen[$name])) {
+            if (array_key_exists($name, $seen)) {
                 continue;
             }
             $seen[$name] = true;

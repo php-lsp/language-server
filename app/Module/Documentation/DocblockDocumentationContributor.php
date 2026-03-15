@@ -9,6 +9,7 @@ use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Core\Contracts\Documentation\DocumentationContributor;
 use App\Module\TypeSystem\TypeResolverInterface;
+use Override;
 
 #[AsDocumentationContributor]
 final class DocblockDocumentationContributor implements DocumentationContributor
@@ -17,6 +18,7 @@ final class DocblockDocumentationContributor implements DocumentationContributor
         private readonly TypeResolverInterface $typeResolver,
     ) {}
 
+    #[Override]
     public function contribute(DocumentationContext $context, DocumentationConsumer $consumer): void
     {
         $result = $this->typeResolver->resolveAtPosition(

@@ -16,12 +16,12 @@ class CompletionConsumer
     /**
      * Количество элементов между yield
      */
-    private const YIELD_EVERY = 100;
+    private const int YIELD_EVERY = 100;
 
     /**
      * Максимальное время между yield (в миллисекундах)
      */
-    private const YIELD_INTERVAL_MS = 10;
+    private const int YIELD_INTERVAL_MS = 10;
 
     public function __construct(
         /**

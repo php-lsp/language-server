@@ -7,6 +7,7 @@ namespace App\Module\Document;
 use App\Module\PsiFile\FifoCache;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
 use Lsp\Workspace\Uri\Uri;
+use Override;
 
 class InMemoryDocumentIdentifierFactory implements DocumentIdentifierFactoryInterface
 {
@@ -20,6 +21,7 @@ class InMemoryDocumentIdentifierFactory implements DocumentIdentifierFactoryInte
         $this->cache = new FifoCache(300);
     }
 
+    #[Override]
     public function create(string $path): TextDocumentIdentifier
     {
         $value = $this->cache[$path];

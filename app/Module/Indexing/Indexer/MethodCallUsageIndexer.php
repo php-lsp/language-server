@@ -6,6 +6,7 @@ namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\PsiFile\PHPPsiFile;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -17,18 +18,19 @@ use PhpParser\NodeFinder;
  */
 class MethodCallUsageIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.methodCallUsages';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $finder = new NodeFinder();
 
         $results = [];
 
-        /** @var Node\Expr\MethodCall[] $instanceCalls */
         $instanceCalls = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\MethodCall::class);
         foreach ($instanceCalls as $call) {
             if (!$call->name instanceof Node\Identifier) {
@@ -38,7 +40,6 @@ class MethodCallUsageIndexer extends AbstractPhpIndexer
             $results[] = [$call->name->toString(), $call->name->getStartFilePos(), null];
         }
 
-        /** @var Node\Expr\StaticCall[] $staticCalls */
         $staticCalls = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\StaticCall::class);
         foreach ($staticCalls as $call) {
             if (!$call->name instanceof Node\Identifier) {

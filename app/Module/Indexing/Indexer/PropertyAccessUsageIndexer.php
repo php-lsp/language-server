@@ -6,6 +6,7 @@ namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\PsiFile\PHPPsiFile;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -17,18 +18,19 @@ use PhpParser\NodeFinder;
  */
 class PropertyAccessUsageIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.propertyAccessUsages';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $finder = new NodeFinder();
 
         $results = [];
 
-        /** @var Node\Expr\PropertyFetch[] $instanceAccesses */
         $instanceAccesses = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\PropertyFetch::class);
         foreach ($instanceAccesses as $access) {
             if (!$access->name instanceof Node\Identifier) {
@@ -38,7 +40,6 @@ class PropertyAccessUsageIndexer extends AbstractPhpIndexer
             $results[] = [$access->name->toString(), $access->name->getStartFilePos(), null];
         }
 
-        /** @var Node\Expr\StaticPropertyFetch[] $staticAccesses */
         $staticAccesses = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\StaticPropertyFetch::class);
         foreach ($staticAccesses as $access) {
             if (!$access->name instanceof Node\VarLikeIdentifier) {

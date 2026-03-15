@@ -16,6 +16,7 @@ use App\Module\PsiFile\InMemoryPsiFileManager;
 use Lsp\Protocol\Type\ParameterInformation;
 use Lsp\Protocol\Type\SignatureInformation;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -27,6 +28,7 @@ final class ConstructorSignatureContributor implements SignatureContributor
         private readonly IndexLookup $indexLookup,
     ) {}
 
+    #[Override]
     public function contribute(SignatureContext $context, SignatureConsumer $consumer): void
     {
         $file = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);
@@ -88,7 +90,6 @@ final class ConstructorSignatureContributor implements SignatureContributor
     {
         $finder = new NodeFinder();
 
-        /** @var Node\Stmt\Class_[] $classes */
         $classes = $finder->findInstanceOf($nodes, Node\Stmt\Class_::class);
 
         foreach ($classes as $class) {

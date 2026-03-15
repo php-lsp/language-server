@@ -8,6 +8,7 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\Indexing\Data\TraitData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Trait_;
 
 /**
@@ -16,11 +17,13 @@ use PhpParser\Node\Stmt\Trait_;
 #[AsIndexer]
 class TraitIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.traits.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $traits = Tree::childrenOfType($phpFile->ast, Trait_::class);

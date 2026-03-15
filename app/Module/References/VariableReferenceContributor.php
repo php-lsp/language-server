@@ -13,6 +13,7 @@ use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -23,6 +24,7 @@ final class VariableReferenceContributor implements ReferenceContributor
         private readonly InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(ReferenceContext $context, ReferenceConsumer $consumer): void
     {
         $file = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);
@@ -42,7 +44,6 @@ final class VariableReferenceContributor implements ReferenceContributor
         $finder = new NodeFinder();
         $searchNodes = $scope instanceof Node ? [$scope] : $file->ast->children;
 
-        /** @var Node\Expr\Variable[] $variables */
         $variables = $finder->findInstanceOf($searchNodes, Node\Expr\Variable::class);
 
         foreach ($variables as $variable) {

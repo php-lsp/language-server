@@ -8,6 +8,7 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\Indexing\Data\ClassData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Class_;
 
 /**
@@ -16,11 +17,13 @@ use PhpParser\Node\Stmt\Class_;
 #[AsIndexer]
 class ClassIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.classes.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $classes = Tree::childrenOfType($phpFile->ast, Class_::class);

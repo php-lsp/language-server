@@ -8,6 +8,7 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\Indexing\Data\InterfaceData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Interface_;
 
 /**
@@ -16,11 +17,13 @@ use PhpParser\Node\Stmt\Interface_;
 #[AsIndexer]
 class InterfaceIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.interfaces.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $interfaces = Tree::childrenOfType($phpFile->ast, Interface_::class);

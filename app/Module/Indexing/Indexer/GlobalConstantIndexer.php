@@ -8,6 +8,7 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\Indexing\Data\ConstantData;
 use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node\Stmt\Const_;
 
 /**
@@ -16,11 +17,13 @@ use PhpParser\Node\Stmt\Const_;
 #[AsIndexer]
 class GlobalConstantIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.constants.fqn';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $constStmts = Tree::childrenOfType($phpFile->ast, Const_::class);

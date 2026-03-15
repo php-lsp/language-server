@@ -10,6 +10,7 @@ use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Core\Contracts\Documentation\DocumentationContributor;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\Tree;
+use Override;
 use PhpParser\Node;
 
 #[AsDocumentationContributor]
@@ -19,6 +20,7 @@ final class NodesTraceDocumentationContributor implements DocumentationContribut
         private InMemoryPsiFileManager $fileManager,
     ) {}
 
+    #[Override]
     public function contribute(DocumentationContext $context, DocumentationConsumer $consumer): void
     {
         $psiFile = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);
@@ -28,11 +30,11 @@ final class NodesTraceDocumentationContributor implements DocumentationContribut
 
             if ($node !== null) {
                 $nodesClasses = implode(' => ', array_map(
-                    fn(Node $node) => $node::class,
+                    static fn(Node $node) => $node::class,
                     iterator_to_array(Tree::getParentNodesIncluding($node)),
                 ));
 
-                if (!empty($nodesClasses)) {
+                if ($nodesClasses !== '') {
                     $consumer(sprintf('Node classes %s', $nodesClasses));
                 }
             }

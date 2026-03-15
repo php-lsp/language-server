@@ -6,6 +6,7 @@ namespace App\Module\Indexing\Indexer;
 
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Module\PsiFile\PHPPsiFile;
+use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
@@ -17,16 +18,17 @@ use PhpParser\NodeFinder;
  */
 class ClassConstantUsageIndexer extends AbstractPhpIndexer
 {
+    #[Override]
     public static function getKey(): string
     {
         return 'php.classConstantUsages';
     }
 
+    #[Override]
     protected function indexInternal(PHPPsiFile $phpFile): array
     {
         $finder = new NodeFinder();
 
-        /** @var Node\Expr\ClassConstFetch[] $fetches */
         $fetches = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\ClassConstFetch::class);
 
         $results = [];
