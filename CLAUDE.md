@@ -45,6 +45,7 @@ app/
 │   ├── InitializeController.php
 │   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
 │   ├── CancelRequestController.php  # $/cancelRequest — request cancellation
+│   ├── Debug/                 # Debug HTTP server controllers (index browser, search)
 │   └── TextDocument/          # textDocument/* method handlers
 │       ├── CodeActionController.php
 │       ├── CompletionController.php
@@ -95,6 +96,7 @@ app/
 │   ├── Workspace/             # Workspace/project management
 │   ├── TypeSystem/            # PHPStan-based type resolution (TypeResolver, PHPStanBootstrap)
 │   └── Notification/          # Server notifications: progress (WorkDoneProgress), error messages, connection state
+├── DependencyInjection/       # HydratorCompilerPass for JSON-RPC serialization
 ├── Infrastructure/Symfony/    # LSPCompilerPass for DI
 └── Listener/                  # Server, logger, message, connection, and error notification listeners
 config/
