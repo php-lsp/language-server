@@ -15,6 +15,7 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\References\AsReferenceContributor;
 use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Core\Contracts\TypeDefinition\AsTypeDefinitionContributor;
+use App\DependencyInjection\HydratorCompilerPass;
 use App\Infrastructure\Symfony\DocumentManagerCompilerPass;
 use App\Infrastructure\Symfony\LSPCompilerPass;
 use Lsp\Kernel\LanguageServerKernel;
@@ -54,5 +55,6 @@ final class Application extends LanguageServerKernel
         }
         $container->addCompilerPass(new LSPCompilerPass());
         $container->addCompilerPass(new DocumentManagerCompilerPass());
+        $container->addCompilerPass(new HydratorCompilerPass());
     }
 }

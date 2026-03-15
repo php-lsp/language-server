@@ -13,13 +13,7 @@ use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CompletionParams;
 use Lsp\Router\Attribute\Route;
 use Psr\Log\LoggerInterface;
-use React\Promise\PromiseInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-
-use function React\Async\async;
-use function React\Async\await;
-use function React\Promise\all;
-use function React\Promise\Timer\timeout;
 
 #[AsController, Route('textDocument/completion')]
 final class CompletionController
@@ -38,44 +32,23 @@ final class CompletionController
         $this->contributors = iterator_to_array($contributors);
     }
 
-    public function __invoke(EditorInterface $editor, CompletionParams $params)
+    public function __invoke(EditorInterface $editor, CompletionParams $params): array
     {
         $context = new CompletionContext($params->textDocument, $params->position, $editor, $this->fileManager);
 
-        $promises = [];
+        $results = [];
         foreach ($this->contributors as $contributor) {
-            $promises[] = $this->runContributor($contributor, $context);
+            $consumer = new CompletionConsumer();
+
+            try {
+                $contributor->contribute($context, $consumer);
+            } catch (\Throwable $e) {
+                $this->logger->error($e->getMessage());
+            }
+
+            $results[] = $consumer->results;
         }
 
-        $results = await(all($promises));
-
         return array_merge(...$results);
-    }
-
-    /**
-     * @return PromiseInterface<array>
-     */
-    private function runContributor(
-        CompletionContributor $contributor,
-        CompletionContext $context,
-    ): PromiseInterface {
-        $consumer = new CompletionConsumer();
-
-        $onRejected = function (\Throwable $e) use ($consumer) {
-            $this->logger->error($e);
-
-            return $consumer->results;
-        };
-
-        return timeout(
-            async(
-                static function () use ($contributor, $context, $consumer) {
-                    $contributor->contribute($context, $consumer);
-
-                    return $consumer->results;
-                },
-            )()->catch($onRejected),
-            time: 1.0,
-        )->catch($onRejected);
     }
 }

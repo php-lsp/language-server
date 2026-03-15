@@ -7,7 +7,6 @@ namespace App\Hydrator;
 use Lsp\Contracts\Hydrator\ExtractorInterface;
 use Lsp\Contracts\Hydrator\HydratorInterface;
 use Lsp\Hydrator\Bridge\TypeLang\Exception\MappingException;
-use Lsp\Hydrator\Bridge\TypeLang\LanguageServerPlatform;
 use Psr\SimpleCache\CacheInterface;
 use TypeLang\Mapper\Mapper;
 use TypeLang\Mapper\Mapping\Driver\AttributeDriver;
@@ -38,7 +37,7 @@ final class TypeLangMapper implements HydratorInterface, ExtractorInterface
         $this->mapper = new Mapper(
             platform: new LanguageServerPlatform(driver: $driver),
             config: new Configuration(
-                objectsAsArrays: false,
+                objectsAsArrays: true,
                 detailedTypes: true,
                 strictTypes: false,
             ),
