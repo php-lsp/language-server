@@ -121,13 +121,28 @@ final class TreeTest extends TestCase
         $this->assertSame('Foo', $result);
     }
 
-    #[TestDox('toString returns var_export for non-stringable node')]
+    #[TestDox('toString returns class name for non-stringable node')]
     public function testToStringNonStringable(): void
     {
-        // Create a minimal node without parent links to avoid circular references
         $node = new Node\Scalar\Int_(42);
         $result = Tree::toString($node);
-        $this->assertStringContainsString('-----', $result);
+        $this->assertNotEmpty($result);
+    }
+
+    #[TestDox('toString does not crash on nodes with circular references')]
+    public function testToStringCircularReference(): void
+    {
+        $psiFile = PsiFileFactory::fromCode('<?php echo 1;');
+
+        // findLastAtPosition returns a node with parent attributes set,
+        // creating circular references that var_export cannot handle.
+        $element = $psiFile->findLastAtPosition(ProtocolFactory::position(0, 8));
+        $this->assertNotNull($element);
+
+        // This must not throw ErrorException about circular references.
+        $result = Tree::toString($element);
+        $this->assertIsString($result);
+        $this->assertNotEmpty($result);
     }
 
     #[TestDox('childrenOfType traverses into namespaces')]

@@ -113,7 +113,7 @@ class InMemoryPsiFileManager
             }
             $psiFile = $this->refreshFile($document, $identifier);
 
-            $this->cache->set($identifier->uri, $psiFile, preventDeletion: true);
+            $this->cache->setPermanent($identifier->uri, $psiFile);
         }
 
         return $psiFile;
