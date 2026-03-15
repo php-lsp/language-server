@@ -44,16 +44,54 @@ class DebugHttpServer
         $query = $request->getQueryParams();
 
         return match (true) {
-            $path === '/' => $this->htmlResponse($this->renderer->render()),
+            // HTML views (HTMX fragments + full page)
+            $path === '/' => $this->htmlResponse($this->renderer->layout()),
+            $path === '/views/indexes' => $this->htmlResponse($this->renderer->indexList()),
+            str_starts_with($path, '/views/indexes/') => $this->routeView($path, $query),
+
+            // JSON API (for curl / agents)
             $path === '/api/indexes' => $this->jsonResponse($this->apiIndexes()),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
-            default => $this->jsonResponse(['error' => 'Not found'], 404),
+
+            default => $this->htmlResponse('<div class="empty">Not found.</div>', 404),
         };
     }
 
+    // --- HTML view routes ---
+
     /**
-     * GET /api/indexes
-     *
+     * @param array<string, string> $query
+     */
+    private function routeView(string $path, array $query): Response
+    {
+        $prefix = '/views/indexes/';
+        $rest = substr($path, strlen($prefix));
+
+        if ($rest === '' || $rest === false) {
+            return $this->htmlResponse('<div class="empty">Index name required.</div>', 400);
+        }
+
+        $parts = explode('/', $rest, 3);
+        $indexName = urldecode($parts[0]);
+        $action = $parts[1] ?? 'keys';
+        $actionParam = isset($parts[2]) ? urldecode($parts[2]) : null;
+
+        $indexKeys = $this->storage->getIndexKeys();
+
+        if (!in_array($indexName, $indexKeys, true)) {
+            return $this->htmlResponse('<div class="empty">Index not found.</div>', 404);
+        }
+
+        return match ($action) {
+            'keys' => $this->htmlResponse($this->renderer->keysList($indexName, $query)),
+            'entries' => $this->htmlResponse($this->renderer->entryDetail($indexName, $actionParam ?? '')),
+            default => $this->htmlResponse('<div class="empty">Unknown action.</div>', 404),
+        };
+    }
+
+    // --- JSON API routes ---
+
+    /**
      * @return array<string, array{key: string, count: int}>
      */
     private function apiIndexes(): array
@@ -62,13 +100,10 @@ class DebugHttpServer
     }
 
     /**
-     * Routes /api/indexes/{name}/...
-     *
      * @param array<string, string> $query
      */
     private function routeIndexApi(string $path, array $query): Response
     {
-        // Parse: /api/indexes/{name}[/keys|/search|/entries/{key}]
         $prefix = '/api/indexes/';
         $rest = substr($path, strlen($prefix));
 
@@ -76,7 +111,6 @@ class DebugHttpServer
             return $this->jsonResponse(['error' => 'Index name required'], 400);
         }
 
-        // Check for sub-routes: /keys, /search, /entries/{key}
         $parts = explode('/', $rest, 3);
         $indexName = urldecode($parts[0]);
         $action = $parts[1] ?? null;
@@ -101,8 +135,6 @@ class DebugHttpServer
     }
 
     /**
-     * GET /api/indexes/{name}
-     *
      * @return array{key: string, count: int}
      */
     private function apiIndexDetail(string $indexName): array
@@ -114,8 +146,6 @@ class DebugHttpServer
     }
 
     /**
-     * GET /api/indexes/{name}/keys?pattern=&limit=&offset=
-     *
      * @param array<string, string> $query
      * @return array<string, mixed>
      */
@@ -147,8 +177,6 @@ class DebugHttpServer
     }
 
     /**
-     * GET /api/indexes/{name}/search?pattern=&limit=
-     *
      * @param array<string, string> $query
      * @return array<string, mixed>
      */
@@ -182,8 +210,6 @@ class DebugHttpServer
     }
 
     /**
-     * GET /api/indexes/{name}/entries/{key}
-     *
      * @return array<string, mixed>
      */
     private function apiEntry(string $indexName, string $entryKey): array
@@ -251,10 +277,10 @@ class DebugHttpServer
         );
     }
 
-    private function htmlResponse(string $html): Response
+    private function htmlResponse(string $html, int $status = 200): Response
     {
         return new Response(
-            200,
+            $status,
             ['Content-Type' => 'text/html; charset=utf-8'],
             $html,
         );

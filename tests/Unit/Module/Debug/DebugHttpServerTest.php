@@ -10,7 +10,6 @@ use App\Module\Indexing\Storage\InMemoryStorage;
 use App\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
-use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 use React\Http\Message\ServerRequest;
 
@@ -32,7 +31,7 @@ final class DebugHttpServerTest extends TestCase
             'App\\hello' => 'App\\hello',
         ], 'file:///src/functions.php');
 
-        $this->server = new DebugHttpServer($this->storage, new DebugHtmlRenderer());
+        $this->server = new DebugHttpServer($this->storage, new DebugHtmlRenderer($this->storage));
     }
 
     private function request(string $method, string $uri): Response
@@ -45,19 +44,82 @@ final class DebugHttpServerTest extends TestCase
         return $handleRequest->invoke($this->server, $request);
     }
 
-    // --- HTML ---
+    // --- HTML views ---
 
-    #[TestDox('GET / returns HTML page')]
+    #[TestDox('GET / returns full HTML page with HTMX')]
     public function testRootReturnsHtml(): void
     {
         $response = $this->request('GET', '/');
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertStringContainsString('text/html', $response->getHeaderLine('Content-Type'));
-        $this->assertStringContainsString('LSP Debug', (string) $response->getBody());
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('<!DOCTYPE html>', $body);
+        $this->assertStringContainsString('LSP Debug', $body);
+        $this->assertStringContainsString('htmx.org', $body);
     }
 
-    // --- GET /api/indexes ---
+    #[TestDox('GET /views/indexes returns index list fragment')]
+    public function testViewIndexes(): void
+    {
+        $response = $this->request('GET', '/views/indexes');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertStringContainsString('text/html', $response->getHeaderLine('Content-Type'));
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('php.classes.fqn', $body);
+        $this->assertStringContainsString('php.functions.fqn', $body);
+    }
+
+    #[TestDox('GET /views/indexes/{name}/keys returns keys list fragment')]
+    public function testViewKeys(): void
+    {
+        $response = $this->request('GET', '/views/indexes/php.classes.fqn/keys');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('App\\Foo', $body);
+        $this->assertStringContainsString('App\\Bar', $body);
+    }
+
+    #[TestDox('GET /views/indexes/{name}/keys with pattern filters results')]
+    public function testViewKeysWithPattern(): void
+    {
+        $response = $this->request('GET', '/views/indexes/php.classes.fqn/keys?pattern=App%5CController%5C*');
+
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('App\\Controller\\Home', $body);
+        $this->assertStringNotContainsString('App\\Foo', $body);
+    }
+
+    #[TestDox('GET /views/indexes/{name}/entries/{key} returns entry detail fragment')]
+    public function testViewEntry(): void
+    {
+        $response = $this->request('GET', '/views/indexes/php.classes.fqn/entries/App%5CFoo');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('App\\Foo', $body);
+        $this->assertStringContainsString('file:///src/Foo.php', $body);
+    }
+
+    #[TestDox('GET /views/indexes/{name}/keys returns 404 for unknown index')]
+    public function testViewKeysNotFound(): void
+    {
+        $response = $this->request('GET', '/views/indexes/nonexistent/keys');
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[TestDox('GET /views/indexes/ without name returns 400')]
+    public function testViewIndexesNoName(): void
+    {
+        $response = $this->request('GET', '/views/indexes/');
+
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
+    // --- JSON API ---
 
     #[TestDox('GET /api/indexes returns all index stats')]
     public function testApiIndexes(): void
@@ -75,7 +137,8 @@ final class DebugHttpServerTest extends TestCase
     #[TestDox('GET /api/indexes returns empty for fresh storage')]
     public function testApiIndexesEmpty(): void
     {
-        $server = new DebugHttpServer(new InMemoryStorage(), new DebugHtmlRenderer());
+        $emptyStorage = new InMemoryStorage();
+        $server = new DebugHttpServer($emptyStorage, new DebugHtmlRenderer($emptyStorage));
         $handleRequest = new \ReflectionMethod($server, 'handleRequest');
 
         $response = $handleRequest->invoke($server, new ServerRequest('GET', '/api/indexes'));
@@ -83,8 +146,6 @@ final class DebugHttpServerTest extends TestCase
 
         $this->assertSame([], $data);
     }
-
-    // --- GET /api/indexes/{name} ---
 
     #[TestDox('GET /api/indexes/{name} returns index detail')]
     public function testApiIndexDetail(): void
@@ -107,8 +168,6 @@ final class DebugHttpServerTest extends TestCase
         $this->assertArrayHasKey('error', $data);
         $this->assertArrayHasKey('available', $data);
     }
-
-    // --- GET /api/indexes/{name}/keys ---
 
     #[TestDox('GET /api/indexes/{name}/keys returns all keys')]
     public function testApiKeys(): void
@@ -144,8 +203,6 @@ final class DebugHttpServerTest extends TestCase
         $this->assertSame(2, $data['limit']);
     }
 
-    // --- GET /api/indexes/{name}/search ---
-
     #[TestDox('GET /api/indexes/{name}/search returns matching entries')]
     public function testApiSearch(): void
     {
@@ -175,8 +232,6 @@ final class DebugHttpServerTest extends TestCase
         $this->assertSame(0, $data['count']);
         $this->assertSame([], $data['results']);
     }
-
-    // --- GET /api/indexes/{name}/entries/{key} ---
 
     #[TestDox('GET /api/indexes/{name}/entries/{key} returns entry')]
     public function testApiEntry(): void
@@ -221,10 +276,17 @@ final class DebugHttpServerTest extends TestCase
         $this->assertSame(404, $response->getStatusCode());
     }
 
-    #[TestDox('unknown sub-action returns 404')]
+    #[TestDox('unknown API sub-action returns 404')]
     public function testUnknownAction(): void
     {
         $response = $this->request('GET', '/api/indexes/php.classes.fqn/foobar');
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[TestDox('unknown view sub-action returns 404')]
+    public function testUnknownViewAction(): void
+    {
+        $response = $this->request('GET', '/views/indexes/php.classes.fqn/foobar');
         $this->assertSame(404, $response->getStatusCode());
     }
 
