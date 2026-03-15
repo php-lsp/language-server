@@ -59,7 +59,7 @@ final class IndexerTest extends TestCase
         $stubDir = VirtualFileStub::create('node_modules');
         $fileFactory->method('create')->willReturn($stubDir);
 
-        $mainIndexer = new Indexer([$indexer], $storage, $logger, $fsReaderFactory, $fileFactory);
+        $mainIndexer = new Indexer([$indexer], $storage, $logger, $fsReaderFactory, $fileFactory, new \App\Module\Indexing\IndexingStatus());
 
         $mainIndexer->index($projectMock);
     }
@@ -86,7 +86,7 @@ final class IndexerTest extends TestCase
         $stubDir = VirtualFileStub::create('.git');
         $fileFactory->method('create')->willReturn($stubDir);
 
-        $mainIndexer = new Indexer([], $storage, $logger, $fsReaderFactory, $fileFactory);
+        $mainIndexer = new Indexer([], $storage, $logger, $fsReaderFactory, $fileFactory, new \App\Module\Indexing\IndexingStatus());
 
         $mainIndexer->index($project);
     }

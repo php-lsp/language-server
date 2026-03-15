@@ -61,4 +61,23 @@ interface DebugStorageInterface extends StorageInterface
      * @param list<string> $indexKeys
      */
     public function clear(array $indexKeys): void;
+
+    /**
+     * Remove all entries associated with a specific URI across all indexes.
+     */
+    public function clearByUri(string $uri): void;
+
+    /**
+     * Get all unique URIs across all indexes.
+     *
+     * @return list<string>
+     */
+    public function getUris(): array;
+
+    /**
+     * Find all entries across all indexes that belong to a specific URI.
+     *
+     * @return array<string, list<Entry>>  indexKey => list of entries
+     */
+    public function findByUri(string $uri): array;
 }

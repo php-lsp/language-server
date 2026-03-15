@@ -308,4 +308,126 @@ final class DebugHtmlRendererTest extends TestCase
         $this->assertStringContainsString('batch-reindex', $html);
         $this->assertStringContainsString('batch-export', $html);
     }
+
+    // --- Navigation tabs ---
+
+    #[TestDox('index list has navigation tabs')]
+    public function testIndexListHasTabs(): void
+    {
+        $html = $this->renderer->indexList();
+        $this->assertStringContainsString('nav-tabs', $html);
+        $this->assertStringContainsString('Files', $html);
+    }
+
+    // --- Sortable table ---
+
+    #[TestDox('index list has sortable columns')]
+    public function testIndexListHasSortableColumns(): void
+    {
+        $html = $this->renderer->indexList();
+        $this->assertStringContainsString('class="sortable"', $html);
+        $this->assertStringContainsString('sortTable', $html);
+    }
+
+    #[TestDox('index list has data-sort attributes for numeric sorting')]
+    public function testIndexListHasDataSort(): void
+    {
+        $html = $this->renderer->indexList();
+        $this->assertStringContainsString('data-sort=', $html);
+    }
+
+    // --- Confirmation dialogs ---
+
+    #[TestDox('batch actions have confirmation dialogs')]
+    public function testBatchActionsHaveConfirmation(): void
+    {
+        $html = $this->renderer->indexList();
+        $this->assertStringContainsString('confirm(', $html);
+    }
+
+    // --- File browser ---
+
+    #[TestDox('file list renders files with index count')]
+    public function testFileListRendersFiles(): void
+    {
+        $html = $this->renderer->fileList();
+        $this->assertStringContainsString('Foo.php', $html);
+        $this->assertStringContainsString('functions.php', $html);
+        $this->assertStringContainsString('2 files', $html);
+    }
+
+    #[TestDox('file list has navigation tabs')]
+    public function testFileListHasTabs(): void
+    {
+        $html = $this->renderer->fileList();
+        $this->assertStringContainsString('nav-tabs', $html);
+        $this->assertStringContainsString('Indexes', $html);
+    }
+
+    #[TestDox('file list filters by pattern')]
+    public function testFileListFiltersByPattern(): void
+    {
+        $html = $this->renderer->fileList(['pattern' => 'Foo']);
+        $this->assertStringContainsString('Foo.php', $html);
+        $this->assertStringNotContainsString('functions.php', $html);
+    }
+
+    #[TestDox('file list shows empty state')]
+    public function testFileListEmpty(): void
+    {
+        $emptyRenderer = new DebugHtmlRenderer(new InMemoryStorage());
+        $html = $emptyRenderer->fileList();
+        $this->assertStringContainsString('No files found', $html);
+    }
+
+    #[TestDox('file detail shows indexes for a file')]
+    public function testFileDetailShowsIndexes(): void
+    {
+        $html = $this->renderer->fileDetail('file:///src/Foo.php');
+        $this->assertStringContainsString('php.classes.fqn', $html);
+        $this->assertStringContainsString('App\\Foo', $html);
+        $this->assertStringContainsString('file:///src/Foo.php', $html);
+    }
+
+    #[TestDox('file detail shows empty state for unknown URI')]
+    public function testFileDetailUnknown(): void
+    {
+        $html = $this->renderer->fileDetail('file:///nonexistent.php');
+        $this->assertStringContainsString('No entries found', $html);
+    }
+
+    // --- Autocomplete ---
+
+    #[TestDox('keys list has autocomplete input')]
+    public function testKeysListHasAutocomplete(): void
+    {
+        $html = $this->renderer->keysList('php.classes.fqn');
+        $this->assertStringContainsString('key-suggestions', $html);
+        $this->assertStringContainsString('fetchSuggestions', $html);
+    }
+
+    // --- Layout features ---
+
+    #[TestDox('layout has status bar')]
+    public function testLayoutHasStatusBar(): void
+    {
+        $html = $this->renderer->layout();
+        $this->assertStringContainsString('status-bar', $html);
+        $this->assertStringContainsString('refreshStatus', $html);
+    }
+
+    #[TestDox('layout has toast container')]
+    public function testLayoutHasToastContainer(): void
+    {
+        $html = $this->renderer->layout();
+        $this->assertStringContainsString('toast-container', $html);
+        $this->assertStringContainsString('showToast', $html);
+    }
+
+    #[TestDox('layout has sortTable function')]
+    public function testLayoutHasSortFunction(): void
+    {
+        $html = $this->renderer->layout();
+        $this->assertStringContainsString('function sortTable', $html);
+    }
 }

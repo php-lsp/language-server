@@ -86,6 +86,32 @@ final class DebugHtmlRenderer
   .batch-actions .btn { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 6px 14px; color: #c9d1d9; cursor: pointer; font-size: 13px; }
   .batch-actions .btn:hover:not(:disabled) { background: #30363d; }
   .batch-actions .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status-bar { background: #161b22; border-bottom: 1px solid #30363d; padding: 6px 24px; font-size: 12px; color: #8b949e; display: flex; gap: 16px; align-items: center; }
+  .status-bar .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .status-bar .dot.idle { background: #238636; }
+  .status-bar .dot.indexing { background: #d29922; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .toast-container { position: fixed; top: 16px; right: 16px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+  .toast { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px 16px; color: #c9d1d9; font-size: 13px; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  .toast.success { border-color: #238636; }
+  .toast.error { border-color: #da3633; }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: #c9d1d9; }
+  th.sortable::after { content: ' ↕'; font-size: 10px; opacity: 0.4; }
+  th.sortable.asc::after { content: ' ↑'; opacity: 1; }
+  th.sortable.desc::after { content: ' ↓'; opacity: 1; }
+
+  .nav-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid #30363d; }
+  .nav-tabs a { padding: 8px 16px; color: #8b949e; cursor: pointer; border-bottom: 2px solid transparent; font-size: 14px; text-decoration: none; }
+  .nav-tabs a:hover { color: #c9d1d9; text-decoration: none; }
+  .nav-tabs a.active { color: #f0f6fc; border-bottom-color: #f78166; }
+
+  .file-indexes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .file-indexes .index-tag { cursor: pointer; }
 </style>
 </head>
 <body>
@@ -97,11 +123,74 @@ final class DebugHtmlRenderer
   <a class="btn" href="/api/export" target="_blank">Export JSON</a>
 </div>
 
+<div class="status-bar" id="status-bar">
+  <span class="dot idle" id="status-dot"></span>
+  <span id="status-text">Ready</span>
+</div>
+
 <div class="container">
   <div id="content" hx-get="/views/indexes" hx-trigger="load" hx-target="#content">
     <div class="empty">Loading...</div>
   </div>
 </div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+function showToast(message, type) {
+  type = type || 'success';
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 3000);
+}
+
+function refreshStatus() {
+  fetch('/api/status').then(function(r) { return r.json(); }).then(function(data) {
+    var dot = document.getElementById('status-dot');
+    var text = document.getElementById('status-text');
+    if (data.indexing) {
+      dot.className = 'dot indexing';
+      text.textContent = 'Indexing... (' + data.filesIndexed + ' files)';
+    } else {
+      dot.className = 'dot idle';
+      var info = 'Ready';
+      if (data.lastDuration !== null) {
+        info += ' — last indexed in ' + data.lastDuration + 's (' + data.filesIndexed + ' files)';
+      }
+      text.textContent = info;
+    }
+  }).catch(function() {});
+}
+
+refreshStatus();
+setInterval(refreshStatus, 2000);
+
+function sortTable(table, colIndex, type) {
+  var tbody = table.querySelector('tbody') || table;
+  var rows = Array.from(table.querySelectorAll('tr:not(:first-child)'));
+  var th = table.querySelectorAll('th')[colIndex];
+  var asc = !th.classList.contains('asc');
+
+  table.querySelectorAll('th.sortable').forEach(function(h) { h.classList.remove('asc', 'desc'); });
+  th.classList.add(asc ? 'asc' : 'desc');
+
+  rows.sort(function(a, b) {
+    var cellA = a.cells[colIndex]; var cellB = b.cells[colIndex];
+    if (!cellA || !cellB) return 0;
+    var va = cellA.getAttribute('data-sort') || cellA.textContent.trim();
+    var vb = cellB.getAttribute('data-sort') || cellB.textContent.trim();
+    if (type === 'num') { va = parseFloat(va) || 0; vb = parseFloat(vb) || 0; }
+    if (va < vb) return asc ? -1 : 1;
+    if (va > vb) return asc ? 1 : -1;
+    return 0;
+  });
+
+  rows.forEach(function(row) { row.parentNode.appendChild(row); });
+}
+</script>
 
 </body>
 </html>
@@ -112,10 +201,18 @@ HTML;
     {
         $stats = $this->storage->stats();
 
+        $tabs = <<<'HTML'
+        <div class="nav-tabs">
+          <a class="active" hx-get="/views/indexes" hx-target="#content" hx-push-url="/">Indexes</a>
+          <a hx-get="/views/files" hx-target="#content" hx-push-url="/files">Files</a>
+        </div>
+        HTML;
+
         $breadcrumb = '<div class="breadcrumb">Indexes</div>';
 
-        // Global search form
-        $searchForm = <<<'HTML'
+        // Global search form — autocomplete uses all index keys
+        $firstIndex = array_key_first($stats) ?? '';
+        $searchForm = <<<HTML
         <form class="search-form" hx-get="/views/search" hx-target="#content" hx-push-url="true">
           <input type="text" name="pattern" placeholder="Search across all indexes (e.g. Controller, App\Foo...)"
                  hx-get="/views/search" hx-target="#content" hx-trigger="keyup changed delay:300ms" hx-push-url="true">
@@ -125,7 +222,7 @@ HTML;
         HTML;
 
         if ($stats === []) {
-            return $breadcrumb . $searchForm . '<div class="empty">No indexes registered yet.</div>';
+            return $tabs . $breadcrumb . $searchForm . '<div class="empty">No indexes registered yet.</div>';
         }
 
         $rows = '';
@@ -137,8 +234,8 @@ HTML;
             <tr class="clickable">
               <td class="checkbox-cell" onclick="event.stopPropagation()"><input type="checkbox" name="indexes[]" value="{$encodedKey}" class="index-checkbox"></td>
               <td class="key" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$encodedKey}</td>
-              <td class="count" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$info['count']}</td>
-              <td class="memory" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$memoryFormatted}</td>
+              <td class="count" data-sort="{$info['count']}" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$info['count']}</td>
+              <td class="memory" data-sort="{$info['memory']}" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$memoryFormatted}</td>
             </tr>
             HTML;
         }
@@ -182,6 +279,9 @@ HTML;
             const indexes = getSelected();
             if (indexes.length === 0) return;
 
+            if (action === 'clear' && !confirm('Clear ' + indexes.length + ' index(es)? This removes all entries.')) return;
+            if (action === 'reindex' && !confirm('Reindex ' + indexes.length + ' index(es)? This clears and rebuilds from project files.')) return;
+
             fetch('/api/batch', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
@@ -193,10 +293,15 @@ HTML;
                 const a = document.createElement('a');
                 a.href = url; a.download = 'indexes-export.json'; a.click();
                 URL.revokeObjectURL(url);
-              } else {
+                showToast('Exported ' + indexes.length + ' index(es)');
+              } else if (data.status === 'ok') {
+                showToast(action === 'clear' ? 'Cleared ' + indexes.length + ' index(es)' : 'Reindexed successfully');
                 htmx.ajax('GET', '/views/indexes', {target: '#content'});
+                refreshStatus();
+              } else {
+                showToast(data.error || 'Action failed', 'error');
               }
-            });
+            }).catch(function() { showToast('Request failed', 'error'); });
           }
 
           document.getElementById('batch-clear').addEventListener('click', () => batchAction('clear'));
@@ -207,15 +312,16 @@ HTML;
         HTML;
 
         return <<<HTML
+        {$tabs}
         {$breadcrumb}
         {$searchForm}
         <form id="index-batch-form">
-        <table>
+        <table id="index-table">
           <tr>
             <th><input type="checkbox" id="select-all"></th>
-            <th>Index Key</th>
-            <th>Entries</th>
-            <th>Memory</th>
+            <th class="sortable" onclick="sortTable(document.getElementById('index-table'), 1, 'text')">Index Key</th>
+            <th class="sortable" onclick="sortTable(document.getElementById('index-table'), 2, 'num')">Entries</th>
+            <th class="sortable" onclick="sortTable(document.getElementById('index-table'), 3, 'num')">Memory</th>
           </tr>
           {$rows}
         </table>
@@ -341,10 +447,33 @@ HTML;
         $searchForm = <<<HTML
         <form class="search-form" hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-push-url="true">
           <input type="text" name="pattern" placeholder="Filter keys (e.g. Controller, Service...)" value="{$encodedPattern}"
-                 hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-trigger="keyup changed delay:300ms" hx-push-url="true">
+                 hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-trigger="keyup changed delay:300ms" hx-push-url="true"
+                 list="key-suggestions" autocomplete="off"
+                 oninput="fetchSuggestions(this, '/api/autocomplete/keys?index={$urlIndex}&q=')">
           <button type="submit">Search</button>
         </form>
+        <datalist id="key-suggestions"></datalist>
         <div class="hint">Wildcards are added automatically. Type any part of a key to search.</div>
+        <script>
+        var _suggestTimer;
+        function fetchSuggestions(input, baseUrl) {
+          clearTimeout(_suggestTimer);
+          _suggestTimer = setTimeout(function() {
+            if (input.value.length < 2) return;
+            fetch(baseUrl + encodeURIComponent(input.value) + '&limit=20')
+              .then(function(r) { return r.json(); })
+              .then(function(items) {
+                var dl = document.getElementById(input.getAttribute('list'));
+                dl.innerHTML = '';
+                items.forEach(function(item) {
+                  var opt = document.createElement('option');
+                  opt.value = item;
+                  dl.appendChild(opt);
+                });
+              }).catch(function() {});
+          }, 200);
+        }
+        </script>
         HTML;
 
         if ($pageKeys === []) {
@@ -374,6 +503,150 @@ HTML;
         $pagination = $this->pagination($urlIndex, $pattern, $offset, $limit, $total);
 
         return $breadcrumb . $searchForm . $table . $pagination;
+    }
+
+    /**
+     * @param array<string, string> $query
+     */
+    public function fileList(array $query = []): string
+    {
+        $pattern = $query['pattern'] ?? '';
+
+        $tabs = <<<'HTML'
+        <div class="nav-tabs">
+          <a hx-get="/views/indexes" hx-target="#content" hx-push-url="/">Indexes</a>
+          <a class="active" hx-get="/views/files" hx-target="#content" hx-push-url="/files">Files</a>
+        </div>
+        HTML;
+
+        $breadcrumb = '<div class="breadcrumb">Files</div>';
+
+        $encodedPattern = $this->e($pattern);
+
+        $searchForm = <<<HTML
+        <form class="search-form" hx-get="/views/files" hx-target="#content" hx-push-url="true">
+          <input type="text" name="pattern" placeholder="Filter files (e.g. Controller, Service.php...)" value="{$encodedPattern}"
+                 hx-get="/views/files" hx-target="#content" hx-trigger="keyup changed delay:300ms" hx-push-url="true"
+                 list="uri-suggestions" autocomplete="off">
+          <button type="submit">Search</button>
+        </form>
+        <div class="hint">Shows all files that have been indexed. Click to see which indexes apply.</div>
+        HTML;
+
+        $uris = $this->storage->getUris();
+
+        if ($pattern !== '') {
+            $searchPattern = $pattern;
+            if (!str_contains($searchPattern, '*') && !str_contains($searchPattern, '?')) {
+                $searchPattern = '*' . $searchPattern . '*';
+            }
+            $uris = array_values(array_filter(
+                $uris,
+                static fn(string $uri): bool => fnmatch($searchPattern, $uri, \FNM_CASEFOLD | \FNM_NOESCAPE),
+            ));
+        }
+
+        if ($uris === []) {
+            return $tabs . $breadcrumb . $searchForm . '<div class="empty">No files found.</div>';
+        }
+
+        $rows = '';
+        foreach (array_slice($uris, 0, 200) as $i => $uri) {
+            $num = $i + 1;
+            $encodedUri = $this->e($uri);
+            $urlUri = urlencode($uri);
+            $shortName = basename(parse_url($uri, \PHP_URL_PATH) ?: $uri);
+
+            $indexEntries = $this->storage->findByUri($uri);
+            $indexCount = count($indexEntries);
+
+            $rows .= <<<HTML
+            <tr class="clickable" hx-get="/views/files/{$urlUri}" hx-target="#content" hx-push-url="/files/{$urlUri}">
+              <td class="num">{$num}</td>
+              <td class="key">{$this->e($shortName)}</td>
+              <td class="uri">{$encodedUri}</td>
+              <td class="count">{$indexCount}</td>
+            </tr>
+            HTML;
+        }
+
+        $total = count($uris);
+
+        return <<<HTML
+        {$tabs}
+        {$breadcrumb}
+        {$searchForm}
+        <table>
+          <tr><th>#</th><th>File</th><th>URI</th><th>Indexes</th></tr>
+          {$rows}
+        </table>
+        <div class="pagination"><span class="info">{$total} files</span></div>
+        HTML;
+    }
+
+    public function fileDetail(string $uri): string
+    {
+        $encodedUri = $this->e($uri);
+
+        $breadcrumb = <<<HTML
+        <div class="breadcrumb">
+          <a hx-get="/views/files" hx-target="#content" hx-push-url="/files">Files</a>
+          <span class="sep">›</span>
+          {$encodedUri}
+        </div>
+        HTML;
+
+        $indexEntries = $this->storage->findByUri($uri);
+
+        if ($indexEntries === []) {
+            return $breadcrumb . '<div class="empty">No entries found for this file.</div>';
+        }
+
+        $sections = '';
+        foreach ($indexEntries as $indexKey => $entries) {
+            $encodedIndex = $this->e($indexKey);
+            $urlIndex = urlencode($indexKey);
+            $count = count($entries);
+
+            $keyItems = '';
+            foreach (array_slice($entries, 0, 50) as $entry) {
+                $encodedKey = $this->e($entry->key);
+                $urlKey = urlencode($entry->key);
+                $keyItems .= <<<HTML
+                <tr class="clickable" hx-get="/views/indexes/{$urlIndex}/entries/{$urlKey}" hx-target="#content">
+                  <td class="key">{$encodedKey}</td>
+                </tr>
+                HTML;
+            }
+
+            $moreNote = $count > 50 ? "<div class=\"hint\">Showing 50 of {$count} entries</div>" : '';
+
+            $sections .= <<<HTML
+            <div class="section">
+              <div class="label"><a hx-get="/views/indexes/{$urlIndex}/keys" hx-target="#content" hx-push-url="/indexes/{$urlIndex}">{$encodedIndex}</a> ({$count} entries)</div>
+              <table>
+                <tr><th>Key</th></tr>
+                {$keyItems}
+              </table>
+              {$moreNote}
+            </div>
+            HTML;
+        }
+
+        $totalIndexes = count($indexEntries);
+        $totalEntries = array_sum(array_map('count', $indexEntries));
+
+        return <<<HTML
+        {$breadcrumb}
+        <div class="detail">
+          <div class="section">
+            <div class="label">URI</div>
+            <pre>{$encodedUri}</pre>
+          </div>
+          <div class="hint">{$totalIndexes} indexes, {$totalEntries} entries total</div>
+          {$sections}
+        </div>
+        HTML;
     }
 
     public function entryDetail(string $indexName, string $entryKey): string

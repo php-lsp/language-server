@@ -191,6 +191,64 @@ class InMemoryStorage implements DebugStorageInterface
         }
     }
 
+    public function clearByUri(string $uri): void
+    {
+        foreach ($this->entries as $indexKey => &$entries) {
+            $entries = array_values(array_filter(
+                $entries,
+                static fn(Entry $entry): bool => $entry->uri !== $uri,
+            ));
+        }
+        unset($entries);
+
+        // Rebuild all secondary indexes since entries changed
+        $oldKeys = array_keys($this->secondaryIndexes);
+        $this->secondaryIndexes = [];
+
+        foreach ($oldKeys as $compositeKey) {
+            $parts = explode(':', $compositeKey, 2);
+            if (count($parts) === 2) {
+                $this->buildSecondaryIndex($parts[0], $parts[1]);
+            }
+        }
+    }
+
+    public function getUris(): array
+    {
+        $uris = [];
+
+        foreach ($this->entries as $entries) {
+            foreach ($entries as $entry) {
+                $uris[$entry->uri] = true;
+            }
+        }
+
+        $result = array_keys($uris);
+        sort($result);
+
+        return $result;
+    }
+
+    public function findByUri(string $uri): array
+    {
+        $result = [];
+
+        foreach ($this->entries as $indexKey => $entries) {
+            $matching = [];
+            foreach ($entries as $entry) {
+                if ($entry->uri === $uri) {
+                    $matching[] = $entry;
+                }
+            }
+
+            if ($matching !== []) {
+                $result[$indexKey] = $matching;
+            }
+        }
+
+        return $result;
+    }
+
     private function updateSecondaryIndexes(string $indexKey, Entry $entry): void
     {
         foreach ($this->secondaryIndexes as $compositeKey => &$index) {

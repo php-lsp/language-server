@@ -21,3 +21,6 @@ services:
 
   App\Module\Indexing\Storage\DebugStorageInterface:
     alias: App\Module\Indexing\Storage\InMemoryStorage
+
+  App\Module\Indexing\IndexingStatus:
+    shared: true

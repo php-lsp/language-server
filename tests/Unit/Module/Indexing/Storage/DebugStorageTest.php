@@ -276,4 +276,68 @@ final class DebugStorageTest extends TestCase
         $this->assertArrayHasKey('value', $hit);
         $this->assertArrayHasKey('uri', $hit);
     }
+
+    // --- clearByUri ---
+
+    #[TestDox('clearByUri removes entries with matching URI')]
+    public function testClearByUri(): void
+    {
+        $storage = $this->createStorage();
+        $storage->clearByUri('file:///src/Foo.php');
+
+        $this->assertSame(0, $storage->count('php.classes.fqn'));
+        // Other URI entries should remain
+        $this->assertSame(1, $storage->count('php.functions.fqn'));
+    }
+
+    #[TestDox('clearByUri with non-existent URI does nothing')]
+    public function testClearByUriNonExistent(): void
+    {
+        $storage = $this->createStorage();
+        $storage->clearByUri('file:///nonexistent.php');
+
+        $this->assertSame(3, $storage->count('php.classes.fqn'));
+    }
+
+    // --- getUris ---
+
+    #[TestDox('getUris returns all unique URIs sorted')]
+    public function testGetUris(): void
+    {
+        $storage = $this->createStorage();
+        $uris = $storage->getUris();
+
+        $this->assertCount(2, $uris);
+        $this->assertContains('file:///src/Foo.php', $uris);
+        $this->assertContains('file:///src/functions.php', $uris);
+    }
+
+    #[TestDox('getUris returns empty for fresh storage')]
+    public function testGetUrisEmpty(): void
+    {
+        $storage = new InMemoryStorage();
+        $this->assertSame([], $storage->getUris());
+    }
+
+    // --- findByUri ---
+
+    #[TestDox('findByUri returns entries grouped by index')]
+    public function testFindByUri(): void
+    {
+        $storage = $this->createStorage();
+        $result = $storage->findByUri('file:///src/Foo.php');
+
+        $this->assertArrayHasKey('php.classes.fqn', $result);
+        $this->assertCount(3, $result['php.classes.fqn']);
+        $this->assertArrayNotHasKey('php.functions.fqn', $result);
+    }
+
+    #[TestDox('findByUri returns empty for unknown URI')]
+    public function testFindByUriUnknown(): void
+    {
+        $storage = $this->createStorage();
+        $result = $storage->findByUri('file:///nonexistent.php');
+
+        $this->assertSame([], $result);
+    }
 }

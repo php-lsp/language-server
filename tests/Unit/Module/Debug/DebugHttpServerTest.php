@@ -441,6 +441,120 @@ final class DebugHttpServerTest extends TestCase
         $this->assertSame(503, $response->getStatusCode());
     }
 
+    // --- Status API ---
+
+    #[TestDox('GET /api/status returns indexing status')]
+    public function testApiStatus(): void
+    {
+        $response = $this->request('GET', '/api/status');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertArrayHasKey('indexing', $data);
+        $this->assertArrayHasKey('filesIndexed', $data);
+        $this->assertFalse($data['indexing']);
+    }
+
+    // --- File browser API ---
+
+    #[TestDox('GET /api/files returns all unique URIs')]
+    public function testApiFiles(): void
+    {
+        $response = $this->request('GET', '/api/files');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame(2, $data['total']);
+        $this->assertContains('file:///src/Foo.php', $data['uris']);
+        $this->assertContains('file:///src/functions.php', $data['uris']);
+    }
+
+    #[TestDox('GET /api/files with pattern filters results')]
+    public function testApiFilesWithPattern(): void
+    {
+        $response = $this->request('GET', '/api/files?pattern=Foo');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(1, $data['total']);
+        $this->assertContains('file:///src/Foo.php', $data['uris']);
+    }
+
+    #[TestDox('GET /api/files/{uri} returns index details for a file')]
+    public function testApiFileDetail(): void
+    {
+        $response = $this->request('GET', '/api/files/' . urlencode('file:///src/Foo.php'));
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('file:///src/Foo.php', $data['uri']);
+        $this->assertArrayHasKey('php.classes.fqn', $data['indexes']);
+        $this->assertSame(3, $data['indexes']['php.classes.fqn']['count']);
+    }
+
+    #[TestDox('GET /api/files/{uri} returns error for unknown URI')]
+    public function testApiFileDetailUnknown(): void
+    {
+        $response = $this->request('GET', '/api/files/' . urlencode('file:///nonexistent.php'));
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertArrayHasKey('error', $data);
+    }
+
+    // --- Autocomplete API ---
+
+    #[TestDox('GET /api/autocomplete/keys returns matching keys')]
+    public function testApiAutocompleteKeys(): void
+    {
+        $response = $this->request('GET', '/api/autocomplete/keys?index=php.classes.fqn&q=Foo');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertContains('App\\Foo', $data);
+    }
+
+    #[TestDox('GET /api/autocomplete/keys without index returns empty')]
+    public function testApiAutocompleteKeysNoIndex(): void
+    {
+        $response = $this->request('GET', '/api/autocomplete/keys?q=Foo');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame([], $data);
+    }
+
+    #[TestDox('GET /api/autocomplete/uris returns matching URIs')]
+    public function testApiAutocompleteUris(): void
+    {
+        $response = $this->request('GET', '/api/autocomplete/uris?q=Foo');
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertContains('file:///src/Foo.php', $data);
+    }
+
+    // --- File browser views ---
+
+    #[TestDox('GET /views/files returns file list')]
+    public function testViewFiles(): void
+    {
+        $response = $this->request('GET', '/views/files');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('Foo.php', $body);
+        $this->assertStringContainsString('functions.php', $body);
+    }
+
+    #[TestDox('GET /views/files/{uri} returns file detail')]
+    public function testViewFileDetail(): void
+    {
+        $response = $this->request('GET', '/views/files/' . urlencode('file:///src/Foo.php'));
+
+        $this->assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        $this->assertStringContainsString('file:///src/Foo.php', $body);
+        $this->assertStringContainsString('php.classes.fqn', $body);
+    }
+
     // --- CORS ---
 
     #[TestDox('API responses include CORS header')]

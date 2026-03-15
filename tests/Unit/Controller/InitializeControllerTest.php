@@ -61,6 +61,8 @@ final class InitializeControllerTest extends TestCase
         $filesReaderProp->setValue($indexer, $this->createMock(\Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface::class));
         $filesProp = new \ReflectionProperty(Indexer::class, 'files');
         $filesProp->setValue($indexer, $this->createMock(\Lsp\Workspace\File\FileFactoryInterface::class));
+        $statusProp = new \ReflectionProperty(Indexer::class, 'indexingStatus');
+        $statusProp->setValue($indexer, new \App\Module\Indexing\IndexingStatus());
 
         $projectFactory = $this->createMock(ProjectFactoryInterface::class);
         $project = $this->createMock(Project::class);

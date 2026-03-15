@@ -26,20 +26,41 @@ http://127.0.0.1:5008
 Server-rendered UI powered by [HTMX](https://htmx.org) with a dark theme. All navigation uses
 HTMX partial page loads — no full-page reloads.
 
+### Status Bar
+
+Always visible at the top. Shows:
+- **Idle** (green dot) — ready, with last indexing duration and file count
+- **Indexing** (pulsing yellow dot) — currently indexing, shows file count progress
+
+Polls `/api/status` every 2 seconds.
+
 ### Index List (home page)
 
+- **Navigation tabs** — switch between Indexes and Files views
 - Table of all registered indexes with columns: **name**, **entry count**, **memory usage**
+- **Sortable columns** — click column headers to sort by name, count, or memory
 - **Global search** — input field with 300ms debounce auto-search across all indexes
 - **Batch actions** — checkboxes on each row with select-all; action buttons:
-  - **Clear** — remove all entries from selected indexes
-  - **Reindex** — clear and re-index selected indexes from the project
+  - **Clear** — remove all entries (with confirmation dialog)
+  - **Reindex** — clear and re-index from project files (with confirmation dialog)
   - **Export JSON** — download selected indexes as a JSON file
+- **Toast notifications** — feedback after batch actions (success/error)
 - **Export JSON** button in the header — exports all index data
+
+### Files View
+
+Browse all indexed files. Shows file name, full URI, and number of indexes that
+contain entries from each file. Click a file to see which indexes apply and
+what keys were extracted.
+
+- Filter by file name or path with auto-wildcards
+- Autocomplete suggestions while typing (populated from indexed URIs)
 
 ### Keys List
 
 Click an index to see all its keys. Features:
 - Glob filter with auto-wildcards (typing `Controller` searches for `*Controller*`)
+- **Autocomplete** — suggestions from actual index keys while typing
 - Pagination (50 entries per page)
 
 ### Entry Detail
@@ -255,6 +276,98 @@ curl -X POST http://127.0.0.1:5008/api/batch \
 }
 ```
 
+### `GET /api/status`
+
+Current indexing status.
+
+```bash
+curl http://127.0.0.1:5008/api/status
+```
+
+```json
+{
+  "indexing": false,
+  "filesIndexed": 1423,
+  "lastIndexedAt": 1710504000.123,
+  "lastDuration": 2.456
+}
+```
+
+### `GET /api/files`
+
+List all indexed file URIs.
+
+| Parameter | Type   | Default | Description      |
+|-----------|--------|---------|------------------|
+| `pattern` | string | —       | Glob filter      |
+| `limit`   | int    | 200     | Maximum entries  |
+
+```bash
+curl 'http://127.0.0.1:5008/api/files?pattern=Controller'
+```
+
+```json
+{
+  "total": 3,
+  "limit": 200,
+  "uris": ["file:///src/Controller/HomeController.php"]
+}
+```
+
+### `GET /api/files/{uri}`
+
+Show which indexes contain entries from a specific file.
+
+```bash
+curl 'http://127.0.0.1:5008/api/files/file%3A%2F%2F%2Fsrc%2FFoo.php'
+```
+
+```json
+{
+  "uri": "file:///src/Foo.php",
+  "indexCount": 2,
+  "indexes": {
+    "php.classes.fqn": { "count": 1, "keys": ["App\\Foo"] },
+    "php.classMethods.fqn": { "count": 1, "keys": ["App\\Foo"] }
+  }
+}
+```
+
+### `GET /api/autocomplete/keys`
+
+Autocomplete suggestions for index keys.
+
+| Parameter | Type   | Description          |
+|-----------|--------|----------------------|
+| `index`   | string | Index key (required) |
+| `q`       | string | Search substring     |
+| `limit`   | int    | Max results (50)     |
+
+```bash
+curl 'http://127.0.0.1:5008/api/autocomplete/keys?index=php.classes.fqn&q=Contr'
+```
+
+```json
+["App\\Controller\\HomeController", "App\\Controller\\InitializeController"]
+```
+
+### `GET /api/autocomplete/uris`
+
+Autocomplete suggestions for file URIs.
+
+| Parameter | Type   | Description      |
+|-----------|--------|------------------|
+| `q`       | string | Search substring |
+| `limit`   | int    | Max results (50) |
+
+```bash
+curl 'http://127.0.0.1:5008/api/autocomplete/uris?q=Controller'
+```
+
+```json
+["file:///src/Controller/HomeController.php"]
+```
+
 ## Auto-Wildcards
 
 Both the web UI and the global search API automatically wrap plain text with
@@ -334,3 +447,4 @@ Both servers run on the same ReactPHP event loop and share the same `InMemorySto
 | `DebugServerListener`    | `app/Listener/DebugServerListener.php`         | Starts debug server on LSP start  |
 | `DebugStorageInterface`  | `app/Module/Indexing/Storage/DebugStorageInterface.php` | Extended storage with introspection |
 | `InMemoryStorage`        | `app/Module/Indexing/Storage/InMemoryStorage.php`      | Storage implementation            |
+| `IndexingStatus`         | `app/Module/Indexing/IndexingStatus.php`               | Tracks indexing progress          |

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Debug;
 
 use App\Module\Indexing\Indexer;
+use App\Module\Indexing\IndexingStatus;
 use App\Module\Indexing\Storage\DebugStorageInterface;
 use App\Module\Workspace\ProjectManager;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,6 +22,7 @@ class DebugHttpServer
         private readonly DebugHtmlRenderer $renderer,
         private readonly ?Indexer $indexer = null,
         private readonly ?ProjectManager $projectManager = null,
+        private readonly ?IndexingStatus $indexingStatus = null,
     ) {}
 
     public function start(string $host, int $port): void
@@ -53,12 +55,23 @@ class DebugHttpServer
             $path === '/' => $this->htmlResponse($this->renderer->layout()),
             $path === '/views/indexes' => $this->htmlResponse($this->renderer->indexList()),
             $path === '/views/search' => $this->htmlResponse($this->renderer->globalSearch($query)),
+            $path === '/views/files' => $this->htmlResponse($this->renderer->fileList($query)),
+            str_starts_with($path, '/views/files/') => $this->htmlResponse(
+                $this->renderer->fileDetail(urldecode(substr($path, strlen('/views/files/')))),
+            ),
             str_starts_with($path, '/views/indexes/') => $this->routeView($path, $query),
 
             // JSON API (for curl / agents)
             $path === '/api/indexes' => $this->jsonResponse($this->apiIndexes()),
             $path === '/api/export' => $this->jsonResponse($this->apiExport()),
             $path === '/api/search' => $this->jsonResponse($this->apiGlobalSearch($query)),
+            $path === '/api/status' => $this->jsonResponse($this->apiStatus()),
+            $path === '/api/files' => $this->jsonResponse($this->apiFiles($query)),
+            str_starts_with($path, '/api/files/') => $this->jsonResponse(
+                $this->apiFileDetail(urldecode(substr($path, strlen('/api/files/')))),
+            ),
+            $path === '/api/autocomplete/keys' => $this->jsonResponse($this->apiAutocompleteKeys($query)),
+            $path === '/api/autocomplete/uris' => $this->jsonResponse($this->apiAutocompleteUris($query)),
             $path === '/api/batch' && $method === 'POST' => $this->handleBatch($request),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
 
@@ -425,6 +438,140 @@ class DebugHttpServer
         }
 
         return '(' . get_debug_type($value) . ')';
+    }
+
+    // --- Status ---
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function apiStatus(): array
+    {
+        return $this->indexingStatus?->toArray() ?? [
+            'indexing' => false,
+            'filesIndexed' => 0,
+            'lastIndexedAt' => null,
+            'lastDuration' => null,
+        ];
+    }
+
+    // --- File browser ---
+
+    /**
+     * @param array<string, string> $query
+     * @return array<string, mixed>
+     */
+    private function apiFiles(array $query): array
+    {
+        $pattern = $query['pattern'] ?? '';
+        $limit = max(1, (int) ($query['limit'] ?? 200));
+
+        $uris = $this->storage->getUris();
+
+        if ($pattern !== '') {
+            $searchPattern = $pattern;
+            if (!str_contains($searchPattern, '*') && !str_contains($searchPattern, '?')) {
+                $searchPattern = '*' . $searchPattern . '*';
+            }
+
+            $uris = array_values(array_filter(
+                $uris,
+                static fn(string $uri): bool => fnmatch($searchPattern, $uri, \FNM_CASEFOLD | \FNM_NOESCAPE),
+            ));
+        }
+
+        $total = count($uris);
+        $uris = array_slice($uris, 0, $limit);
+
+        return [
+            'total' => $total,
+            'limit' => $limit,
+            'uris' => $uris,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function apiFileDetail(string $uri): array
+    {
+        $entries = $this->storage->findByUri($uri);
+
+        if ($entries === []) {
+            return ['error' => "No entries found for URI '{$uri}'"];
+        }
+
+        $indexes = [];
+        foreach ($entries as $indexKey => $indexEntries) {
+            $indexes[$indexKey] = [
+                'count' => count($indexEntries),
+                'keys' => array_map(static fn($e) => $e->key, $indexEntries),
+            ];
+        }
+
+        return [
+            'uri' => $uri,
+            'indexCount' => count($indexes),
+            'indexes' => $indexes,
+        ];
+    }
+
+    // --- Autocomplete ---
+
+    /**
+     * @param array<string, string> $query
+     * @return list<string>
+     */
+    private function apiAutocompleteKeys(array $query): array
+    {
+        $q = $query['q'] ?? '';
+        $index = $query['index'] ?? '';
+        $limit = max(1, (int) ($query['limit'] ?? 50));
+
+        if ($index === '') {
+            return [];
+        }
+
+        $results = [];
+        $count = 0;
+
+        foreach ($this->storage->read($index) as $entry) {
+            if ($count >= $limit) {
+                break;
+            }
+
+            if ($q === '' || stripos($entry->key, $q) !== false) {
+                $results[] = $entry->key;
+                $count++;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param array<string, string> $query
+     * @return list<string>
+     */
+    private function apiAutocompleteUris(array $query): array
+    {
+        $q = $query['q'] ?? '';
+        $limit = max(1, (int) ($query['limit'] ?? 50));
+
+        $uris = $this->storage->getUris();
+        $results = [];
+
+        foreach ($uris as $uri) {
+            if (count($results) >= $limit) {
+                break;
+            }
+
+            if ($q === '' || stripos($uri, $q) !== false) {
+                $results[] = $uri;
+            }
+        }
+
+        return $results;
     }
 
     private function jsonResponse(mixed $data, int $status = 200): Response
