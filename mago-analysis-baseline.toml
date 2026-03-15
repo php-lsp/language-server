@@ -1773,8 +1773,14 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
 code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PHPPsiFile.php"
+code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Module/PsiFile/PHPPsiFile.php"
