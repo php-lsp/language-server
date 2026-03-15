@@ -207,6 +207,8 @@ If **any** step fails — fix and repeat from step 1.
 
 ## Guidelines
 
+- **All documentation must be written in English.** This applies to all
+  files in `docs/`, README.md, CLAUDE.md, code comments, and commit messages.
 - When you modify code that is described in this file or any documentation
   file (README.md, docs/, etc.), you **must** update the relevant
   documentation to reflect those changes. Keep docs in sync with code.
@@ -228,3 +230,6 @@ If **any** step fails — fix and repeat from step 1.
   capabilities checklist, and implementation priorities.
 - See [docs/binary-builds.md](docs/binary-builds.md) for standalone binary
   builds via php-micro, release workflow, and platform support.
+- See [docs/architecture-analysis.md](docs/architecture-analysis.md) for the
+  objective architecture analysis, metrics, weakness assessment, and comparison
+  with other LSP implementations.

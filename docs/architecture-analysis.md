@@ -1,96 +1,97 @@
 # Architecture Analysis: PHP Language Server
 
-> Объективный анализ архитектуры, выявление слабых мест, рекомендации по
-> улучшению и сравнение с ведущими LSP-реализациями.
+> Objective architecture analysis with quantitative metrics, weakness
+> identification, improvement recommendations, and comparison with leading
+> LSP implementations.
 >
-> Дата: 2026-03-15
+> Date: 2026-03-15
 
 ---
 
-## Содержание
+## Table of Contents
 
-1. [Обзор текущей архитектуры](#1-обзор-текущей-архитектуры)
-2. [Количественные метрики](#2-количественные-метрики)
-3. [Архитектурные паттерны](#3-архитектурные-паттерны)
-4. [Слабые места и проблемы](#4-слабые-места-и-проблемы)
-5. [Сравнение с другими LSP/IDE](#5-сравнение-с-другими-lspide)
-6. [Матрица оценки](#6-матрица-оценки)
-7. [Рекомендации по улучшению](#7-рекомендации-по-улучшению)
-8. [Приоритеты](#8-приоритеты)
+1. [Current Architecture Overview](#1-current-architecture-overview)
+2. [Quantitative Metrics](#2-quantitative-metrics)
+3. [Architectural Patterns](#3-architectural-patterns)
+4. [Weaknesses and Issues](#4-weaknesses-and-issues)
+5. [Comparison with Other LSP/IDE Implementations](#5-comparison-with-other-lspide-implementations)
+6. [Evaluation Matrix](#6-evaluation-matrix)
+7. [Improvement Recommendations](#7-improvement-recommendations)
+8. [Priorities](#8-priorities)
 
 ---
 
-## 1. Обзор текущей архитектуры
+## 1. Current Architecture Overview
 
-### Стек
+### Technology Stack
 
-| Компонент | Технология |
+| Component | Technology |
 |-----------|-----------|
-| Язык | PHP 8.4+ |
-| DI-контейнер | Symfony DependencyInjection |
+| Language | PHP 8.4+ |
+| DI Container | Symfony DependencyInjection |
 | Async I/O | ReactPHP (event loop + promises) |
-| Парсер AST | nikic/php-parser v5 |
-| Типы | PHPStan (type resolution) |
-| Протокол | php-lsp/protocol (типизированные LSP DTOs) |
-| Ядро | php-lsp/kernel (LanguageServerKernel) |
+| AST Parser | nikic/php-parser v5 |
+| Type System | PHPStan (type resolution) |
+| Protocol | php-lsp/protocol (typed LSP DTOs) |
+| Kernel | php-lsp/kernel (LanguageServerKernel) |
 
-### Слои (сверху вниз)
+### Layers (top to bottom)
 
 ```
 LSP Client (IDE)
-    │ JSON-RPC / TCP
+    | JSON-RPC / TCP
 Transport (php-lsp/kernel + ReactPHP)
-    │
-Routing (#[Route] атрибуты)
-    │
-Controllers (14 штук)
-    │
-Context + Contributors (параллельно) + Consumer
-    │
+    |
+Routing (#[Route] attributes)
+    |
+Controllers (14 total)
+    |
+Context + Contributors (parallel) + Consumer
+    |
 Infrastructure: Indexing, PsiFile (AST), TypeSystem, DocumentManager
 ```
 
-### Ключевые решения
+### Key Design Decisions
 
-- **Contributor/Plugin pattern** — контроллеры делегируют работу набору
-  мелких contributor-классов, обнаруживаемых через PHP-атрибуты и DI-теги.
-- **Параллельное выполнение** — completion-контрибьюторы запускаются через
-  `React\Promise\all()` с timeout 1 сек.
-- **In-Memory индексация** — весь индекс хранится в `InMemoryStorage`
-  (PHP-массивы в памяти процесса).
-- **FIFO-кеш AST** — 300 файлов, вытеснение 10% старейших при переполнении.
+- **Contributor/Plugin pattern** — controllers delegate work to small
+  contributor classes discovered via PHP attributes and DI tags.
+- **Parallel execution** — completion contributors run via
+  `React\Promise\all()` with a 1-second timeout.
+- **In-memory indexing** — the entire index lives in `InMemoryStorage`
+  (PHP arrays in process memory).
+- **FIFO AST cache** — 300 files, evicting 10% of the oldest on overflow.
 
 ---
 
-## 2. Количественные метрики
+## 2. Quantitative Metrics
 
-### Размер кодовой базы
+### Codebase Size
 
-| Метрика | Значение |
-|---------|----------|
-| PHP-файлов в `app/` | 150 |
-| PHP-файлов в `tests/` | 121 |
-| Строк кода (`app/`) | 8 217 |
-| Отношение тестов/код | 0.81 (файлы) |
+| Metric | Value |
+|--------|-------|
+| PHP files in `app/` | 150 |
+| PHP files in `tests/` | 121 |
+| Lines of code (`app/`) | 8,217 |
+| Test-to-code ratio | 0.81 (by file count) |
 
-### Размер модулей (LOC)
+### Module Size (LOC)
 
-| Модуль | LOC | Файлов | Назначение |
-|--------|-----|--------|------------|
-| Indexing | 1 803 | 47 | Индексация и хранилище |
-| Completion | 1 395 | 17 | Автодополнение |
-| References | 674 | 7 | Поиск ссылок |
+| Module | LOC | Files | Purpose |
+|--------|-----|-------|---------|
+| Indexing | 1,803 | 47 | Indexing and storage |
+| Completion | 1,395 | 17 | Code completion |
+| References | 674 | 7 | Find references |
 | Declaration | 628 | 7 | Go-to-definition |
-| PsiFile | 593 | 6 | AST-парсинг |
-| Documentation | 534 | 7 | Hover-документация |
-| Signature | 426 | 3 | Сигнатуры функций |
-| TypeSystem | 310 | 5 | Разрешение типов |
-| Controller | 1 004 | 14 | Обработчики запросов |
-| Core/Contracts | 433 | 24 | Интерфейсы и контракты |
+| PsiFile | 593 | 6 | AST parsing |
+| Documentation | 534 | 7 | Hover documentation |
+| Signature | 426 | 3 | Function signatures |
+| TypeSystem | 310 | 5 | Type resolution |
+| Controller | 1,004 | 14 | Request handlers |
+| Core/Contracts | 433 | 24 | Interfaces and contracts |
 
-### Coupling (связанность модулей)
+### Coupling (Module Dependencies)
 
-| Модуль | Ca (входящие) | Ce (исходящие) | Instability (Ce/(Ca+Ce)) |
+| Module | Ca (afferent) | Ce (efferent) | Instability (Ce/(Ca+Ce)) |
 |--------|:---:|:---:|:---:|
 | **PsiFile** | 96 | 1 | 0.01 |
 | **Indexing** | 95 | 29 | 0.23 |
@@ -104,19 +105,19 @@ Infrastructure: Indexing, PsiFile (AST), TypeSystem, DocumentManager
 | References | 0 | 26 | 1.00 |
 | Signature | 0 | 15 | 1.00 |
 
-**Интерпретация:**
-- **PsiFile и Indexing** — центральные модули, от которых зависит
-  практически всё. Instability ≈ 0 — они стабильны, но при этом содержат
-  конкретные реализации (не абстракции), что нарушает Stable Abstractions
-  Principle (SAP).
-- Completion, Declaration и другие — полностью нестабильные (Instability = 1),
-  что правильно для конечных consumer-модулей.
-- TypeSystem имеет Instability 0.75 — адекватно для модуля, который
-  используется редко, но зависит от внешних библиотек.
+**Interpretation:**
+- **PsiFile and Indexing** are central modules that nearly everything
+  depends on. Instability ~ 0 means they are stable, yet they contain
+  concrete implementations (not abstractions), violating the Stable
+  Abstractions Principle (SAP).
+- Completion, Declaration, and others are fully unstable (Instability = 1),
+  which is correct for leaf consumer modules.
+- TypeSystem has Instability 0.75 — adequate for a module that is rarely
+  depended upon but depends on external libraries.
 
-### Abstractness (абстрактность модулей)
+### Abstractness
 
-| Модуль | Всего классов | Интерфейсов/абстрактных | Abstractness |
+| Module | Total classes | Interfaces/Abstract | Abstractness |
 |--------|:---:|:---:|:---:|
 | Document | 4 | 2 | 0.50 |
 | TypeSystem | 5 | 1 | 0.20 |
@@ -129,111 +130,111 @@ Infrastructure: Indexing, PsiFile (AST), TypeSystem, DocumentManager
 | Signature | 3 | 0 | **0.00** |
 | Workspace | 1 | 0 | **0.00** |
 
-**Проблема:** PsiFile (Ca=96, Abstractness=0.00) попадает в «зону боли»
-(Zone of Pain) по диаграмме Мартина — высоко стабильный, но конкретный.
-Любое изменение в `InMemoryPsiFileManager` или `PHPPsiFile` затронет
-огромное количество зависимых модулей.
+**Issue:** PsiFile (Ca=96, Abstractness=0.00) falls into the "Zone of Pain"
+on Martin's diagram — highly stable but entirely concrete. Any change to
+`InMemoryPsiFileManager` or `PHPPsiFile` will ripple through a massive
+number of dependent modules.
 
 ---
 
-## 3. Архитектурные паттерны
+## 3. Architectural Patterns
 
-### Используемые паттерны
+### Patterns in Use
 
-| Паттерн | Где применяется | Оценка |
-|---------|----------------|--------|
-| **Strategy** | Contributor интерфейсы (CompletionContributor, etc.) | Хорошо |
-| **Observer** | Symfony EventDispatcher для событий сервера | Хорошо |
-| **Template Method** | AbstractPhpIndexer (abstract `indexInternal`) | Хорошо |
-| **Consumer/Collector** | CompletionConsumer, ReferenceConsumer — сбор результатов | Хорошо |
-| **FIFO Cache** | FifoCache для AST-файлов | Адекватно |
-| **Service Locator** | `#[AutowireIterator]` для получения списка контрибьюторов | Адекватно |
-| **Repository** | StorageInterface / InMemoryStorage для индекса | Базово |
-
-### Отсутствующие паттерны (критично для LSP)
-
-| Паттерн | Необходимость | Статус |
+| Pattern | Where Applied | Rating |
 |---------|--------------|--------|
-| **Demand-driven computation / Incremental** | Критично | Отсутствует |
-| **Cancel token / Cancellation** | Высоко | Отсутствует |
-| **Virtual File System (VFS)** | Высоко | Частично (Document layer) |
-| **Persistent index / Serialization** | Высоко | Отсутствует |
-| **Workspace change tracking** | Высоко | Отсутствует |
+| **Strategy** | Contributor interfaces (CompletionContributor, etc.) | Good |
+| **Observer** | Symfony EventDispatcher for server events | Good |
+| **Template Method** | AbstractPhpIndexer (abstract `indexInternal`) | Good |
+| **Consumer/Collector** | CompletionConsumer, ReferenceConsumer — result accumulation | Good |
+| **FIFO Cache** | FifoCache for AST files | Adequate |
+| **Service Locator** | `#[AutowireIterator]` for contributor lists | Adequate |
+| **Repository** | StorageInterface / InMemoryStorage for the index | Basic |
+
+### Missing Patterns (Critical for LSP)
+
+| Pattern | Necessity | Status |
+|---------|----------|--------|
+| **Demand-driven computation / Incremental** | Critical | Missing |
+| **Cancel token / Cancellation** | High | Missing |
+| **Virtual File System (VFS)** | High | Partial (Document layer) |
+| **Persistent index / Serialization** | High | Missing |
+| **Workspace change tracking** | High | Missing |
 
 ---
 
-## 4. Слабые места и проблемы
+## 4. Weaknesses and Issues
 
-### 4.1. Индексация — полный пересчёт без инкрементальности
+### 4.1. Indexing — Full Recomputation Without Incrementality
 
-**Проблема:** `Indexer::index()` обходит все файлы проекта синхронно при
-инициализации. Нет механизма инкрементального обновления при изменении
-одного файла.
+**Problem:** `Indexer::index()` traverses all project files synchronously
+on initialization. There is no mechanism for incremental updates when a
+single file changes.
 
 ```php
 // app/Module/Indexing/Indexer.php:36-48
 public function index(Project $project): void
 {
     foreach ($project as $file) {
-        $this->walkFilesInternal($file, 0);  // Весь проект
+        $this->walkFilesInternal($file, 0);  // Entire project
     }
     // + PHP stubs
     $this->walkFilesInternal($stubs, 0);
 }
 ```
 
-**Последствия:**
-- При открытии проекта с 10 000+ файлов — долгий старт.
-- При изменении файла индекс не обновляется — данные устаревают.
-- Нет возможности частичного переиндексирования.
+**Consequences:**
+- Opening a project with 10,000+ files results in a long startup time.
+- When a file changes, the index is not updated — data becomes stale.
+- No ability for partial re-indexing.
 
-**Уровень критичности:** КРИТИЧНЫЙ
+**Severity:** CRITICAL
 
-### 4.2. InMemoryStorage — данные теряются при перезапуске
+### 4.2. InMemoryStorage — Data Lost on Restart
 
-**Проблема:** Весь индекс хранится в PHP-массивах. Нет персистентного
-хранилища. При перезапуске сервера индекс полностью теряется.
+**Problem:** The entire index is stored in PHP arrays. There is no
+persistent storage. On server restart, the index is completely lost.
 
 ```php
 // app/Module/Indexing/Storage/InMemoryStorage.php
 class InMemoryStorage implements StorageInterface
 {
-    private array $entries = [];  // Всё в памяти
+    private array $entries = [];  // Everything in memory
 }
 ```
 
-**Последствия:**
-- Каждый запуск = полная переиндексация.
-- На крупных проектах — неприемлемая задержка при старте.
-- Потребление памяти растёт линейно с размером проекта.
+**Consequences:**
+- Every startup = full re-indexing.
+- On large projects — unacceptable startup delay.
+- Memory consumption grows linearly with project size.
 
-**Уровень критичности:** ВЫСОКИЙ
+**Severity:** HIGH
 
-### 4.3. Линейный поиск по индексу — O(N)
+### 4.3. Linear Index Search — O(N)
 
-**Проблема:** Большинство contributors выполняют полный проход по всем
-записям индекса и фильтруют по имени/типу:
+**Problem:** Most contributors perform a full pass over all index entries
+and filter by name/type:
 
 ```php
-// Типичный паттерн в contributors:
+// Typical pattern in contributors:
 foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
     if ($entry->value->className !== $className) {
-        continue;  // Линейная фильтрация
+        continue;  // Linear filtering
     }
 }
 ```
 
-**Последствия:**
-- Completion на проекте с 50 000 методов = 50 000 итераций для каждого
-  contributor'а.
-- Деградация производительности при росте проекта.
+**Consequences:**
+- Completion on a project with 50,000 methods = 50,000 iterations per
+  contributor.
+- Performance degrades as the project grows.
 
-**Уровень критичности:** ВЫСОКИЙ
+**Severity:** HIGH
 
-### 4.4. Hardcoded-список игнорируемых директорий
+### 4.4. Hardcoded Ignored Directory List
 
-**Проблема:** В `Indexer::walkFilesInternal()` список игнорируемых
-директорий захардкожен:
+**Problem:** In `Indexer::walkFilesInternal()`, the list of ignored
+directories is hardcoded:
 
 ```php
 $ignored = [
@@ -244,18 +245,18 @@ $ignored = [
 ];
 ```
 
-**Последствия:**
-- Нет конфигурируемости для пользователя.
-- Некоторые записи специфичны (aerospike, couchbase) и не должны быть
-  в базовом коде.
-- Дублирование (`'tests'` указан дважды).
+**Consequences:**
+- No user configurability.
+- Some entries are domain-specific (aerospike, couchbase) and should not
+  be in the base code.
+- Duplication (`'tests'` listed twice).
 
-**Уровень критичности:** СРЕДНИЙ
+**Severity:** MEDIUM
 
-### 4.5. Индексация отключена при инициализации
+### 4.5. Indexing Disabled at Initialization
 
-**Проблема:** В `InitializeController::walkWorkspaceFolder()` стоит
-ранний `return` перед вызовом индексации:
+**Problem:** In `InitializeController::walkWorkspaceFolder()`, there is
+an early `return` before the indexing call:
 
 ```php
 private function walkWorkspaceFolder(WorkspaceFolder $folder): void
@@ -263,47 +264,47 @@ private function walkWorkspaceFolder(WorkspaceFolder $folder): void
     $project = $this->projectFactory->create($folder->uri, $folder->name);
     $this->projectManager->setProject($project);
 
-    return;  // <-- Индексация отключена!
+    return;  // <-- Indexing disabled!
     $this->indexer->index($project);
 }
 ```
 
-**Последствия:**
-- Индекс всегда пуст.
-- Все контрибьюторы, зависящие от индекса, не работают.
-- Фактически completion по классам/функциям не функционирует.
+**Consequences:**
+- The index is always empty.
+- All contributors that depend on the index do not work.
+- Class/function completion is effectively non-functional.
 
-**Уровень критичности:** КРИТИЧНЫЙ
+**Severity:** CRITICAL
 
-### 4.6. Отсутствие cancellation и прогресс-уведомлений
+### 4.6. No Cancellation or Progress Notifications
 
-**Проблема:** Нет механизма отмены запросов. Если пользователь быстро
-набирает текст, каждый `textDocument/completion` запрос выполняется
-полностью, даже если результат уже не нужен.
+**Problem:** There is no request cancellation mechanism. If the user
+types quickly, each `textDocument/completion` request executes fully,
+even when the result is no longer needed.
 
-**Последствия:**
-- Нагрузка на сервер при быстрой печати.
-- Задержки в ответах — IDE может показывать устаревшие результаты.
+**Consequences:**
+- Server load during fast typing.
+- Response delays — the IDE may display stale results.
 
-**Уровень критичности:** СРЕДНИЙ
+**Severity:** MEDIUM
 
-### 4.7. PsiFile — God Object тенденция
+### 4.7. PsiFile — God Object Tendency
 
-**Проблема:** `InMemoryPsiFileManager` совмещает:
-- Парсинг файлов
-- Кеширование AST
-- Отправку диагностик клиенту
-- Загрузку документов с диска
-- Инвалидацию кеша по версии
+**Problem:** `InMemoryPsiFileManager` combines:
+- File parsing
+- AST caching
+- Sending diagnostics to the client
+- Loading documents from disk
+- Cache invalidation by version
 
-Это нарушает Single Responsibility Principle. 96 входящих зависимостей
-делают рефакторинг рискованным.
+This violates the Single Responsibility Principle. 96 incoming dependencies
+make refactoring risky.
 
-**Уровень критичности:** СРЕДНИЙ
+**Severity:** MEDIUM
 
-### 4.8. Закомментированный debug-код
+### 4.8. Commented-Out Debug Code
 
-**Проблема:** В 7+ файлах остался закомментированный debug-код
+**Problem:** 7+ files contain commented-out debug code
 (`dump()`, `echo`, `var_dump`):
 
 ```
@@ -314,197 +315,196 @@ app/Module/PsiFile/InMemoryPsiFileManager.php:74           // dump(...)
 app/Module/Indexing/Indexer.php:80                         // echo(...)
 ```
 
-**Уровень критичности:** НИЗКИЙ (code smell)
+**Severity:** LOW (code smell)
 
-### 4.9. Отсутствие Go-to-definition для произвольных типов
+### 4.9. No Go-to-Definition for Arbitrary Types
 
-**Проблема:** `ClassMemberCompletionContributor` определяет тип
-объекта только для `$this->`, `self::`, `static::`. Нет разрешения
-типов для произвольных переменных (через TypeSystem).
+**Problem:** `ClassMemberCompletionContributor` resolves the object type
+only for `$this->`, `self::`, `static::`. There is no type resolution
+for arbitrary variables (via TypeSystem).
 
-**Последствия:**
-- Completion после `$foo->` не работает, если `$foo` не `$this`.
-- Основная функция LSP — интеллектуальное дополнение — ограничена.
+**Consequences:**
+- Completion after `$foo->` does not work if `$foo` is not `$this`.
+- The core LSP function — intelligent completion — is limited.
 
-**Уровень критичности:** ВЫСОКИЙ
+**Severity:** HIGH
 
-### 4.10. Асимметрия параллелизма контроллеров
+### 4.10. Asymmetric Controller Parallelism
 
-**Проблема:** `CompletionController` запускает контрибьюторов параллельно
-через `React\Promise\all()`, но `ReferencesController`, `HoverController`,
-`DeclarationController` выполняют их последовательно через `foreach`.
+**Problem:** `CompletionController` runs contributors in parallel via
+`React\Promise\all()`, but `ReferencesController`, `HoverController`,
+and `DeclarationController` execute them sequentially via `foreach`.
 
 ```php
-// CompletionController — параллельно
+// CompletionController — parallel
 $results = await(all($promises));
 
-// ReferencesController — последовательно
+// ReferencesController — sequential
 foreach ($this->contributors as $contributor) {
     $contributor->contribute($context, $consumer);
 }
 ```
 
-**Последствия:**
-- Неконсистентное поведение.
-- References/Hover медленнее, чем могли бы быть.
+**Consequences:**
+- Inconsistent behavior.
+- References/Hover are slower than they could be.
 
-**Уровень критичности:** НИЗКИЙ (пока контрибьюторов мало)
+**Severity:** LOW (while the number of contributors is small)
 
 ---
 
-## 5. Сравнение с другими LSP/IDE
+## 5. Comparison with Other LSP/IDE Implementations
 
 ### 5.1. Intelephense (PHP LSP, TypeScript)
 
-**Архитектура:** Monolithic, TypeScript, closed-source.
+**Architecture:** Monolithic, TypeScript, closed-source.
 
-| Аспект | Intelephense | php-lsp/language-server |
+| Aspect | Intelephense | php-lsp/language-server |
 |--------|-------------|------------------------|
-| Язык реализации | TypeScript (Node.js) | PHP (ReactPHP) |
-| Индексация | Персистентная (SQLite/файлы), инкрементальная | In-memory, полная, неинкрементальная |
-| Разрешение типов | Собственный type inference engine | PHPStan (внешняя зависимость) |
-| Cancellation | Да (LSP cancellation protocol) | Нет |
-| Производительность | Оптимизирована для 100k+ файлов | Не тестировалась на масштабе |
-| Расширяемость | Закрытая (плагины отсутствуют) | Открытая (contributor pattern) |
-| Зрелость | Stable (5+ лет) | Pre-release |
+| Implementation language | TypeScript (Node.js) | PHP (ReactPHP) |
+| Indexing | Persistent (SQLite/files), incremental | In-memory, full, non-incremental |
+| Type resolution | Custom type inference engine | PHPStan (external dependency) |
+| Cancellation | Yes (LSP cancellation protocol) | No |
+| Performance | Optimized for 100k+ files | Not tested at scale |
+| Extensibility | Closed (no plugins) | Open (contributor pattern) |
+| Maturity | Stable (5+ years) | Pre-release |
 
-**Вывод:** Intelephense значительно впереди по production-readiness, но
-уступает в расширяемости благодаря закрытому коду.
+**Conclusion:** Intelephense is significantly ahead in production-readiness
+but lacks extensibility due to its closed-source nature.
 
 ### 5.2. Phpactor (PHP LSP, PHP)
 
-**Архитектура:** Extension-based, PHP, open-source.
+**Architecture:** Extension-based, PHP, open-source.
 
-| Аспект | Phpactor | php-lsp/language-server |
+| Aspect | Phpactor | php-lsp/language-server |
 |--------|---------|------------------------|
-| Язык | PHP | PHP |
-| Архитектура | Extension system (контейнер расширений) | Contributor pattern (Symfony DI) |
-| Индексация | Файловая (JSON), инкрементальная | In-memory, неинкрементальная |
-| Type inference | Собственный worse-reflection | PHPStan |
-| Кеширование | Персистентное (файловая система) | In-memory FIFO |
-| Workspace events | `didChangeWatchedFiles` | Не обрабатываются |
-| Зрелость | Stable (7+ лет) | Pre-release |
+| Language | PHP | PHP |
+| Architecture | Extension system (extension container) | Contributor pattern (Symfony DI) |
+| Indexing | File-based (JSON), incremental | In-memory, non-incremental |
+| Type inference | Custom worse-reflection | PHPStan |
+| Caching | Persistent (filesystem) | In-memory FIFO |
+| Workspace events | `didChangeWatchedFiles` | Not handled |
+| Maturity | Stable (7+ years) | Pre-release |
 
-**Вывод:** Phpactor — наиболее близкий по духу проект (PHP на PHP).
-Его extension system похожа на contributor pattern, но более зрелая.
-Главное преимущество — инкрементальная индексация и файловый кеш.
+**Conclusion:** Phpactor is the closest project in spirit (PHP on PHP).
+Its extension system is similar to the contributor pattern but more mature.
+Key advantage — incremental indexing and file cache.
 
 ### 5.3. rust-analyzer (Rust LSP, Rust)
 
-**Архитектура:** Demand-driven (salsa framework), инкрементальные
-вычисления.
+**Architecture:** Demand-driven (salsa framework), incremental computation.
 
-| Аспект | rust-analyzer | php-lsp/language-server |
+| Aspect | rust-analyzer | php-lsp/language-server |
 |--------|--------------|------------------------|
-| Модель вычислений | Demand-driven (lazy, memoized) | Eager (всё вычисляется при запросе) |
-| Инкрементальность | Полная (salsa DB, fine-grained) | Отсутствует |
-| Cancellation | Да (salsa revision tracking) | Нет |
-| Память | Управляемая (GC salsa, LRU) | Неуправляемая (растёт) |
-| Параллелизм | Multi-threaded (rayon) | Single-threaded (event loop) |
-| Расширяемость | Фиксированная (монолит) | Plugin-based |
+| Computation model | Demand-driven (lazy, memoized) | Eager (computed on request) |
+| Incrementality | Full (salsa DB, fine-grained) | Absent |
+| Cancellation | Yes (salsa revision tracking) | No |
+| Memory | Managed (salsa GC, LRU) | Unmanaged (grows) |
+| Concurrency | Multi-threaded (rayon) | Single-threaded (event loop) |
+| Extensibility | Fixed (monolithic) | Plugin-based |
 
-**Вывод:** rust-analyzer — золотой стандарт LSP-архитектуры.
-Его demand-driven модель недостижима на PHP, но принципы
-инкрементальности и cancellation можно адаптировать.
+**Conclusion:** rust-analyzer is the gold standard of LSP architecture.
+Its demand-driven model is not achievable in PHP, but principles of
+incrementality and cancellation can be adapted.
 
 ### 5.4. TypeScript Language Server (tsserver)
 
-| Аспект | tsserver | php-lsp/language-server |
+| Aspect | tsserver | php-lsp/language-server |
 |--------|---------|------------------------|
-| Индексация | Program object, project references | Flat index |
-| Инкрементальность | Incremental parser + checker | Отсутствует |
-| Модульность | Монолитная | Plugin-based |
-| Диагностики | Полноценный type checker | Только parse errors |
+| Indexing | Program object, project references | Flat index |
+| Incrementality | Incremental parser + checker | Absent |
+| Modularity | Monolithic | Plugin-based |
+| Diagnostics | Full type checker | Parse errors only |
 
 ### 5.5. clangd (C/C++ LSP)
 
-| Аспект | clangd | php-lsp/language-server |
+| Aspect | clangd | php-lsp/language-server |
 |--------|-------|------------------------|
-| Индекс | Persistent YAML/binary, background indexer | In-memory |
-| Парсинг | Incremental (Clang AST), error-tolerant | Full reparse |
+| Index | Persistent YAML/binary, background indexer | In-memory |
+| Parsing | Incremental (Clang AST), error-tolerant | Full reparse |
 | Threading | Multi-threaded (thread pool) | Single-threaded |
-| Cancellation | Полная поддержка | Нет |
+| Cancellation | Full support | No |
 
 ---
 
-## 6. Матрица оценки
+## 6. Evaluation Matrix
 
-Оценка по 10-балльной шкале (10 = идеально).
+Scores on a 10-point scale (10 = ideal).
 
-### 6.1. Архитектурные свойства
+### 6.1. Architectural Properties
 
-| Свойство | Оценка | Комментарий |
-|----------|:------:|-------------|
-| **Модульность** | 8/10 | Отличное разделение на contributor'ы. Но PsiFile/Indexing — монолитные центры. |
-| **Расширяемость** | 9/10 | Добавление нового contributor'а = 1 файл. Лучше, чем у большинства LSP. |
-| **Тестируемость** | 7/10 | 121 тестовых файлов. Хорошее покрытие модулей, но нет integration/E2E тестов. |
-| **Масштабируемость** | 3/10 | In-memory, линейный поиск, отсутствие инкрементальности — не масштабируется. |
-| **Производительность** | 4/10 | Полный обход индекса, синхронная индексация, один поток. |
-| **Отказоустойчивость** | 6/10 | Timeout на contributor'ы, catch исключений. Но нет cancellation. |
-| **Maintainability** | 7/10 | Чистый код, хорошая структура. Но PsiFile — Zone of Pain. |
-| **Зрелость** | 3/10 | Pre-release, индексация отключена, debug-код в production. |
+| Property | Score | Comment |
+|----------|:-----:|---------|
+| **Modularity** | 8/10 | Excellent contributor separation. But PsiFile/Indexing are monolithic centers. |
+| **Extensibility** | 9/10 | Adding a new contributor = 1 file. Better than most LSP implementations. |
+| **Testability** | 7/10 | 121 test files. Good module coverage, but no integration/E2E tests. |
+| **Scalability** | 3/10 | In-memory, linear search, no incrementality — does not scale. |
+| **Performance** | 4/10 | Full index traversal, synchronous indexing, single thread. |
+| **Fault tolerance** | 6/10 | Timeouts on contributors, exception catching. But no cancellation. |
+| **Maintainability** | 7/10 | Clean code, good structure. But PsiFile is in the Zone of Pain. |
+| **Maturity** | 3/10 | Pre-release, indexing disabled, debug code in production. |
 
-### 6.2. Сравнительная матрица с другими LSP
+### 6.2. Comparative Matrix with Other LSPs
 
-| Свойство | php-lsp | Intelephense | Phpactor | rust-analyzer | clangd |
+| Property | php-lsp | Intelephense | Phpactor | rust-analyzer | clangd |
 |----------|:-------:|:------------:|:--------:|:-------------:|:------:|
-| Модульность | 8 | 5 | 7 | 6 | 5 |
-| Расширяемость | 9 | 3 | 8 | 4 | 3 |
-| Инкрементальность | 1 | 8 | 6 | 10 | 9 |
-| Персистентный индекс | 1 | 9 | 7 | 10 | 10 |
+| Modularity | 8 | 5 | 7 | 6 | 5 |
+| Extensibility | 9 | 3 | 8 | 4 | 3 |
+| Incrementality | 1 | 8 | 6 | 10 | 9 |
+| Persistent index | 1 | 9 | 7 | 10 | 10 |
 | Type inference | 4 | 9 | 7 | 10 | 9 |
 | Cancellation | 1 | 8 | 5 | 10 | 10 |
-| Масштабируемость | 3 | 8 | 6 | 10 | 9 |
-| Документация | 8 | 7 | 6 | 10 | 8 |
-| **Среднее** | **4.4** | **7.1** | **6.5** | **8.8** | **7.9** |
+| Scalability | 3 | 8 | 6 | 10 | 9 |
+| Documentation | 8 | 7 | 6 | 10 | 8 |
+| **Average** | **4.4** | **7.1** | **6.5** | **8.8** | **7.9** |
 
-### 6.3. Диаграмма зон Мартина (Distance from Main Sequence)
+### 6.3. Martin's Zone Diagram (Distance from Main Sequence)
 
 ```
 Abstractness (A)
-1.0 ┌────────────────────────────────┐
-    │ Zone of               Document │
-    │ Uselessness         ·         │
-    │                    TypeSystem  │
-0.5 │                  ·            │
-    │                               │
-    │         Main Sequence ────────│
-    │        /                      │
-    │       /   Indexing ·          │
-    │      /                        │
-0.0 │ PsiFile ·     Zone of Pain    │
-    └────────────────────────────────┘
-   0.0    Instability (I)        1.0
+1.0 +--------------------------------+
+    | Zone of               Document |
+    | Uselessness         .          |
+    |                    TypeSystem  |
+0.5 |                  .             |
+    |                                |
+    |         Main Sequence ---------+
+    |        /                       |
+    |       /   Indexing .           |
+    |      /                         |
+0.0 | PsiFile .     Zone of Pain     |
+    +--------------------------------+
+   0.0    Instability (I)         1.0
 
-PsiFile: I=0.01, A=0.00 → Distance=0.99 (глубоко в Zone of Pain)
-Indexing: I=0.23, A=0.08 → Distance=0.69 (в Zone of Pain)
-Document: I=0.14, A=0.50 → Distance=0.36 (близко к Main Sequence)
-TypeSystem: I=0.75, A=0.20 → Distance=0.05 (на Main Sequence)
+PsiFile:    I=0.01, A=0.00 -> Distance=0.99 (deep in Zone of Pain)
+Indexing:   I=0.23, A=0.08 -> Distance=0.69 (in Zone of Pain)
+Document:   I=0.14, A=0.50 -> Distance=0.36 (close to Main Sequence)
+TypeSystem: I=0.75, A=0.20 -> Distance=0.05 (on Main Sequence)
 ```
 
-**PsiFile** — наиболее проблемный модуль: максимальная стабильность
-при нулевой абстрактности. Необходимо выделить интерфейсы.
+**PsiFile** is the most problematic module: maximum stability with zero
+abstractness. Interfaces must be extracted.
 
 ---
 
-## 7. Рекомендации по улучшению
+## 7. Improvement Recommendations
 
-### 7.1. [КРИТИЧНЫЙ] Включить и сделать индексацию инкрементальной
+### 7.1. [CRITICAL] Enable and Make Indexing Incremental
 
-**Текущее состояние:** Индексация полностью отключена (`return` в
+**Current state:** Indexing is completely disabled (`return` in
 `walkWorkspaceFolder`).
 
-**Рекомендация:**
+**Recommendation:**
 
-1. Убрать ранний `return`, восстановить вызов `indexer->index()`.
-2. Реализовать событие `textDocument/didChange` → частичная
-   переиндексация изменённого файла.
-3. Добавить `StorageInterface::delete(string $uri)` для удаления
-   записей устаревшего файла перед повторной индексацией.
-4. Выполнять индексацию в фоне через `React\EventLoop\Loop::addTimer()`.
+1. Remove the early `return`, restore the `indexer->index()` call.
+2. Implement a `textDocument/didChange` event handler for partial
+   re-indexing of the changed file.
+3. Add `StorageInterface::delete(string $uri)` for removing stale
+   entries before re-indexing.
+4. Run indexing in the background via `React\EventLoop\Loop::addTimer()`.
 
 ```php
-// Предлагаемый подход:
+// Proposed approach:
 public function reindexFile(VirtualFileInterface $file): void
 {
     $this->storage->deleteByUri((string) $file->uri);
@@ -512,19 +512,19 @@ public function reindexFile(VirtualFileInterface $file): void
 }
 ```
 
-### 7.2. [КРИТИЧНЫЙ] Персистентный индекс
+### 7.2. [CRITICAL] Persistent Index
 
-**Рекомендация:** Добавить `FileSystemStorage` как альтернативу
+**Recommendation:** Add `FileSystemStorage` as an alternative to
 `InMemoryStorage`:
 
-- Сериализация в JSON/MessagePack файлы в `.php-lsp/cache/`.
-- При старте — загрузка кеша, валидация по mtime файлов.
-- Только изменённые файлы переиндексируются.
-- `JsonSerializer` уже существует — можно использовать как основу.
+- Serialize to JSON/MessagePack files in `.php-lsp/cache/`.
+- On startup — load cache, validate by file mtime.
+- Only changed files get re-indexed.
+- `JsonSerializer` already exists and can serve as a foundation.
 
-**Альтернатива:** SQLite через `ext-pdo_sqlite`:
+**Alternative:** SQLite via `ext-pdo_sqlite`:
 
-```
+```sql
 CREATE TABLE symbols (
     key TEXT,
     name TEXT,
@@ -536,14 +536,14 @@ CREATE TABLE symbols (
 CREATE INDEX idx_key_name ON symbols(key, name);
 ```
 
-Это решит проблемы O(N) поиска (через SQL-индексы) и персистентности
-одновременно.
+This solves both the O(N) search problem (via SQL indexes) and
+persistence simultaneously.
 
-### 7.3. [ВЫСОКИЙ] Выделить интерфейсы для PsiFile
+### 7.3. [HIGH] Extract PsiFile Interfaces
 
-**Проблема:** PsiFile — Zone of Pain (I=0.01, A=0.00).
+**Problem:** PsiFile is in the Zone of Pain (I=0.01, A=0.00).
 
-**Рекомендация:**
+**Recommendation:**
 
 ```php
 // app/Core/Contracts/PsiFile/PsiFileInterface.php
@@ -560,77 +560,77 @@ interface PsiFileManagerInterface
 }
 ```
 
-Все зависимости (96 штук) должны зависеть от интерфейсов, а не от
-конкретных `InMemoryPsiFileManager` и `PHPPsiFile`.
+All 96 dependencies should depend on interfaces, not on the concrete
+`InMemoryPsiFileManager` and `PHPPsiFile`.
 
-### 7.4. [ВЫСОКИЙ] Индексированные структуры данных для поиска
+### 7.4. [HIGH] Indexed Data Structures for Lookup
 
-**Проблема:** Линейный поиск O(N) при каждом completion/reference запросе.
+**Problem:** Linear O(N) search on every completion/reference request.
 
-**Рекомендация:** Добавить вторичные индексы в StorageInterface:
+**Recommendation:** Add secondary indexes to StorageInterface:
 
 ```php
 interface StorageInterface
 {
-    // Существующий
+    // Existing
     public function read(string $indexKey): iterable;
 
-    // Новый: поиск по вторичному ключу
+    // New: lookup by secondary key
     public function findByField(string $indexKey, string $field, mixed $value): iterable;
 
-    // Новый: поиск по префиксу (для completion)
+    // New: prefix search (for completion)
     public function findByPrefix(string $indexKey, string $field, string $prefix): iterable;
 }
 ```
 
-В `InMemoryStorage` — HashMap по полям (`className`, `name`).
-В `SQLiteStorage` — SQL-индексы.
+In `InMemoryStorage` — HashMap by fields (`className`, `name`).
+In `SQLiteStorage` — SQL indexes.
 
-### 7.5. [ВЫСОКИЙ] Type-aware completion через TypeSystem
+### 7.5. [HIGH] Type-Aware Completion via TypeSystem
 
-**Проблема:** Completion после `$foo->` не работает для произвольных
-переменных.
+**Problem:** Completion after `$foo->` does not work for arbitrary
+variables.
 
-**Рекомендация:** Интегрировать `TypeResolver` в
+**Recommendation:** Integrate `TypeResolver` into
 `ClassMemberCompletionContributor`:
 
 ```php
-// Если не $this/self/static — резолвить тип через PHPStan
+// If not $this/self/static — resolve type via PHPStan
 $typeResult = $this->typeResolver->resolveAtPosition($editor, $doc, $pos);
 if ($typeResult !== null) {
     $className = $typeResult->type->describe(VerbosityLevel::typeOnly());
 }
 ```
 
-### 7.6. [СРЕДНИЙ] Cancellation support
+### 7.6. [MEDIUM] Cancellation Support
 
-**Рекомендация:**
+**Recommendation:**
 
-1. Реализовать обработчик `$/cancelRequest`.
-2. Передавать `CancellationToken` в контекст.
-3. Contributors проверяют токен в циклах:
+1. Implement a `$/cancelRequest` handler.
+2. Pass a `CancellationToken` into the context.
+3. Contributors check the token in loops:
 
 ```php
 foreach ($entries as $entry) {
     if ($context->isCancelled()) {
         return;
     }
-    // ... обработка
+    // ... processing
 }
 ```
 
-### 7.7. [СРЕДНИЙ] Разделить InMemoryPsiFileManager
+### 7.7. [MEDIUM] Split InMemoryPsiFileManager
 
-**Рекомендация:** Разбить на:
-- `PsiFileCache` — FIFO-кеш AST
-- `PsiFileParser` — парсинг (уже есть `PHPPsiFileParser`)
-- `DiagnosticPublisher` — отправка диагностик клиенту
-- `PsiFileManager` — оркестрация (тонкий фасад)
+**Recommendation:** Break it into:
+- `PsiFileCache` — FIFO AST cache
+- `PsiFileParser` — parsing (already exists as `PHPPsiFileParser`)
+- `DiagnosticPublisher` — sending diagnostics to the client
+- `PsiFileManager` — orchestration (thin facade)
 
-### 7.8. [СРЕДНИЙ] Конфигурация игнорируемых директорий
+### 7.8. [MEDIUM] Configurable Ignored Directories
 
-**Рекомендация:** Вынести в конфигурационный файл `.php-lsp.json`
-или `initializationOptions`:
+**Recommendation:** Extract to a configuration file `.php-lsp.json`
+or `initializationOptions`:
 
 ```json
 {
@@ -639,14 +639,14 @@ foreach ($entries as $entry) {
 }
 ```
 
-### 7.9. [НИЗКИЙ] Унифицировать параллелизм контроллеров
+### 7.9. [LOW] Unify Controller Parallelism
 
-**Рекомендация:** Либо все контроллеры запускают контрибьюторов
-параллельно (через общий trait/base), либо все последовательно.
-Лучше — параллельно:
+**Recommendation:** Either all controllers run contributors in parallel
+(via a shared trait/base), or all run them sequentially. Parallel is
+preferred:
 
 ```php
-// Общий trait для контроллеров
+// Shared trait for controllers
 trait ParallelContributorRunner
 {
     private function runContributors(array $contributors, $context, $consumer): void
@@ -660,65 +660,65 @@ trait ParallelContributorRunner
 }
 ```
 
-### 7.10. [НИЗКИЙ] Удалить закомментированный debug-код
+### 7.10. [LOW] Remove Commented-Out Debug Code
 
-Удалить все `// dump(...)`, `// echo(...)` из production-кода.
-Вместо этого использовать логгер с уровнем `debug`.
+Remove all `// dump(...)`, `// echo(...)` from production code.
+Use the logger with `debug` level instead.
 
 ---
 
-## 8. Приоритеты
+## 8. Priorities
 
-### Фаза 1: Базовая функциональность (быстрые победы)
+### Phase 1: Basic Functionality (Quick Wins)
 
-1. Включить индексацию (убрать `return` в InitializeController)
-2. Удалить debug-код
-3. Вынести список игнорируемых директорий в конфиг
+1. Enable indexing (remove `return` in InitializeController)
+2. Remove debug code
+3. Extract ignored directory list to configuration
 
-### Фаза 2: Производительность и надёжность
+### Phase 2: Performance and Reliability
 
-4. Инкрементальная индексация (по изменению файлов)
-5. Вторичные индексы в Storage (HashMap по className, name)
-6. Выделить PsiFile интерфейсы
+4. Incremental indexing (on file changes)
+5. Secondary indexes in Storage (HashMap by className, name)
+6. Extract PsiFile interfaces
 7. Cancellation support
 
-### Фаза 3: Масштабируемость
+### Phase 3: Scalability
 
-8. Персистентный индекс (SQLite или файловый кеш)
-9. Type-aware completion через TypeSystem
-10. Унифицировать параллелизм контроллеров
+8. Persistent index (SQLite or file cache)
+9. Type-aware completion via TypeSystem
+10. Unify controller parallelism
 
-### Фаза 4: Production-readiness
+### Phase 4: Production-Readiness
 
-11. Background indexing с progress notifications
+11. Background indexing with progress notifications
 12. Workspace change tracking (`didChangeWatchedFiles`)
-13. Integration/E2E тесты
-14. Memory profiling и лимиты
+13. Integration/E2E tests
+14. Memory profiling and limits
 
 ---
 
-## Заключение
+## Conclusion
 
-Архитектура php-lsp/language-server демонстрирует **отличный
-архитектурный фундамент** — contributor pattern обеспечивает
-расширяемость, превосходящую большинство конкурентов (9/10).
+The php-lsp/language-server architecture demonstrates an **excellent
+architectural foundation** — the contributor pattern provides
+extensibility that surpasses most competitors (9/10).
 
-Однако **инфраструктурный слой** (индексация, хранилище, кеширование)
-находится на раннем этапе развития. Ключевой блокер — отключённая
-индексация и отсутствие инкрементальности — делают сервер
-нефункциональным в текущем состоянии.
+However, the **infrastructure layer** (indexing, storage, caching) is
+at an early stage of development. The key blocker — disabled indexing
+and lack of incrementality — renders the server non-functional in its
+current state.
 
-Сильные стороны:
-- Элегантный contributor pattern с авто-обнаружением через атрибуты
-- Чистое разделение на контроллеры, контракты и модули
-- Хорошее тестовое покрытие (121 тестов)
-- Качественная документация
+**Strengths:**
+- Elegant contributor pattern with auto-discovery via attributes
+- Clean separation into controllers, contracts, and modules
+- Good test coverage (121 tests)
+- High-quality documentation
 
-Главные зоны роста:
-- Инкрементальная индексация (как у Phpactor/Intelephense)
-- Персистентный индекс (как у clangd/rust-analyzer)
-- Type-aware intelligence (раскрыть потенциал PHPStan)
-- Cancellation (стандарт для production LSP)
+**Key growth areas:**
+- Incremental indexing (as in Phpactor/Intelephense)
+- Persistent index (as in clangd/rust-analyzer)
+- Type-aware intelligence (unlock PHPStan's potential)
+- Cancellation (standard for production LSP)
 
-При реализации фаз 1-3 сервер может выйти на уровень конкурентоспособности
-с Phpactor (оценка ~6.5) в течение нескольких месяцев разработки.
+By implementing Phases 1-3, the server can reach a competitive level
+with Phpactor (score ~6.5) within several months of development.
