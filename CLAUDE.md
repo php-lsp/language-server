@@ -76,6 +76,7 @@ app/
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
 │   ├── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
+│   ├── Notification/          # ProgressNotifierInterface
 │   └── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
 ├── Module/                    # Feature implementations
 │   ├── CodeAction/            # Code action contributors (2): import symbol, remove unused import
