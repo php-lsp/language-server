@@ -61,13 +61,12 @@ class PHPPsiFile
     private function toColumn(Document $document, int $pos): int
     {
         $text = $document->getContents();
-        $len = strlen($text);
-        if ($pos > $len) {
-            $pos = $len;
+        if ($pos > strlen($text)) {
+            throw new \RuntimeException('Invalid position information');
         }
 
         $needle = "\n";
-        $lineStartPos = strrpos($text, $needle, $pos - $len);
+        $lineStartPos = strrpos($text, $needle, $pos - strlen($text));
         if (false === $lineStartPos) {
             $lineStartPos = -1;
         }
