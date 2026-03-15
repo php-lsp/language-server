@@ -28,6 +28,7 @@
         "phpstan/phpstan": "^2.1",
         "react/async": "^4.3",
         "react/filesystem": "0.2.x-dev",
+        "react/http": "^1.11",
         "react/promise-timer": "^1.11"
     },
     "autoload": {

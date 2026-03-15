@@ -37,7 +37,9 @@ class PropertyAccessUsageIndexer extends AbstractPhpIndexer
                 continue;
             }
 
-            $results[] = [$access->name->toString(), $access->name->getStartFilePos(), null];
+            $propName = $access->name->toString();
+            $pos = $access->name->getStartFilePos();
+            $results["{$propName}@{$pos}"] = [$propName, $pos, null];
         }
 
         $staticAccesses = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\StaticPropertyFetch::class);
@@ -47,7 +49,10 @@ class PropertyAccessUsageIndexer extends AbstractPhpIndexer
             }
 
             $className = $access->class instanceof Node\Name ? $access->class->toString() : null;
-            $results[] = [$access->name->toString(), $access->name->getStartFilePos(), $className];
+            $propName = $access->name->toString();
+            $pos = $access->name->getStartFilePos();
+            $key = $className !== null ? "{$className}::\${$propName}@{$pos}" : "{$propName}@{$pos}";
+            $results[$key] = [$propName, $pos, $className];
         }
 
         return $results;

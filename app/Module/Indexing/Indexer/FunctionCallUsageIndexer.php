@@ -37,7 +37,9 @@ class FunctionCallUsageIndexer extends AbstractPhpIndexer
                 continue;
             }
 
-            $results[] = [$call->name->toString(), $call->getStartFilePos()];
+            $funcName = $call->name->toString();
+            $pos = $call->getStartFilePos();
+            $results["{$funcName}@{$pos}"] = [$funcName, $pos];
         }
 
         return $results;

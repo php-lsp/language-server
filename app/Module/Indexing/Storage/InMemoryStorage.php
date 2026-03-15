@@ -6,7 +6,7 @@ namespace App\Module\Indexing\Storage;
 
 use Override;
 
-class InMemoryStorage implements StorageInterface
+class InMemoryStorage implements DebugStorageInterface
 {
     /**
      * @var Entry[]
@@ -77,6 +77,176 @@ class InMemoryStorage implements StorageInterface
 
             $this->updateSecondaryIndexes($indexKey, $entry);
         }
+    }
+
+    public function getIndexKeys(): array
+    {
+        return \array_keys($this->entries);
+    }
+
+    public function count(string $indexKey): int
+    {
+        return array_key_exists($indexKey, $this->entries)
+            ? \count($this->entries[$indexKey])
+            : 0;
+    }
+
+    /**
+     * @return iterable<Entry>
+     */
+    public function search(string $indexKey, string $keyPattern): iterable
+    {
+        if (!array_key_exists($indexKey, $this->entries)) {
+            return;
+        }
+
+        foreach ($this->entries[$indexKey] as $entry) {
+            if (\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
+                yield $entry;
+            }
+        }
+    }
+
+    public function find(string $indexKey, string $entryKey): ?Entry
+    {
+        if (!array_key_exists($indexKey, $this->entries)) {
+            return null;
+        }
+
+        foreach ($this->entries[$indexKey] as $entry) {
+            if ($entry->key === $entryKey) {
+                return $entry;
+            }
+        }
+
+        return null;
+    }
+
+    public function memoryUsage(string $indexKey): int
+    {
+        if (!array_key_exists($indexKey, $this->entries)) {
+            return 0;
+        }
+
+        $before = memory_get_usage();
+        $serialized = serialize($this->entries[$indexKey]);
+        $after = memory_get_usage();
+
+        // Use the serialized string length as a reasonable estimate
+        return \strlen($serialized);
+    }
+
+    public function stats(): array
+    {
+        $result = [];
+
+        foreach ($this->entries as $indexKey => $entries) {
+            $result[$indexKey] = [
+                'key' => $indexKey,
+                'count' => \count($entries),
+                'memory' => $this->memoryUsage($indexKey),
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return iterable<array{index: string, key: string, value: mixed, uri: string}>
+     */
+    public function searchAll(string $keyPattern, int $limit = 100): iterable
+    {
+        $count = 0;
+
+        foreach ($this->entries as $indexKey => $entries) {
+            foreach ($entries as $entry) {
+                if ($count >= $limit) {
+                    return;
+                }
+
+                if (\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
+                    yield [
+                        'index' => $indexKey,
+                        'key' => $entry->key,
+                        'value' => $entry->value,
+                        'uri' => $entry->uri,
+                    ];
+                    $count++;
+                }
+            }
+        }
+    }
+
+    public function clear(array $indexKeys): void
+    {
+        foreach ($indexKeys as $indexKey) {
+            unset($this->entries[$indexKey]);
+
+            // Clear secondary indexes for this index
+            foreach (array_keys($this->secondaryIndexes) as $compositeKey) {
+                if (str_starts_with($compositeKey, $indexKey . ':')) {
+                    unset($this->secondaryIndexes[$compositeKey]);
+                }
+            }
+        }
+    }
+
+    public function clearByUri(string $uri): void
+    {
+        foreach ($this->entries as $indexKey => &$entries) {
+            $entries = array_values(array_filter(
+                $entries,
+                static fn(Entry $entry): bool => $entry->uri !== $uri,
+            ));
+        }
+        unset($entries);
+
+        // Rebuild all secondary indexes since entries changed
+        $oldKeys = array_keys($this->secondaryIndexes);
+        $this->secondaryIndexes = [];
+
+        foreach ($oldKeys as $compositeKey) {
+            $parts = explode(':', $compositeKey, 2);
+            if (count($parts) === 2) {
+                $this->buildSecondaryIndex($parts[0], $parts[1]);
+            }
+        }
+    }
+
+    public function getUris(): array
+    {
+        $uris = [];
+
+        foreach ($this->entries as $entries) {
+            foreach ($entries as $entry) {
+                $uris[$entry->uri] = true;
+            }
+        }
+
+        $result = array_keys($uris);
+        sort($result);
+
+        return $result;
+    }
+
+    public function findByUri(string $uri): array
+    {
+        $result = [];
+
+        foreach ($this->entries as $indexKey => $entries) {
+            $matching = [];
+            foreach ($entries as $entry) {
+                if ($entry->uri === $uri) {
+                    $matching[] = $entry;
+                }
+            }
+
+            if ($matching !== []) {
+                $result[$indexKey] = $matching;
+            }
+        }
+
+        return $result;
     }
 
     private function updateSecondaryIndexes(string $indexKey, Entry $entry): void

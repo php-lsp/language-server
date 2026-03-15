@@ -29,6 +29,7 @@ final class Indexer
         private LoggerInterface $logger,
         private FilesystemReaderFactoryInterface $filesystemReaderFactory,
         private FileFactoryInterface $files,
+        private readonly IndexingStatus $indexingStatus,
     ) {
         $this->indexers = iterator_to_array($indexers);
     }
@@ -36,6 +37,8 @@ final class Indexer
     public function index(Project $project): void
     {
         $this->logger->info('Indexing project: {uri}', ['uri' => (string) $project->uri]);
+
+        $this->indexingStatus->start();
 
         $fileCount = 0;
         foreach ($project as $file) {
@@ -47,6 +50,8 @@ final class Indexer
         $stubs = $this->files->create($uri->path, $this->filesystemReaderFactory);
 
         $fileCount += $this->walkFilesInternal($stubs);
+
+        $this->indexingStatus->finish();
 
         $this->logger->info('Indexing finished: {count} files indexed', ['count' => $fileCount]);
     }
@@ -102,6 +107,7 @@ final class Indexer
 
         if ($file->count() === 0) {
             $this->runIndexers($file);
+            $this->indexingStatus->fileIndexed();
             $count = 1;
         }
 

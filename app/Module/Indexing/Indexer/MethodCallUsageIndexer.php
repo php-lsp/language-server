@@ -37,7 +37,9 @@ class MethodCallUsageIndexer extends AbstractPhpIndexer
                 continue;
             }
 
-            $results[] = [$call->name->toString(), $call->name->getStartFilePos(), null];
+            $methodName = $call->name->toString();
+            $pos = $call->name->getStartFilePos();
+            $results["{$methodName}@{$pos}"] = [$methodName, $pos, null];
         }
 
         $staticCalls = $finder->findInstanceOf($phpFile->ast->children, Node\Expr\StaticCall::class);
@@ -47,7 +49,10 @@ class MethodCallUsageIndexer extends AbstractPhpIndexer
             }
 
             $className = $call->class instanceof Node\Name ? $call->class->toString() : null;
-            $results[] = [$call->name->toString(), $call->name->getStartFilePos(), $className];
+            $methodName = $call->name->toString();
+            $pos = $call->name->getStartFilePos();
+            $key = $className !== null ? "{$className}::{$methodName}@{$pos}" : "{$methodName}@{$pos}";
+            $results[$key] = [$methodName, $pos, $className];
         }
 
         return $results;

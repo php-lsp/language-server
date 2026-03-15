@@ -15,3 +15,15 @@ services:
 
   App\Module\TypeSystem\TypeResolverInterface:
     alias: App\Module\TypeSystem\TypeResolver
+
+  App\Module\Indexing\Storage\InMemoryStorage:
+    shared: true
+
+  App\Module\Indexing\Storage\StorageInterface:
+    alias: App\Module\Indexing\Storage\InMemoryStorage
+
+  App\Module\Indexing\Storage\DebugStorageInterface:
+    alias: App\Module\Indexing\Storage\InMemoryStorage
+
+  App\Module\Indexing\IndexingStatus:
+    shared: true
