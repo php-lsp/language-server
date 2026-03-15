@@ -1,5 +1,8 @@
 parameters:
-  # Defaults are defined in .env; override via .env.local or shell environment.
+  # Env-var defaults (overridable via .env, .env.local, or shell environment)
+  env(OTEL_EXPORTER_OTLP_ENDPOINT): ''
+  env(OTEL_SERVICE_NAME): 'php-lsp'
+
   app.telemetry.endpoint: '%env(OTEL_EXPORTER_OTLP_ENDPOINT)%'
   app.telemetry.service_name: '%env(OTEL_SERVICE_NAME)%'
 
