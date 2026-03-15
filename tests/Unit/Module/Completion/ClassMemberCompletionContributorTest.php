@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Completion;
 
 use App\Module\Completion\ClassMemberCompletionContributor;
-use App\Module\Indexing\Storage\IndexData\MethodData;
-use App\Module\Indexing\Storage\IndexData\PropertyData;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Data\PropertyData;
+use App\Module\Indexing\Data\Visibility;
 use App\Module\TypeSystem\TypeResolverInterface;
 use App\Tests\Support\CompletionTestHelper;
 use App\Tests\Support\IndexTestHelper;
@@ -26,10 +27,10 @@ final class ClassMemberCompletionContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///test.php' => ['Foo::bar' => new MethodData('bar', 'Foo', 0, 10, 'public', false, false, [], 'void')],
+                'file:///test.php' => ['Foo::bar' => new MethodData('bar', 'Foo', 0, 10, Visibility::Public, false, false, 'void', [])],
             ],
             'php.properties.fqn' => [
-                'file:///test.php' => ['Foo::$baz' => new PropertyData('baz', 'Foo', 0, 10, 'public', 'string', false, false)],
+                'file:///test.php' => ['Foo::$baz' => new PropertyData('baz', 'Foo', 0, 10, Visibility::Public, 'string', false, false, false)],
             ],
         ]);
         $typeResolver = MockHelper::mock(TypeResolverInterface::class);
@@ -52,10 +53,10 @@ final class ClassMemberCompletionContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///test.php' => ['Foo::bar' => new MethodData('bar', 'Foo', 0, 10, 'public', false, false, [], 'void')],
+                'file:///test.php' => ['Foo::bar' => new MethodData('bar', 'Foo', 0, 10, Visibility::Public, false, false, 'void', [])],
             ],
             'php.properties.fqn' => [
-                'file:///test.php' => ['Foo::$baz' => new PropertyData('baz', 'Foo', 0, 10, 'public', 'string', false, false)],
+                'file:///test.php' => ['Foo::$baz' => new PropertyData('baz', 'Foo', 0, 10, Visibility::Public, 'string', false, false, false)],
             ],
         ]);
         $typeResolver = MockHelper::mock(TypeResolverInterface::class);

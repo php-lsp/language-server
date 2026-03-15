@@ -7,8 +7,9 @@ namespace App\Tests\Unit\Module\Documentation;
 use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Module\Documentation\MethodDocumentationContributor;
-use App\Module\Indexing\Storage\IndexData\MethodData;
-use App\Module\Indexing\Storage\IndexData\ParameterData;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Data\ParameterData;
+use App\Module\Indexing\Data\Visibility;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -57,9 +58,10 @@ final class MethodDocumentationContributorTest extends TestCase
             className: 'Foo',
             startPosition: 0,
             endPosition: 100,
-            visibility: 'public',
+            visibility: Visibility::Public,
             isStatic: true,
             isAbstract: false,
+            returnType: 'void',
             parameters: [
                 new ParameterData(
                     name: 'value',
@@ -67,13 +69,13 @@ final class MethodDocumentationContributorTest extends TestCase
                     hasDefault: false,
                     isVariadic: false,
                     isPromoted: false,
+                    isNullable: false,
                 ),
             ],
-            returnType: 'void',
         );
 
         $indexLookup = IndexTestHelper::createLookup([
-            'php.classMethods.fqn' => ['file:///test.php' => [$methodData]],
+            'php.classMethods.fqn' => ['file:///test.php' => ['Foo::bar' => $methodData]],
         ]);
 
         $context = new DocumentationContext(

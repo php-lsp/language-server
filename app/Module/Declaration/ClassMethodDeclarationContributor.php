@@ -8,7 +8,6 @@ use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
-use App\Module\Indexing\Data\MethodData;
 use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
@@ -52,24 +51,17 @@ final class ClassMethodDeclarationContributor implements DeclarationContributor
         $zeroPosition = new Position(0, 0);
         $startRange = new Range($zeroPosition, $zeroPosition);
 
-        foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $value) {
-            if ($value->key !== $className) {
+        $lookupKey = $className . '::' . $methodName;
+
+        foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
+            if ($entry->key !== $lookupKey) {
                 continue;
             }
 
-            /** @var list<MethodData> $methods */
-            $methods = $value->value;
-
-            foreach ($methods as $method) {
-                if ($method->name !== $methodName) {
-                    continue;
-                }
-
-                $consumer(new Location(
-                    uri: $value->uri,
-                    range: $startRange,
-                ));
-            }
+            $consumer(new Location(
+                uri: $entry->uri,
+                range: $startRange,
+            ));
         }
     }
 }

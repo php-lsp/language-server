@@ -78,7 +78,7 @@ final class MethodDocumentationContributor implements DocumentationContributor
                 $params[] = $paramStr;
             }
 
-            $visibility = $entry->value->visibility;
+            $visibility = $entry->value->visibility->value;
             $static = $entry->value->isStatic ? 'static ' : '';
             $signature =
                 $visibility . ' ' . $static . 'function ' . $entry->value->name . '(' . implode(', ', $params) . ')';

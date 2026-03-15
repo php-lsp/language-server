@@ -69,10 +69,10 @@ final class ClassMethodDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode('<?php \Foo::bar();');
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///def.php' => ['Foo' => [
-                    new MethodData('bar', 'Foo', 0, 30, Visibility::Public, true, false, null, []),
-                    new MethodData('baz', 'Foo', 31, 60, Visibility::Public, true, false, null, []),
-                ]],
+                'file:///def.php' => [
+                    'Foo::bar' => new MethodData('bar', 'Foo', 0, 30, Visibility::Public, true, false, null, []),
+                    'Foo::baz' => new MethodData('baz', 'Foo', 31, 60, Visibility::Public, true, false, null, []),
+                ],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);

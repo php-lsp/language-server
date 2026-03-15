@@ -17,7 +17,7 @@ use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Trait_;
 
 /**
- * @extends AbstractPhpIndexer<list<ConstantData>>
+ * @extends AbstractPhpIndexer<ConstantData>
  */
 #[AsIndexer]
 class ClassConstantIndexer extends AbstractPhpIndexer
@@ -46,10 +46,8 @@ class ClassConstantIndexer extends AbstractPhpIndexer
             }
 
             $className = $classLike->namespacedName?->toString() ?? $classLike->name->toString();
-            $constants = $this->extractConstants($classLike, $className);
-
-            if ($constants !== []) {
-                $results[$className] = $constants;
+            foreach ($this->extractConstants($classLike, $className) as $constant) {
+                $results[$className . '::' . $constant->name] = $constant;
             }
         }
 

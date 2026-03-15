@@ -8,7 +8,7 @@ use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\GlobalConstantDeclarationContributor;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
-use App\Module\Indexing\Storage\IndexData\ConstantData;
+use App\Module\Indexing\Data\ConstantData;
 use App\Module\PsiFile\PositionResolver;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;

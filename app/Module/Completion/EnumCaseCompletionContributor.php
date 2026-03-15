@@ -53,7 +53,7 @@ final class EnumCaseCompletionContributor implements CompletionContributor
         }
 
         foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-            if ($entry->value->ownerFqn !== $enumName) {
+            if ($entry->value->className !== $enumName) {
                 continue;
             }
 

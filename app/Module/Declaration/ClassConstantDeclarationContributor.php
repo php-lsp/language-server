@@ -56,7 +56,7 @@ final class ClassConstantDeclarationContributor implements DeclarationContributo
         }
 
         foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-            if ($entry->value->ownerFqn !== $className || $entry->value->name !== $constantName) {
+            if ($entry->value->className !== $className || $entry->value->name !== $constantName) {
                 continue;
             }
 

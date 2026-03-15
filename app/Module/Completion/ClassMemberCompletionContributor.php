@@ -110,7 +110,7 @@ final class ClassMemberCompletionContributor implements CompletionContributor
                 $params[] = $paramStr;
             }
 
-            $detail = $entry->value->visibility . ' function(' . implode(', ', $params) . ')';
+            $detail = $entry->value->visibility->value . ' function(' . implode(', ', $params) . ')';
             if ($entry->value->returnType !== null) {
                 $detail .= ': ' . $entry->value->returnType;
             }
@@ -128,7 +128,7 @@ final class ClassMemberCompletionContributor implements CompletionContributor
                 continue;
             }
 
-            $detail = $entry->value->visibility;
+            $detail = $entry->value->visibility->value;
             if ($entry->value->type !== null) {
                 $detail .= ' ' . $entry->value->type;
             }

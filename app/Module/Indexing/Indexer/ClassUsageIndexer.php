@@ -39,7 +39,16 @@ class ClassUsageIndexer extends AbstractPhpIndexer
                 continue;
             }
 
+            if ($parent instanceof Node\Expr\ConstFetch) {
+                continue;
+            }
+
             $className = $name->toString();
+
+            if (in_array(strtolower($className), ['true', 'false', 'null'], true)) {
+                continue;
+            }
+
             $pos = $name->getStartFilePos();
             $results["{$className}@{$pos}"] = [$className, $pos];
         }

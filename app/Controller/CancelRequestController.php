@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Core\Cancellation\CancellationTokenRegistry;
 use Lsp\Kernel\Attribute\AsController;
+use Lsp\Protocol\Type\CancelParams;
 use Lsp\Router\Attribute\Route;
 
 #[AsController, Route('$/cancelRequest')]
@@ -15,11 +16,8 @@ final class CancelRequestController
         private readonly CancellationTokenRegistry $registry,
     ) {}
 
-    public function __invoke(object $params): void
+    public function __invoke(CancelParams $params): void
     {
-        $id = $params->id ?? null;
-        if ($id !== null) {
-            $this->registry->cancel($id);
-        }
+        $this->registry->cancel($params->id);
     }
 }

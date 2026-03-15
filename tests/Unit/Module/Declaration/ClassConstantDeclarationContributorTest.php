@@ -8,7 +8,7 @@ use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\ClassConstantDeclarationContributor;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
-use App\Module\Indexing\Storage\IndexData\ConstantData;
+use App\Module\Indexing\Data\ConstantData;
 use App\Module\PsiFile\PositionResolver;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -51,7 +51,7 @@ final class ClassConstantDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode($code);
         $lookup = IndexTestHelper::createLookup([
             'php.classConstants.fqn' => [
-                'file:///def.php' => ['BAR' => new ConstantData('BAR', 'Foo', 0, 10, null, null)],
+                'file:///def.php' => ['Foo::BAR' => new ConstantData('BAR', 'Foo', 0, 10, null, null)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);

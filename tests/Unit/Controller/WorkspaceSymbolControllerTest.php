@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller;
 
 use App\Controller\WorkspaceSymbolController;
-use App\Module\Indexing\Storage\IndexData\ClassData;
-use App\Module\Indexing\Storage\IndexData\ConstantData;
-use App\Module\Indexing\Storage\IndexData\EnumData;
-use App\Module\Indexing\Storage\IndexData\FunctionData;
-use App\Module\Indexing\Storage\IndexData\InterfaceData;
-use App\Module\Indexing\Storage\IndexData\MethodData;
-use App\Module\Indexing\Storage\IndexData\PropertyData;
-use App\Module\Indexing\Storage\IndexData\TraitData;
+use App\Module\Indexing\Data\ClassData;
+use App\Module\Indexing\Data\ConstantData;
+use App\Module\Indexing\Data\EnumData;
+use App\Module\Indexing\Data\FunctionData;
+use App\Module\Indexing\Data\InterfaceData;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Data\PropertyData;
+use App\Module\Indexing\Data\TraitData;
+use App\Module\Indexing\Data\Visibility;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\TestCase;
 use Lsp\Protocol\Type\SymbolKind;
@@ -39,7 +40,7 @@ final class WorkspaceSymbolControllerTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///test.php' => ['App\\Foo' => new ClassData('App\\Foo', 0, 10, null, [], false, false)],
+                'file:///test.php' => ['App\\Foo' => new ClassData('App\\Foo', 0, 10, false, false, false, null, [])],
             ],
         ]);
         $controller = new WorkspaceSymbolController($lookup);
@@ -72,7 +73,7 @@ final class WorkspaceSymbolControllerTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.functions.fqn' => [
-                'file:///test.php' => ['myFunc' => new FunctionData('myFunc', 0, 20, [], null)],
+                'file:///test.php' => ['myFunc' => new FunctionData('myFunc', 0, 20, null, [])],
             ],
         ]);
         $controller = new WorkspaceSymbolController($lookup);
@@ -88,7 +89,7 @@ final class WorkspaceSymbolControllerTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.classMethods.fqn' => [
-                'file:///test.php' => ['Foo::bar' => new MethodData('bar', 'Foo', 0, 10, 'public', false, false, [], null)],
+                'file:///test.php' => ['Foo::bar' => new MethodData('bar', 'Foo', 0, 10, Visibility::Public, false, false, null, [])],
             ],
         ]);
         $controller = new WorkspaceSymbolController($lookup);
@@ -105,7 +106,7 @@ final class WorkspaceSymbolControllerTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.properties.fqn' => [
-                'file:///test.php' => ['Foo::$name' => new PropertyData('name', 'Foo', 0, 10, 'public', 'string', false, false)],
+                'file:///test.php' => ['Foo::$name' => new PropertyData('name', 'Foo', 0, 10, Visibility::Public, 'string', false, false, false)],
             ],
         ]);
         $controller = new WorkspaceSymbolController($lookup);
@@ -154,7 +155,7 @@ final class WorkspaceSymbolControllerTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.constants.fqn' => [
-                'file:///test.php' => ['MY_CONST' => new ConstantData('MY_CONST', null, 0, 10, null, '42')],
+                'file:///test.php' => ['MY_CONST' => new ConstantData('MY_CONST', null, 0, 10, null, null)],
             ],
         ]);
         $controller = new WorkspaceSymbolController($lookup);
@@ -170,10 +171,10 @@ final class WorkspaceSymbolControllerTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
-                'file:///test.php' => ['Foo' => new ClassData('Foo', 0, 10, null, [], false, false)],
+                'file:///test.php' => ['Foo' => new ClassData('Foo', 0, 10, false, false, false, null, [])],
             ],
             'php.functions.fqn' => [
-                'file:///test.php' => ['bar' => new FunctionData('bar', 0, 20, [], null)],
+                'file:///test.php' => ['bar' => new FunctionData('bar', 0, 20, null, [])],
             ],
         ]);
         $controller = new WorkspaceSymbolController($lookup);
@@ -189,8 +190,8 @@ final class WorkspaceSymbolControllerTest extends TestCase
         $lookup = IndexTestHelper::createLookup([
             'php.classes.fqn' => [
                 'file:///test.php' => [
-                    'Foo' => new ClassData('Foo', 0, 10, null, [], false, false),
-                    'Bar' => new ClassData('Bar', 11, 20, null, [], false, false),
+                    'Foo' => new ClassData('Foo', 0, 10, false, false, false, null, []),
+                    'Bar' => new ClassData('Bar', 11, 20, false, false, false, null, []),
                 ],
             ],
         ]);

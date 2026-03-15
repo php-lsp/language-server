@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Completion;
 
 use App\Module\Completion\InterfaceCompletionContributor;
-use App\Module\Indexing\Storage\IndexData\InterfaceData;
+use App\Module\Indexing\Data\InterfaceData;
 use App\Tests\Support\CompletionTestHelper;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\PsiFileFactory;

@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Module\Documentation;
 use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Module\Documentation\ConstantDocumentationContributor;
-use App\Module\Indexing\Storage\IndexData\ConstantData;
+use App\Module\Indexing\Data\ConstantData;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -53,15 +53,15 @@ final class ConstantDocumentationContributorTest extends TestCase
 
         $constantData = new ConstantData(
             name: 'BAR',
-            ownerFqn: 'Foo',
+            className: 'Foo',
             startPosition: 0,
             endPosition: 100,
             type: 'string',
-            value: "'baz'",
+            visibility: null,
         );
 
         $indexLookup = IndexTestHelper::createLookup([
-            'php.classConstants.fqn' => ['file:///test.php' => [$constantData]],
+            'php.classConstants.fqn' => ['file:///test.php' => ['Foo::BAR' => $constantData]],
         ]);
 
         $context = new DocumentationContext(
@@ -77,7 +77,6 @@ final class ConstantDocumentationContributorTest extends TestCase
         $this->assertNotEmpty($consumer->results);
         $this->assertStringContainsString('const Foo::BAR', $consumer->results[0]);
         $this->assertStringContainsString(': string', $consumer->results[0]);
-        $this->assertStringContainsString("= 'baz'", $consumer->results[0]);
         $this->assertStringContainsString('```php', $consumer->results[0]);
     }
 
@@ -92,11 +91,11 @@ final class ConstantDocumentationContributorTest extends TestCase
 
         $constantData = new ConstantData(
             name: 'MY_CONST',
-            ownerFqn: null,
+            className: null,
             startPosition: 0,
             endPosition: 100,
             type: null,
-            value: '42',
+            visibility: null,
         );
 
         $indexLookup = IndexTestHelper::createLookup([
@@ -115,7 +114,6 @@ final class ConstantDocumentationContributorTest extends TestCase
 
         $this->assertNotEmpty($consumer->results);
         $this->assertStringContainsString('const MY_CONST', $consumer->results[0]);
-        $this->assertStringContainsString('= 42', $consumer->results[0]);
         $this->assertStringContainsString('```php', $consumer->results[0]);
     }
 }

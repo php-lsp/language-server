@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Module\Documentation;
 use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Module\Documentation\ClassDocumentationContributor;
-use App\Module\Indexing\Storage\IndexData\ClassData;
+use App\Module\Indexing\Data\ClassData;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -55,10 +55,11 @@ final class ClassDocumentationContributorTest extends TestCase
             fqn: 'App\MyClass',
             startPosition: 0,
             endPosition: 100,
-            extends: 'App\BaseClass',
-            implements: ['App\FooInterface'],
             isAbstract: false,
             isFinal: true,
+            isReadonly: false,
+            extends: 'App\BaseClass',
+            implements: ['App\FooInterface'],
         );
 
         $indexLookup = IndexTestHelper::createLookup([

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Completion;
 
 use App\Module\Completion\ConstantCompletionContributor;
-use App\Module\Indexing\Storage\IndexData\ConstantData;
+use App\Module\Indexing\Data\ConstantData;
 use App\Tests\Support\CompletionTestHelper;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\PsiFileFactory;
@@ -23,7 +23,7 @@ final class ConstantCompletionContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.constants.fqn' => [
-                'file:///test.php' => ['MY_CONST' => new ConstantData('MY_CONST', null, 0, 10, null, '42')],
+                'file:///test.php' => ['MY_CONST' => new ConstantData('MY_CONST', null, 0, 10, null, null)],
             ],
         ]);
         $contributor = new ConstantCompletionContributor($lookup);
@@ -44,7 +44,7 @@ final class ConstantCompletionContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup([
             'php.constants.fqn' => [
-                'file:///test.php' => ['MY_CONST' => new ConstantData('MY_CONST', null, 0, 10, null, '42')],
+                'file:///test.php' => ['MY_CONST' => new ConstantData('MY_CONST', null, 0, 10, null, null)],
             ],
         ]);
         $contributor = new ConstantCompletionContributor($lookup);

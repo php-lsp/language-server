@@ -1,18 +1,6 @@
 variant = "loose"
 
 [[issues]]
-file = "app/Controller/CancelRequestController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `App\Core\Cancellation\CancellationTokenRegistry::cancel`: expected `int|string`, but found `nonnull`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/CancelRequestController.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
 file = "app/Controller/Debug/IndexKeysController.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `fnmatch`: expected `string`, but found `nonnull`."
@@ -646,13 +634,13 @@ count = 2
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
 code = "invalid-operand"
 message = "Invalid type `never` for right operand in string concatenation."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 4
+count = 3
 
 [[issues]]
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
@@ -724,6 +712,12 @@ count = 1
 file = "app/Module/Completion/ClassMemberCompletionContributor.php"
 code = "null-operand"
 message = "Implicit conversion of `null` to empty string for left operand in string concatenation."
+count = 2
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "null-property-access"
+message = "Attempting to access a property on an expression that is always `null`."
 count = 2
 
 [[issues]]
@@ -1142,6 +1136,18 @@ count = 2
 
 [[issues]]
 file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
 code = "non-existent-method"
 message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
 count = 2
@@ -1346,6 +1352,18 @@ count = 2
 
 [[issues]]
 file = "app/Module/Definition/MethodDefinitionContributor.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/MethodDefinitionContributor.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/MethodDefinitionContributor.php"
 code = "non-existent-method"
 message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
 count = 2
@@ -1444,13 +1462,13 @@ count = 11
 file = "app/Module/Documentation/ConstantDocumentationContributor.php"
 code = "invalid-operand"
 message = "Invalid type `never` for right operand in string concatenation."
-count = 3
+count = 1
 
 [[issues]]
 file = "app/Module/Documentation/ConstantDocumentationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 6
+count = 4
 
 [[issues]]
 file = "app/Module/Documentation/FunctionDocumentationContributor.php"
@@ -1537,6 +1555,12 @@ message = "Implicit conversion of `null` to empty string for left operand in str
 count = 1
 
 [[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "null-property-access"
+message = "Attempting to access a property on an expression that is always `null`."
+count = 1
+
+[[issues]]
 file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
 code = "missing-return-type"
 message = "Function `arrow function` is missing a return type hint."
@@ -1553,6 +1577,12 @@ file = "app/Module/Documentation/PropertyDocumentationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 6
+
+[[issues]]
+file = "app/Module/Documentation/PropertyDocumentationContributor.php"
+code = "null-property-access"
+message = "Attempting to access a property on an expression that is always `null`."
+count = 1
 
 [[issues]]
 file = "app/Module/Highlight/NameHighlightContributor.php"
@@ -1600,7 +1630,7 @@ count = 1
 file = "app/Module/Indexing/IndexLookup.php"
 code = "possibly-static-access-on-interface"
 message = 'Potential static method call on interface `App\Core\Contracts\Indexing\IndexerInterface` via `class-string`.'
-count = 1
+count = 3
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
@@ -1664,12 +1694,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
-code = "mixed-array-index"
-message = 'Invalid index type `mixed` used for array access on `array<array-key, non-empty-list<App\Module\Indexing\Data\ConstantData>>`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1678,6 +1702,12 @@ count = 1
 file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
 count = 1
 
 [[issues]]
@@ -1736,12 +1766,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
-code = "mixed-array-index"
-message = 'Invalid index type `mixed` used for array access on `array<array-key, array{}|non-empty-list<App\Module\Indexing\Data\MethodData>>`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1750,6 +1774,12 @@ count = 1
 file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
 count = 1
 
 [[issues]]
@@ -1928,12 +1958,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
-code = "mixed-array-index"
-message = 'Invalid index type `mixed` used for array access on `array<array-key, non-empty-list<App\Module\Indexing\Data\PropertyData>>`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1942,6 +1966,12 @@ count = 1
 file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
 count = 1
 
 [[issues]]
@@ -1978,6 +2008,12 @@ count = 1
 file = "app/Module/Indexing/IndexerFileCollector.php"
 code = "invalid-property-assignment-value"
 message = "Invalid type for property `$ignoredDirs`: expected `list<string>`, but got `non-empty-array<non-negative-int, string>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/DebugStorageInterface.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\DebugStorageInterface::find`.'
 count = 1
 
 [[issues]]

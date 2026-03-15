@@ -8,7 +8,8 @@ use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\PropertyDeclarationContributor;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
-use App\Module\Indexing\Storage\IndexData\PropertyData;
+use App\Module\Indexing\Data\PropertyData;
+use App\Module\Indexing\Data\Visibility;
 use App\Module\PsiFile\PositionResolver;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -51,7 +52,7 @@ final class PropertyDeclarationContributorTest extends TestCase
         $psiFile = PsiFileFactory::fromCode($code);
         $lookup = IndexTestHelper::createLookup([
             'php.properties.fqn' => [
-                'file:///def.php' => ['name' => new PropertyData('name', 'Foo', 0, 10, 'public', 'string', false, false)],
+                'file:///def.php' => ['Foo::$name' => new PropertyData('name', 'Foo', 0, 10, Visibility::Public, 'string', false, false, false)],
             ],
         ]);
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);

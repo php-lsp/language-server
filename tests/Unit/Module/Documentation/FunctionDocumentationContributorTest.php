@@ -7,8 +7,8 @@ namespace App\Tests\Unit\Module\Documentation;
 use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Module\Documentation\FunctionDocumentationContributor;
-use App\Module\Indexing\Storage\IndexData\FunctionData;
-use App\Module\Indexing\Storage\IndexData\ParameterData;
+use App\Module\Indexing\Data\FunctionData;
+use App\Module\Indexing\Data\ParameterData;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -56,6 +56,7 @@ final class FunctionDocumentationContributorTest extends TestCase
             fqn: 'array_map',
             startPosition: 0,
             endPosition: 100,
+            returnType: 'array',
             parameters: [
                 new ParameterData(
                     name: 'callback',
@@ -63,6 +64,7 @@ final class FunctionDocumentationContributorTest extends TestCase
                     hasDefault: false,
                     isVariadic: false,
                     isPromoted: false,
+                    isNullable: false,
                 ),
                 new ParameterData(
                     name: 'array',
@@ -70,9 +72,9 @@ final class FunctionDocumentationContributorTest extends TestCase
                     hasDefault: false,
                     isVariadic: true,
                     isPromoted: false,
+                    isNullable: false,
                 ),
             ],
-            returnType: 'array',
         );
 
         $indexLookup = IndexTestHelper::createLookup([

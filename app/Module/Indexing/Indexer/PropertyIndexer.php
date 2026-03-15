@@ -18,7 +18,7 @@ use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\Trait_;
 
 /**
- * @extends AbstractPhpIndexer<list<PropertyData>>
+ * @extends AbstractPhpIndexer<PropertyData>
  */
 #[AsIndexer]
 class PropertyIndexer extends AbstractPhpIndexer
@@ -41,10 +41,8 @@ class PropertyIndexer extends AbstractPhpIndexer
             }
 
             $className = $classLike->namespacedName?->toString() ?? $classLike->name->toString();
-            $properties = $this->extractProperties($classLike, $className);
-
-            if ($properties !== []) {
-                $results[$className] = $properties;
+            foreach ($this->extractProperties($classLike, $className) as $property) {
+                $results[$className . '::$' . $property->name] = $property;
             }
         }
 

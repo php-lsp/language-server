@@ -7,7 +7,8 @@ namespace App\Tests\Unit\Module\Documentation;
 use App\Core\Contracts\Documentation\DocumentationConsumer;
 use App\Core\Contracts\Documentation\DocumentationContext;
 use App\Module\Documentation\PropertyDocumentationContributor;
-use App\Module\Indexing\Storage\IndexData\PropertyData;
+use App\Module\Indexing\Data\PropertyData;
+use App\Module\Indexing\Data\Visibility;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
@@ -56,14 +57,15 @@ final class PropertyDocumentationContributorTest extends TestCase
             className: 'App\MyClass',
             startPosition: 0,
             endPosition: 100,
-            visibility: 'public',
+            visibility: Visibility::Public,
             type: 'string',
             isStatic: false,
             isReadonly: true,
+            isPromoted: false,
         );
 
         $indexLookup = IndexTestHelper::createLookup([
-            'php.properties.fqn' => ['file:///test.php' => [$propertyData]],
+            'php.properties.fqn' => ['file:///test.php' => ['App\\MyClass::$name' => $propertyData]],
         ]);
 
         $context = new DocumentationContext(
