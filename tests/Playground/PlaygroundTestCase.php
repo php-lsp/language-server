@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Playground;
 
+use App\Core\UriHelper;
 use App\Tests\Playground\Support\LspClient;
 use App\Tests\Playground\Support\ServerProcess;
 use PHPUnit\Framework\TestCase;
@@ -85,7 +86,7 @@ abstract class PlaygroundTestCase extends TestCase
 
         // Perform LSP initialize handshake
         $playgroundPath = $projectRoot . '/playground';
-        $rootUri = 'file://' . $playgroundPath;
+        $rootUri = UriHelper::toFileUri($playgroundPath);
 
         self::$initializeResult = self::$client->initialize($rootUri, [
             'textDocument' => [
@@ -159,7 +160,7 @@ abstract class PlaygroundTestCase extends TestCase
      */
     protected static function playgroundFileUri(string $relativePath): string
     {
-        return 'file://' . self::getProjectRoot() . '/playground/' . $relativePath;
+        return UriHelper::toFileUri(self::getProjectRoot() . '/playground/' . $relativePath);
     }
 
     /**
