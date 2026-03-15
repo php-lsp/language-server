@@ -32,9 +32,11 @@ final class SetTraceController
         if ($this->logger instanceof Logger) {
             /** @var HandlerInterface $handler */
             foreach ($this->logger->getHandlers() as $handler) {
-                if (\method_exists($handler, 'setLevel')) {
-                    $handler->setLevel($level);
+                if (!\method_exists($handler, 'setLevel')) {
+                    continue;
                 }
+
+                $handler->setLevel($level);
             }
         }
 
