@@ -34,6 +34,44 @@ final class Indexer
         $this->indexers = iterator_to_array($indexers);
     }
 
+    /**
+     * @return list<string>
+     */
+    public function getIndexerKeys(): array
+    {
+        return array_map(
+            static fn(IndexerInterface $indexer): string => $indexer::getKey(),
+            $this->indexers,
+        );
+    }
+
+    public function indexByKey(Project $project, string $indexerKey): void
+    {
+        $filesToIndex = $this->fileCollector->collect($project);
+
+        foreach ($this->indexers as $indexer) {
+            if ($indexer::getKey() !== $indexerKey) {
+                continue;
+            }
+
+            $this->storage->clear([$indexerKey]);
+
+            foreach ($filesToIndex as $file) {
+                if (!$indexer->supports($file)) {
+                    continue;
+                }
+
+                await(
+                    async(function () use ($file, $indexer, $indexerKey) {
+                        $this->storage->write($indexerKey, $indexer->index($file), (string) $file->uri);
+                    })(),
+                );
+            }
+
+            return;
+        }
+    }
+
     public function index(Project $project): void
     {
         $this->logger->info('Indexing project: {uri}', ['uri' => (string) $project->uri]);

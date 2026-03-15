@@ -177,7 +177,7 @@ count = 1
 [[issues]]
 file = "app/Module/Debug/DebugHttpServer.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (5.380000000000001)."
+message = "Class has a high kan defect score (5.59)."
 count = 1
 
 [[issues]]
@@ -196,7 +196,7 @@ count = 2
 file = "app/Module/Debug/DebugHttpServer.php"
 code = "literal-named-argument"
 message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 3
+count = 5
 
 [[issues]]
 file = "app/Module/Debug/DebugHttpServer.php"

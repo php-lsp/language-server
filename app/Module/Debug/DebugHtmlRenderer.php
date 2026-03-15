@@ -26,6 +26,7 @@ final class DebugHtmlRenderer
             <script src="https://unpkg.com/htmx.org@2.0.4"></script>
             <style>
               * { margin: 0; padding: 0; box-sizing: border-box; }
+              ::selection { background: #264f78; color: #fff; }
               body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; background: #0d1117; color: #c9d1d9; }
               a { color: #58a6ff; text-decoration: none; }
               a:hover { text-decoration: underline; }
@@ -111,6 +112,13 @@ final class DebugHtmlRenderer
 
               .file-indexes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
               .file-indexes .index-tag { cursor: pointer; }
+
+              .reindex-toolbar { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+              .reindex-toolbar select { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 8px 12px; color: #c9d1d9; font-size: 13px; font-family: monospace; }
+              .reindex-toolbar select:focus { outline: none; border-color: #58a6ff; }
+              .reindex-toolbar .btn-reindex { background: #238636; border: 1px solid #2ea043; border-radius: 6px; padding: 8px 16px; color: #fff; cursor: pointer; font-size: 13px; font-weight: 500; }
+              .reindex-toolbar .btn-reindex:hover { background: #2ea043; }
+              .reindex-toolbar .btn-reindex:disabled { opacity: 0.5; cursor: not-allowed; }
 
               .accordion { border: 1px solid #30363d; border-radius: 6px; margin-bottom: 8px; overflow: hidden; }
               .accordion-header { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #21262d; cursor: pointer; user-select: none; }
@@ -264,8 +272,54 @@ final class DebugHtmlRenderer
             <div class="hint">Wildcards are added automatically. Type any part of a key to search.</div>
             HTML;
 
+        $reindexToolbar = <<<'HTML'
+            <div class="reindex-toolbar">
+              <select id="reindex-select"><option value="">All indexers</option></select>
+              <button class="btn-reindex" id="reindex-btn" onclick="triggerReindex()">Reindex</button>
+            </div>
+            <script>
+            (function() {
+              fetch('/api/indexers').then(r => r.json()).then(keys => {
+                var sel = document.getElementById('reindex-select');
+                keys.forEach(function(k) {
+                  var opt = document.createElement('option');
+                  opt.value = k; opt.textContent = k;
+                  sel.appendChild(opt);
+                });
+              }).catch(function() {});
+            })();
+            function triggerReindex() {
+              var sel = document.getElementById('reindex-select');
+              var btn = document.getElementById('reindex-btn');
+              btn.disabled = true; btn.textContent = 'Indexing...';
+              var body = {};
+              if (sel.value) body.indexer = sel.value;
+              fetch('/api/reindex', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+              }).then(r => r.json()).then(data => {
+                if (data.status === 'ok') {
+                  showToast('Reindexed: ' + (data.indexer || 'all'));
+                  htmx.ajax('GET', '/views/indexes', {target: '#content'});
+                  refreshStatus();
+                } else {
+                  showToast(data.error || 'Reindex failed', 'error');
+                }
+              }).catch(function() { showToast('Request failed', 'error'); })
+              .finally(function() { btn.disabled = false; btn.textContent = 'Reindex'; });
+            }
+            </script>
+            HTML;
+
         if ($stats === []) {
-            return $tabs . $breadcrumb . $searchForm . '<div class="empty">No indexes registered yet.</div>';
+            return (
+                $tabs
+                . $breadcrumb
+                . $reindexToolbar
+                . $searchForm
+                . '<div class="empty">No indexes registered yet.</div>'
+            );
         }
 
         $rows = '';
@@ -357,6 +411,7 @@ final class DebugHtmlRenderer
         return <<<HTML
             {$tabs}
             {$breadcrumb}
+            {$reindexToolbar}
             {$searchForm}
             <form id="index-batch-form">
             <table id="index-table">

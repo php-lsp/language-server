@@ -71,6 +71,8 @@ class DebugHttpServer
             $path === '/api/autocomplete/keys' => $this->jsonResponse($this->apiAutocompleteKeys($query)),
             $path === '/api/autocomplete/uris' => $this->jsonResponse($this->apiAutocompleteUris($query)),
             $path === '/api/batch' && $method === 'POST' => $this->handleBatch($request),
+            $path === '/api/reindex' && $method === 'POST' => $this->handleReindex($request),
+            $path === '/api/indexers' => $this->jsonResponse($this->apiIndexers()),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
             // Full page — always return layout (hash routing handles the rest)
             default => $this->htmlResponse($this->renderer->layout()),
@@ -107,6 +109,45 @@ class DebugHttpServer
             'entries' => $this->htmlResponse($this->renderer->entryDetail($indexName, $actionParam ?? '')),
             default => $this->htmlResponse('<div class="empty">Unknown action.</div>', 404),
         };
+    }
+
+    // --- Reindex ---
+
+    private function handleReindex(ServerRequestInterface $request): Response
+    {
+        if ($this->indexer === null || $this->projectManager === null) {
+            return $this->jsonResponse(['error' => 'Indexer is not available'], 503);
+        }
+
+        $body = json_decode((string) $request->getBody(), true);
+        $indexerKey = is_array($body) ? $body['indexer'] ?? null : null;
+
+        $project = $this->projectManager->getProject();
+
+        if ($indexerKey !== null && $indexerKey !== '') {
+            $available = $this->indexer->getIndexerKeys();
+            if (!in_array($indexerKey, $available, true)) {
+                return $this->jsonResponse([
+                    'error' => "Unknown indexer: {$indexerKey}",
+                    'available' => $available,
+                ], 404);
+            }
+            $this->indexer->indexByKey($project, $indexerKey);
+
+            return $this->jsonResponse(['status' => 'ok', 'indexer' => $indexerKey]);
+        }
+
+        $this->indexer->index($project);
+
+        return $this->jsonResponse(['status' => 'ok', 'indexer' => 'all']);
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function apiIndexers(): array
+    {
+        return $this->indexer?->getIndexerKeys() ?? [];
     }
 
     // --- Batch actions ---
