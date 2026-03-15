@@ -2,53 +2,59 @@
 
 ## Current State Analysis
 
-### Existing Indexers (10)
+### Existing Indexers (16)
 
-**Declaration indexers (5):**
+**Declaration indexers (11):**
 
 | Indexer | Key | Indexed Data |
 |---------|-----|-------------|
-| `ClassIndexer` | `php.classes.fqn` | FQN → FQN (string) |
-| `InterfaceIndexer` | `php.interfaces.fqn` | FQN (list) |
-| `TraitIndexer` | `php.traits.fqn` | FQN (list) |
-| `FunctionIndexer` | `php.functions.fqn` | FQN → [name, startPos] |
-| `ClassMethodIndexer` | `php.classMethods.fqn` | ClassName → list of method names |
+| `ClassIndexer` | `php.classes.fqn` | FQN → ClassData (extends, implements, abstract/final, positions) |
+| `InterfaceIndexer` | `php.interfaces.fqn` | FQN → InterfaceData (extends, positions) |
+| `TraitIndexer` | `php.traits.fqn` | FQN → TraitData (positions) |
+| `FunctionIndexer` | `php.functions.fqn` | FQN → FunctionData (params, returnType, positions) |
+| `ClassMethodIndexer` | `php.classMethods.fqn` | ClassName::method → MethodData (visibility, static, params, returnType, positions) |
+| `EnumIndexer` | `php.enums.fqn` | FQN → EnumData (backedType, implements, positions) |
+| `PropertyIndexer` | `php.properties.fqn` | ClassName::$prop → PropertyData (visibility, type, static, readonly, positions) |
+| `ClassConstantIndexer` | `php.classConstants.fqn` | ClassName::CONST → ConstantData (type, value, positions) |
+| `GlobalConstantIndexer` | `php.constants.fqn` | Name → ConstantData (value, positions) |
+| `NamespaceIndexer` | `php.namespaces.fqn` | FQN → NamespaceData (positions) |
+| `InheritanceIndexer` | `php.inheritance` | [child, parent, relation] tuples |
 
 **Usage indexers (5):**
 
 | Indexer | Key | Indexed Data |
 |---------|-----|-------------|
-| `ClassUsageIndexer` | `php.usages.classes` | Class usage locations |
-| `MethodCallUsageIndexer` | `php.usages.methodCalls` | Method call locations |
-| `FunctionCallUsageIndexer` | `php.usages.functionCalls` | Function call locations |
-| `PropertyAccessUsageIndexer` | `php.usages.propertyAccess` | Property access locations |
-| `ClassConstantUsageIndexer` | `php.usages.classConstants` | Class constant usage locations |
+| `ClassUsageIndexer` | `php.classUsages` | Class usage locations |
+| `MethodCallUsageIndexer` | `php.methodCallUsages` | Method call locations |
+| `FunctionCallUsageIndexer` | `php.functionCallUsages` | Function call locations |
+| `PropertyAccessUsageIndexer` | `php.propertyAccessUsages` | Property access locations |
+| `ClassConstantUsageIndexer` | `php.classConstantUsages` | Class constant usage locations |
 
-### Existing Contributors (20)
+### Existing Contributors (39)
 
-**Completion (5):** Classes, Functions, Keywords, Superglobals, Shortcuts
-**Declaration (3):** Class, ClassMethod, Function
-**Documentation (2):** Docblock, NodesTrace
+**Completion (15):** Classes, Functions, Keywords, Superglobals, Shortcuts (with control flow snippets), Interfaces, Traits, Enums, Constants, ClassMembers, ClassConstants, EnumCases, UseStatements, Namespaces, Variables
+**Declaration (7):** Class (+ Interface + Trait + Enum), ClassMethod, Function, Property, ClassConstant, GlobalConstant, Variable
+**Documentation (7):** Docblock, NodesTrace, Class, Function, Method, Property, Constant
 **Signature (3):** Function, Method, Constructor
 **References (7):** Class, Function, Method, Property, Variable, Interface, ClassConstant
-**Rename (0):** Controller exists, reuses reference contributors, incomplete
+**Rename:** Functional — uses ReferenceContributors to find all usages, generates TextEdits
 
-### Key Gaps
+### Key Gaps (Resolved)
 
-1. **Indexers store only names** — no position data, no type info, no relationships
-2. **No enum support** anywhere (indexing, completion, declaration)
-3. **No constant indexing** (class constants, global constants)
-4. **No property indexing**
-5. **No namespace indexing**
-6. **No inheritance/implementation graph**
-7. **References** — controller wired but zero contributors
-8. **Rename** — stub, non-functional
-9. **DocumentSymbol** — implemented but commented out (disabled)
-10. **No interface/trait completion** contributors (only class completion exists)
+1. ~~Indexers store only names~~ — **DONE**: All indexers now store structured IndexData objects with positions, types, and relationships
+2. ~~No enum support~~ — **DONE**: EnumIndexer, EnumCompletionContributor, EnumCaseCompletionContributor, enum in DocumentSymbol
+3. ~~No constant indexing~~ — **DONE**: ClassConstantIndexer, GlobalConstantIndexer
+4. ~~No property indexing~~ — **DONE**: PropertyIndexer
+5. ~~No namespace indexing~~ — **DONE**: NamespaceIndexer
+6. ~~No inheritance/implementation graph~~ — **DONE**: InheritanceIndexer
+7. ~~References — controller wired but zero contributors~~ — **Already implemented** (7 reference contributors)
+8. ~~Rename — stub, non-functional~~ — **DONE**: Functional rename using reference contributors
+9. ~~DocumentSymbol — disabled~~ — **DONE**: Activated with support for classes, interfaces, traits, enums, constants
+10. ~~No interface/trait completion~~ — **DONE**: InterfaceCompletionContributor, TraitCompletionContributor
 
 ---
 
-## Phase 1: Enrich Indexers (Foundation)
+## Phase 1: Enrich Indexers (Foundation) — DONE
 
 Everything else depends on rich index data. Current indexers store bare FQN strings — need to store structured data with positions, types, and relationships.
 
@@ -91,7 +97,7 @@ Storage/IndexData/
 
 ---
 
-## Phase 2: Completion Contributors
+## Phase 2: Completion Contributors — DONE
 
 ### 2.1 — Missing Type Completion
 
@@ -123,7 +129,7 @@ Expand `ShortcutCompletionContributor`:
 
 ---
 
-## Phase 3: Declaration Contributors (Go-To-Definition)
+## Phase 3: Declaration Contributors (Go-To-Definition) — DONE
 
 | Contributor | Handles Navigation To | Depends On |
 |-------------|----------------------|------------|
@@ -159,7 +165,7 @@ ClassConstantUsageIndexer).
 
 ---
 
-## Phase 5: Documentation Contributors (Hover)
+## Phase 5: Documentation Contributors (Hover) — DONE
 
 | Contributor | Hover On | Shows |
 |-------------|---------|-------|
@@ -185,27 +191,29 @@ All 3 signature contributors have been implemented:
 
 ---
 
-## Phase 7: Activate & Complete Stubs
+## Phase 7: Activate & Complete Stubs — DONE
 
-### 7.1 — DocumentSymbol
+### 7.1 — DocumentSymbol — DONE
 
-`DocumentSymbolController` is fully implemented but disabled (route attribute commented out). Needs:
-- Uncomment `#[AsController, Route('textDocument/documentSymbol')]`
-- Enable `documentSymbolProvider` in `InitializeController` capabilities
-- Add support for interfaces, traits, enums, constants (currently only classes + functions)
+`DocumentSymbolController` activated with full support:
+- Route attribute uncommented and controller enabled
+- `documentSymbolProvider` enabled in `InitializeController` capabilities
+- Supports classes, interfaces, traits, enums (with cases), constants, functions, methods, properties
 
-### 7.2 — Rename
+### 7.2 — Rename — DONE
 
-`RenameController` is a stub reusing `ReferenceContributor`. Once references work:
-- Implement `TextEdit` generation from reference locations
-- Implement `PrepareRenameController` properly (validate rename target, return range)
-- Consider adding a dedicated `RenameContributor` interface for complex renames
+`RenameController` implemented using `ReferenceContributor`:
+- Uses RenameParams with newName to collect all references and generate TextEdits
+- Returns WorkspaceEdit with changes grouped by file URI
+- `PrepareRenameController` validates renameable symbols (Variable, Identifier, Name nodes)
 
-### 7.3 — Workspace Symbols
+### 7.3 — Workspace Symbols — DONE
 
-New controller `workspace/symbol` — search symbols across the entire project:
-- Reuses all indexers for lookup
-- Returns `SymbolInformation[]` with location, kind, container
+`WorkspaceSymbolController` at `workspace/symbol` — searches symbols across the project:
+- Queries all type indexers (classes, interfaces, traits, enums, functions, methods, properties, constants)
+- Uses StrContainsMatcher for fuzzy query filtering
+- Returns `SymbolInformation[]` with location, kind, and container name
+- `workspaceSymbolProvider` registered in InitializeController capabilities
 
 ---
 

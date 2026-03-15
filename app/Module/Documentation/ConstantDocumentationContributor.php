@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Documentation;
+
+use App\Core\Contracts\Documentation\AsDocumentationContributor;
+use App\Core\Contracts\Documentation\DocumentationConsumer;
+use App\Core\Contracts\Documentation\DocumentationContext;
+use App\Core\Contracts\Documentation\DocumentationContributor;
+use App\Module\Indexing\Indexer\ClassConstantIndexer;
+use App\Module\Indexing\Indexer\GlobalConstantIndexer;
+use App\Module\Indexing\IndexLookup;
+use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\Tree;
+use PhpParser\Node;
+
+#[AsDocumentationContributor]
+final class ConstantDocumentationContributor implements DocumentationContributor
+{
+    public function __construct(
+        private readonly IndexLookup $indexLookup,
+        private readonly InMemoryPsiFileManager $fileManager,
+    ) {}
+
+    public function contribute(DocumentationContext $context, DocumentationConsumer $consumer): void
+    {
+        $file = $this->fileManager->findPsiFile($context->editor, $context->textDocumentIdentifier);
+        if ($file === null) {
+            return;
+        }
+
+        $element = $file->findLastAtPosition($context->position);
+
+        // Class constant: Foo::BAR
+        if ($element instanceof Node\Identifier) {
+            $constFetch = Tree::parentOfType($element, Node\Expr\ClassConstFetch::class);
+            if ($constFetch !== null && $constFetch->class instanceof Node\Name) {
+                $className = $constFetch->class->toString();
+                $constName = $element->toString();
+
+                foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
+                    if ($entry->value->ownerFqn !== $className || $entry->value->name !== $constName) {
+                        continue;
+                    }
+
+                    $signature = 'const ' . $className . '::' . $entry->value->name;
+                    if ($entry->value->type !== null) {
+                        $signature .= ': ' . $entry->value->type;
+                    }
+                    if ($entry->value->value !== null) {
+                        $signature .= ' = ' . $entry->value->value;
+                    }
+
+                    $consumer(sprintf("```php\n%s\n```", $signature));
+
+                    return;
+                }
+            }
+        }
+
+        // Global constant
+        if ($element instanceof Node\Name) {
+            $parent = Tree::parent($element);
+            if ($parent instanceof Node\Expr\ConstFetch) {
+                $constName = $element->toString();
+                if (in_array(strtolower($constName), ['true', 'false', 'null'], true)) {
+                    return;
+                }
+
+                foreach ($this->indexLookup->findByKey(GlobalConstantIndexer::class) as $entry) {
+                    if ($entry->value->name !== $constName) {
+                        continue;
+                    }
+
+                    $signature = 'const ' . $entry->value->name;
+                    if ($entry->value->value !== null) {
+                        $signature .= ' = ' . $entry->value->value;
+                    }
+
+                    $consumer(sprintf("```php\n%s\n```", $signature));
+
+                    return;
+                }
+            }
+        }
+    }
+}
