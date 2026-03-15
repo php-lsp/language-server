@@ -19,6 +19,10 @@
         <testsuite name="functional">
             <directory>tests/Functional</directory>
         </testsuite>
+        <testsuite name="playground">
+            <directory>tests/Playground</directory>
+            <exclude>tests/Playground/Support</exclude>
+        </testsuite>
     </testsuites>
 
     <coverage/>

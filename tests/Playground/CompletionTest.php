@@ -1,0 +1,149 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Playground;
+
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\TestDox;
+
+#[Group('e2e')]
+#[TestDox('LSP Completion')]
+final class CompletionTest extends PlaygroundTestCase
+{
+    protected static float $indexingWaitTime = 3.0;
+
+    private static bool $filesOpened = false;
+
+    /** @var array<string, mixed>|null Cached file-scope completion response */
+    private static ?array $fileScopeResponse = null;
+
+    /** @var array<string, mixed>|null Cached method-body completion response */
+    private static ?array $methodBodyResponse = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (!self::$filesOpened) {
+            self::openPlaygroundFile('src/Calculator.php');
+            self::openPlaygroundFile('src/Greeter.php');
+            self::openPlaygroundFile('src/UserService.php');
+            self::openPlaygroundFile('src/User.php');
+            self::openPlaygroundFile('src/StatusEnum.php');
+            self::openPlaygroundFile('src/AppInterface.php');
+            self::$filesOpened = true;
+
+            // Cache completion responses — one request per position
+            self::$fileScopeResponse = self::completion('src/Calculator.php', 0, 0);
+            self::$methodBodyResponse = self::completion('src/Calculator.php', 21, 14);
+        }
+    }
+
+    #[TestDox('Completion at file scope includes indexed playground classes')]
+    public function testFileScopeCompletionIncludesPlaygroundClasses(): void
+    {
+        self::assertResponseOk(self::$fileScopeResponse);
+
+        $labels = self::extractCompletionLabels(self::$fileScopeResponse);
+
+        self::assertContains('Playground\User', $labels);
+        self::assertContains('Playground\Greeter', $labels);
+        self::assertContains('Playground\Calculator', $labels);
+        self::assertContains('Playground\UserService', $labels);
+        self::assertContains('Playground\StatusEnum', $labels);
+        self::assertContains('Playground\AppInterface', $labels);
+    }
+
+    #[TestDox('Completion item for class has correct structure')]
+    public function testClassCompletionItem(): void
+    {
+        $items = self::$fileScopeResponse['result'];
+        $userItem = self::findItemByLabel($items, 'Playground\User');
+
+        self::assertNotNull($userItem, 'Should contain Playground\User completion item');
+        self::assertSame([
+            'label' => 'Playground\User',
+            'kind' => 7,
+            'detail' => '[class]',
+        ], $userItem);
+    }
+
+    #[TestDox('Completion item for enum has correct kind')]
+    public function testEnumCompletionItem(): void
+    {
+        $items = self::$fileScopeResponse['result'];
+        $enumItem = self::findItemByLabel($items, 'Playground\StatusEnum');
+
+        self::assertNotNull($enumItem, 'Should contain Playground\StatusEnum completion item');
+        self::assertSame([
+            'label' => 'Playground\StatusEnum',
+            'kind' => 13,
+            'detail' => '[enum]',
+        ], $enumItem);
+    }
+
+    #[TestDox('Completion item for interface has correct kind')]
+    public function testInterfaceCompletionItem(): void
+    {
+        $items = self::$fileScopeResponse['result'];
+        $ifaceItem = self::findItemByLabel($items, 'Playground\AppInterface');
+
+        self::assertNotNull($ifaceItem, 'Should contain Playground\AppInterface completion item');
+        self::assertSame([
+            'label' => 'Playground\AppInterface',
+            'kind' => 8,
+            'detail' => '[interface]',
+        ], $ifaceItem);
+    }
+
+    #[TestDox('Completion at file scope includes PHP keywords')]
+    public function testFileScopeIncludesKeywords(): void
+    {
+        $labels = self::extractCompletionLabels(self::$fileScopeResponse);
+
+        self::assertContains('if', $labels);
+        self::assertContains('class', $labels);
+        self::assertContains('function', $labels);
+        self::assertContains('return', $labels);
+        self::assertContains('namespace', $labels);
+    }
+
+    #[TestDox('Completion at file scope includes superglobals')]
+    public function testFileScopeIncludesSuperglobals(): void
+    {
+        $labels = self::extractCompletionLabels(self::$fileScopeResponse);
+
+        self::assertContains('$GLOBALS', $labels);
+        self::assertContains('$_SERVER', $labels);
+        self::assertContains('$_GET', $labels);
+        self::assertContains('$_POST', $labels);
+        self::assertContains('$_ENV', $labels);
+    }
+
+    #[TestDox('Completion inside method body returns keywords and snippets')]
+    public function testMethodBodyCompletion(): void
+    {
+        self::assertResponseOk(self::$methodBodyResponse);
+
+        $labels = self::extractCompletionLabels(self::$methodBodyResponse);
+
+        self::assertContains('if', $labels);
+        self::assertContains('return', $labels);
+        self::assertContains('foreach', $labels);
+    }
+
+    /**
+     * @param list<array<string, mixed>> $items
+     * @return array<string, mixed>|null
+     */
+    private static function findItemByLabel(array $items, string $label): ?array
+    {
+        foreach ($items as $item) {
+            if ($item['label'] === $label) {
+                return $item;
+            }
+        }
+        return null;
+    }
+}
