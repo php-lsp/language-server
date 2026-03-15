@@ -71,6 +71,10 @@ services:
   React\Filesystem\AdapterInterface:
     factory: [React\Filesystem\Factory, create]
 
+  Lsp\Server\ConnectionStoreBROKEN: ~
+  Lsp\Server\ConnectionProviderInterface:
+    class: Lsp\Server\ConnectionStore
+
 when@dev:
   services:
     _defaults:
@@ -95,6 +99,3 @@ when@dev:
 
 
 
-    Lsp\Server\ConnectionStore: ~
-    Lsp\Server\ConnectionProviderInterface:
-      class: Lsp\Server\ConnectionStore
