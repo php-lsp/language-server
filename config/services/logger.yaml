@@ -1,8 +1,4 @@
 parameters:
-  # Env-var defaults (overridable via .env, .env.local, or shell environment)
-  env(APP_LOGGER_NAME): 'php-lsp'
-  env(BUGGREGATOR_HOST): '127.0.0.1:9913'
-
   app.logger.name: '%env(APP_LOGGER_NAME)%'
   app.buggregator.host: '%env(BUGGREGATOR_HOST)%'
 
