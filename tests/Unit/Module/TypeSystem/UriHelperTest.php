@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Module\TypeSystem;
 
-use App\Module\TypeSystem\UriHelper;
+use App\Core\UriHelper;
 use App\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -30,15 +30,15 @@ final class UriHelperTest extends TestCase
         $this->assertSame('C:/Users/dev/file.php', UriHelper::toFilePath('file:///C:/Users/dev/file.php'));
     }
 
-    #[TestDox('returns non-file URI unchanged')]
-    public function testReturnsNonFileUriUnchanged(): void
+    #[TestDox('returns null for non-file URI')]
+    public function testReturnsNullForNonFileUri(): void
     {
-        $this->assertSame('untitled:Untitled-1', UriHelper::toFilePath('untitled:Untitled-1'));
+        $this->assertNull(UriHelper::toFilePath('untitled:Untitled-1'));
     }
 
-    #[TestDox('handles plain path without scheme')]
-    public function testHandlesPlainPath(): void
+    #[TestDox('returns null for plain path without scheme')]
+    public function testReturnsNullForPlainPath(): void
     {
-        $this->assertSame('/tmp/test.php', UriHelper::toFilePath('/tmp/test.php'));
+        $this->assertNull(UriHelper::toFilePath('/tmp/test.php'));
     }
 }

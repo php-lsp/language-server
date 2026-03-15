@@ -27,11 +27,20 @@ final class InitializeTest extends PlaygroundTestCase
                     ],
                     'declarationProvider' => true,
                     'definitionProvider' => true,
+                    'typeDefinitionProvider' => true,
+                    'implementationProvider' => true,
                     'referencesProvider' => true,
                     'documentHighlightProvider' => true,
                     'documentSymbolProvider' => true,
                     'workspaceSymbolProvider' => true,
+                    'codeActionProvider' => [
+                        'codeActionKinds' => [
+                            'quickfix',
+                            'source.organizeImports',
+                        ],
+                    ],
                     'documentFormattingProvider' => true,
+                    'documentRangeFormattingProvider' => true,
                     'renameProvider' => [
                         'prepareProvider' => true,
                     ],

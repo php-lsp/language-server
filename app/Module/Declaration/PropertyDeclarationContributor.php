@@ -8,14 +8,12 @@ use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
-use App\Module\Document\DocumentIdentifierFactoryInterface;
 use App\Module\Indexing\Indexer\PropertyIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\PositionResolver;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Location;
-use Lsp\Protocol\Type\Position;
-use Lsp\Protocol\Type\Range;
 use Override;
 use PhpParser\Node;
 
@@ -25,7 +23,7 @@ final class PropertyDeclarationContributor implements DeclarationContributor
     public function __construct(
         private readonly IndexLookup $indexLookup,
         private readonly InMemoryPsiFileManager $fileManager,
-        private readonly DocumentIdentifierFactoryInterface $documentIdentifierFactory,
+        private readonly PositionResolver $positionResolver,
     ) {}
 
     #[Override]
@@ -69,24 +67,12 @@ final class PropertyDeclarationContributor implements DeclarationContributor
 
             $consumer(new Location(
                 uri: $entry->uri,
-                range: $this->positionToRange($entry->uri, $entry->value->startPosition, $context),
+                range: $this->positionResolver->resolveRange(
+                    $entry->uri,
+                    $entry->value->startPosition,
+                    $context->editor,
+                ),
             ));
         }
-    }
-
-    private function positionToRange(string $uri, int $startPosition, DeclarationContext $context): Range
-    {
-        $textDocumentIdentifier = $this->documentIdentifierFactory->create($uri);
-        $source = $this->fileManager->findPsiFile($context->editor, $textDocumentIdentifier);
-        if ($source === null) {
-            $zeroPosition = new Position(0, 0);
-
-            return new Range($zeroPosition, $zeroPosition);
-        }
-
-        [$line, $column] = Tree::toLineColumn($source->ast->document, $startPosition);
-        $exactPosition = new Position($line, $column);
-
-        return new Range($exactPosition, $exactPosition);
     }
 }

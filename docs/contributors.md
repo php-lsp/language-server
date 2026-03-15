@@ -15,13 +15,16 @@ the others.
 
 | Type | Interface | Attribute | DI Tag |
 |------|-----------|-----------|--------|
+| Code action | `CodeActionContributor` | `#[AsCodeActionContributor]` | `lsp.codeActionContributors` |
 | Code completion | `CompletionContributor` | `#[AsCompletionContributor]` | `lsp.completionContributors` |
 | Go to declaration | `DeclarationContributor` | `#[AsDeclarationContributor]` | `lsp.declarationContributors` |
 | Go to definition | `DefinitionContributor` | `#[AsDefinitionContributor]` | `lsp.definitionContributors` |
 | Documentation (hover) | `DocumentationContributor` | `#[AsDocumentationContributor]` | `lsp.documentationContributors` |
 | Document highlight | `DocumentHighlightContributor` | `#[AsDocumentHighlightContributor]` | `lsp.documentHighlightContributors` |
+| Find implementations | `ImplementationContributor` | `#[AsImplementationContributor]` | `lsp.implementationContributors` |
 | Find references | `ReferenceContributor` | `#[AsReferenceContributor]` | `lsp.referenceContributors` |
 | Function signatures | `SignatureContributor` | `#[AsSignatureContributor]` | `lsp.signatureContributors` |
+| Go to type definition | `TypeDefinitionContributor` | `#[AsTypeDefinitionContributor]` | `lsp.typeDefinitionContributors` |
 | Indexing | `IndexerInterface` | `#[AsIndexer]` | `lsp.indexers` |
 
 ## Anatomy of a Contributor

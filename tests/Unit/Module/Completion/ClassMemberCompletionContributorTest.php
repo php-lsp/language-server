@@ -7,8 +7,10 @@ namespace App\Tests\Unit\Module\Completion;
 use App\Module\Completion\ClassMemberCompletionContributor;
 use App\Module\Indexing\Storage\IndexData\MethodData;
 use App\Module\Indexing\Storage\IndexData\PropertyData;
+use App\Module\TypeSystem\TypeResolverInterface;
 use App\Tests\Support\CompletionTestHelper;
 use App\Tests\Support\IndexTestHelper;
+use App\Tests\Support\MockHelper;
 use App\Tests\Support\PsiFileFactory;
 use App\Tests\Support\ProtocolFactory;
 use App\Tests\TestCase;
@@ -30,7 +32,8 @@ final class ClassMemberCompletionContributorTest extends TestCase
                 'file:///test.php' => ['Foo::$baz' => new PropertyData('baz', 'Foo', 0, 10, 'public', 'string', false, false)],
             ],
         ]);
-        $contributor = new ClassMemberCompletionContributor($lookup);
+        $typeResolver = MockHelper::mock(TypeResolverInterface::class);
+        $contributor = new ClassMemberCompletionContributor($lookup, $typeResolver);
         $psiFile = PsiFileFactory::fromCode('<?php class Foo { public function bar() { $this->b; } }');
         $results = CompletionTestHelper::contribute(
             $contributor,
@@ -55,7 +58,8 @@ final class ClassMemberCompletionContributorTest extends TestCase
                 'file:///test.php' => ['Foo::$baz' => new PropertyData('baz', 'Foo', 0, 10, 'public', 'string', false, false)],
             ],
         ]);
-        $contributor = new ClassMemberCompletionContributor($lookup);
+        $typeResolver = MockHelper::mock(TypeResolverInterface::class);
+        $contributor = new ClassMemberCompletionContributor($lookup, $typeResolver);
         $psiFile = PsiFileFactory::fromCode('<?php echo 1;');
         $results = CompletionTestHelper::contribute(
             $contributor,

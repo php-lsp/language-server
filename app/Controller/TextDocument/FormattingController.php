@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
 
+use App\Core\UriHelper;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\DocumentFormattingParams;
@@ -31,7 +32,7 @@ final class FormattingController
         }
 
         $originalContent = $document->getContents();
-        $filePath = $this->uriToPath($params->textDocument->uri);
+        $filePath = UriHelper::toFilePath($params->textDocument->uri);
         if ($filePath === null) {
             return null;
         }
@@ -52,15 +53,6 @@ final class FormattingController
                 newText: $formatted,
             ),
         ];
-    }
-
-    private function uriToPath(string $uri): ?string
-    {
-        if (str_starts_with($uri, 'file://')) {
-            return substr($uri, offset: 7);
-        }
-
-        return null;
     }
 
     private function runFormatter(string $filePath, string $content): ?string

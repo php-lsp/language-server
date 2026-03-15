@@ -30,8 +30,6 @@ final class DeclarationController
 
     public function __invoke(EditorInterface $editor, DeclarationParams $params): array
     {
-        //        dump('ReferenceParams: ', $params);
-
         $context = new DeclarationContext($params->textDocument, $params->position, $editor);
         $consumer = new DeclarationConsumer();
 

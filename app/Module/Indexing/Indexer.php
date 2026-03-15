@@ -58,9 +58,9 @@ final class Indexer
     private const int MAX_FILE_SIZE = 500_000;
 
     /**
-     * Directories skipped during indexing.
+     * Default directories skipped during indexing.
      */
-    private const array IGNORED_DIRS = [
+    private const array DEFAULT_IGNORED_DIRS = [
         'node_modules',
         '.git',
         '.idea',
@@ -68,27 +68,33 @@ final class Indexer
         'resources',
         'runtime',
         'vendor',
-        'psalm',
-        'rector',
-        'thecodingmachine',
-        'aerospike',
         'tests',
-        'mongodb',
-        'meta',
-        'rdkafka',
-        'intl',
-        'swoole',
-        'wincache',
-        'couchbase',
-        'couchbase_v2',
-        'relay',
-        'redis',
-        'imagick',
     ];
+
+    /**
+     * @var list<string>
+     */
+    private array $ignoredDirs;
+
+    /**
+     * @param list<string> $extraIgnoredDirs
+     */
+    public function setIgnoredDirs(array $extraIgnoredDirs = []): void
+    {
+        $this->ignoredDirs = array_unique([...self::DEFAULT_IGNORED_DIRS, ...$extraIgnoredDirs]);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getIgnoredDirs(): array
+    {
+        return $this->ignoredDirs ?? self::DEFAULT_IGNORED_DIRS;
+    }
 
     private function walkFilesInternal(VirtualFileInterface $file): int
     {
-        if (in_array($file->name, self::IGNORED_DIRS, strict: true)) {
+        if (in_array($file->name, $this->getIgnoredDirs(), strict: true)) {
             return 0;
         }
 
@@ -104,6 +110,14 @@ final class Indexer
         }
 
         return $count;
+    }
+
+    public function reindexFile(VirtualFileInterface $file): void
+    {
+        $uri = (string) $file->uri;
+        $this->storage->deleteByUri($uri);
+        $this->runIndexers($file);
+        $this->logger->debug('Re-indexed file: {uri}', ['uri' => $uri]);
     }
 
     private function runIndexers(VirtualFileInterface $file): void

@@ -95,6 +95,20 @@ class InMemoryStorage implements StorageInterface
         unset($index);
     }
 
+    #[Override]
+    public function deleteByUri(string $uri): void
+    {
+        foreach ($this->entries as $indexKey => &$entries) {
+            $entries = array_values(array_filter(
+                $entries,
+                static fn(Entry $entry) => $entry->uri !== $uri,
+            ));
+        }
+        unset($entries);
+
+        $this->secondaryIndexes = [];
+    }
+
     private function buildSecondaryIndex(string $indexKey, string $field): void
     {
         $compositeKey = $indexKey . ':' . $field;

@@ -12,16 +12,19 @@ use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\Indexer\PropertyIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\Tree;
+use App\Module\TypeSystem\TypeResolverInterface;
 use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 use Override;
 use PhpParser\Node;
+use PHPStan\Type\ObjectType;
 
 #[AsCompletionContributor]
 final class ClassMemberCompletionContributor implements CompletionContributor
 {
     public function __construct(
         private readonly IndexLookup $indexLookup,
+        private readonly TypeResolverInterface $typeResolver,
     ) {}
 
     #[Override]
@@ -84,6 +87,10 @@ final class ClassMemberCompletionContributor implements CompletionContributor
         }
 
         if ($className === null) {
+            $className = $this->resolveVariableType($context, $element);
+        }
+
+        if ($className === null) {
             return;
         }
 
@@ -132,5 +139,35 @@ final class ClassMemberCompletionContributor implements CompletionContributor
                 detail: $detail,
             ));
         }
+    }
+
+    private function resolveVariableType(CompletionContext $context, Node $element): ?string
+    {
+        $propertyFetch = Tree::parentOfType($element, Node\Expr\PropertyFetch::class);
+        $methodCall = Tree::parentOfType($element, Node\Expr\MethodCall::class);
+
+        $varNode = null;
+        if ($propertyFetch !== null && $propertyFetch->var instanceof Node\Expr\Variable) {
+            $varNode = $propertyFetch->var;
+        } elseif ($methodCall !== null && $methodCall->var instanceof Node\Expr\Variable) {
+            $varNode = $methodCall->var;
+        }
+
+        if ($varNode === null || !is_string($varNode->name)) {
+            return null;
+        }
+
+        $type = $this->typeResolver->resolveVariableAtPosition(
+            $context->editor,
+            $context->textDocumentIdentifier,
+            $context->position,
+            $varNode->name,
+        );
+
+        if ($type instanceof ObjectType) {
+            return $type->getClassName();
+        }
+
+        return null;
     }
 }

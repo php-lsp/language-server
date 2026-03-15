@@ -7,6 +7,7 @@ namespace App\Module\PsiFile;
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
+use PhpParser\Error;
 use PhpParser\Node;
 
 class Tree
@@ -166,6 +167,51 @@ class Tree
                 $node->getEndLine() - 1,
                 self::toColumn($file->ast->document, $node->getEndFilePos()),
             ),
+        );
+    }
+
+    /**
+     * Convert a php-parser 1-based line number to a 0-based LSP line number.
+     */
+    public static function toLspLine(int $parserLine): int
+    {
+        return $parserLine - 1;
+    }
+
+    /**
+     * Convert a 0-based LSP line number to a php-parser 1-based line number.
+     */
+    public static function toParserLine(int $lspLine): int
+    {
+        return $lspLine + 1;
+    }
+
+    /**
+     * Get the 0-based LSP start line of a php-parser node.
+     */
+    public static function nodeStartLine(Node $node): int
+    {
+        return $node->getStartLine() - 1;
+    }
+
+    /**
+     * Get the 0-based LSP end line of a php-parser node.
+     */
+    public static function nodeEndLine(Node $node): int
+    {
+        return $node->getEndLine() - 1;
+    }
+
+    /**
+     * Convert a php-parser Error to an LSP Range.
+     */
+    public static function errorRange(Error $error, Document $document): Range
+    {
+        $contents = $document->getContents();
+
+        return new Range(
+            start: new Position($error->getStartLine() - 1, $error->getStartColumn($contents)),
+            end: new Position($error->getEndLine() - 1, $error->getEndColumn($contents)),
         );
     }
 

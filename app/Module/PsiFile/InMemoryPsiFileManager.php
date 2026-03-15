@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\PsiFile;
 
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\Document\DocumentLoaderInterface;
 use Lsp\Dispatcher\DispatcherInterface;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
@@ -11,18 +12,17 @@ use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Diagnostic;
 use Lsp\Protocol\Type\DiagnosticSeverity;
-use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\PublishDiagnosticsParams;
-use Lsp\Protocol\Type\Range;
 use Lsp\Protocol\Type\TextDocumentIdentifier;
 use Lsp\Rpc\Message\Notification;
 use Lsp\Workspace\Uri\Uri;
+use Override;
 use PhpParser\Error;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
 #[Autoconfigure]
-class InMemoryPsiFileManager
+class InMemoryPsiFileManager implements PsiFileManagerInterface
 {
     /**
      * @var FifoCache<PHPPsiFile>
@@ -56,13 +56,7 @@ class InMemoryPsiFileManager
                 uri: $uri,
                 diagnostics: array_map(
                     static fn(Error $error) => new Diagnostic(
-                        range: new Range(
-                            start: new Position(
-                                $error->getStartLine() - 1,
-                                $error->getStartColumn($document->getContents()),
-                            ),
-                            end: new Position($error->getEndLine() - 1, $error->getEndColumn($document->getContents())),
-                        ),
+                        range: Tree::errorRange($error, $document),
                         message: $error->getMessage(),
                         severity: DiagnosticSeverity::Error,
                     ),
@@ -71,7 +65,6 @@ class InMemoryPsiFileManager
             );
 
             $parameters = $this->resultProvider->getResult($p);
-            //            dump('PublishDiagnostics: ', $parameters);
 
             $notification = new Notification(
                 method: 'textDocument/publishDiagnostics',
@@ -83,18 +76,12 @@ class InMemoryPsiFileManager
                     'error' => $response->getMessage(),
                 ]);
             }
-
-            //            $this->connection->notify(
-            //                new Notification(
-            //                    'textDocument/publishDiagnostics',
-            //                    $encoder->toArray($p),
-            //                )
-            //            );
         }
 
         return new PHPPsiFile($root);
     }
 
+    #[Override]
     public function findPsiFile(EditorInterface $editor, TextDocumentIdentifier $identifier): ?PHPPsiFile
     {
         $psiFile = $this->cache->get($identifier->uri);
@@ -119,6 +106,7 @@ class InMemoryPsiFileManager
         return $psiFile;
     }
 
+    #[Override]
     public function invalidate(string $uri): void
     {
         $this->cache->remove($uri);

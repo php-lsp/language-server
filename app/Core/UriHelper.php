@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Module\TypeSystem;
+namespace App\Core;
 
 final class UriHelper
 {
-    public static function toFilePath(string $uri): string
+    public static function toFilePath(string $uri): ?string
     {
         if (!str_starts_with($uri, 'file://')) {
-            return $uri;
+            return null;
         }
 
         $path = substr($uri, offset: 7);
