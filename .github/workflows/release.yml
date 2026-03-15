@@ -1,0 +1,217 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: write
+
+env:
+  PHP_VERSION: '8.4'
+  SPC_EXTENSIONS: 'phar,iconv,mbstring,tokenizer,filter,ffi'
+  BOX_VERSION: '4.6.10'
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }}-${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: x86_64
+            runner: ubuntu-latest
+            spc_binary: spc-linux-x86_64
+            output_name: php-lsp-linux-x86_64
+          - os: macos
+            arch: x86_64
+            runner: macos-13
+            spc_binary: spc-macos-x86_64
+            output_name: php-lsp-darwin-x86_64
+          - os: macos
+            arch: aarch64
+            runner: macos-latest
+            spc_binary: spc-macos-aarch64
+            output_name: php-lsp-darwin-aarch64
+          - os: windows
+            arch: x86_64
+            runner: windows-latest
+            spc_binary: spc-windows-x64.exe
+            output_name: php-lsp-windows-x86_64
+
+    steps:
+      - name: Set Git To Use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Install PHP (for Composer & Box) ──────────────────────────
+      - name: Setup PHP ${{ env.PHP_VERSION }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, phar
+          tools: composer:v2
+          coverage: none
+          ini-values: phar.readonly=0
+
+      # ── Composer dependencies (production only) ───────────────────
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Restore Composer Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-release-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-release-
+
+      - name: Install Production Dependencies
+        shell: bash
+        run: |
+          COMPOSER_MIRROR_PATH_REPOS=1 composer install \
+            --optimize-autoloader \
+            --no-interaction \
+            --no-progress \
+            --no-scripts \
+            --no-dev
+
+      # ── Build PHAR ────────────────────────────────────────────────
+      - name: Warm Up Cache
+        shell: bash
+        run: |
+          chmod +x bin/lsp
+          php bin/lsp cache:clear --env=prod
+
+      - name: Download Box
+        shell: bash
+        run: |
+          mkdir -p var/bin
+          curl -fsSL -o var/bin/box \
+            "https://github.com/box-project/box/releases/download/${{ env.BOX_VERSION }}/box.phar"
+          chmod +x var/bin/box
+
+      - name: Compile PHAR
+        shell: bash
+        run: php var/bin/box compile
+
+      # ── Download & run SPC (static-php-cli) ──────────────────────
+      - name: Cache SPC build
+        uses: actions/cache@v4
+        id: spc-cache
+        with:
+          path: var/spc
+          key: spc-${{ matrix.os }}-${{ matrix.arch }}-php${{ env.PHP_VERSION }}-${{ env.SPC_EXTENSIONS }}
+
+      - name: Download SPC
+        shell: bash
+        run: |
+          mkdir -p var/spc/bin
+          if [ ! -f var/spc/bin/spc ]; then
+            curl -fsSL -o var/spc/bin/spc \
+              "https://dl.static-php.dev/static-php-cli/spc-bin/nightly/${{ matrix.spc_binary }}"
+            chmod +x var/spc/bin/spc
+          fi
+
+      - name: Download PHP Sources & Extensions
+        if: steps.spc-cache.outputs.cache-hit != 'true'
+        shell: bash
+        working-directory: var/spc
+        run: |
+          ./bin/spc download micro \
+            --for-extensions=${{ env.SPC_EXTENSIONS }} \
+            --with-php=${{ env.PHP_VERSION }} \
+            --prefer-pre-built
+
+      - name: Install UPX (non-Windows)
+        if: matrix.os != 'windows'
+        shell: bash
+        working-directory: var/spc
+        run: ./bin/spc install-pkg upx
+
+      - name: Build micro.sfx
+        shell: bash
+        working-directory: var/spc
+        run: |
+          UPX_FLAG=""
+          if [ "${{ matrix.os }}" != "windows" ]; then
+            UPX_FLAG="--with-upx-pack"
+          fi
+
+          ./bin/spc build ${{ env.SPC_EXTENSIONS }} \
+            --build-micro \
+            $UPX_FLAG \
+            --with-hardcoded-ini "ffi.enable=true"
+
+      # ── Combine micro.sfx + PHAR → standalone binary ─────────────
+      - name: Combine into Standalone Binary (Unix)
+        if: matrix.os != 'windows'
+        shell: bash
+        run: |
+          mkdir -p var/release
+          ./var/spc/bin/spc micro:combine \
+            var/prod/build.phar \
+            --output=var/release/${{ matrix.output_name }}
+          chmod +x var/release/${{ matrix.output_name }}
+
+      - name: Combine into Standalone Binary (Windows)
+        if: matrix.os == 'windows'
+        shell: bash
+        run: |
+          mkdir -p var/release
+          cat var/spc/buildroot/bin/micro.sfx var/prod/build.phar \
+            > var/release/${{ matrix.output_name }}.exe
+
+      # ── Package artifact ──────────────────────────────────────────
+      - name: Package (Unix)
+        if: matrix.os != 'windows'
+        shell: bash
+        run: |
+          cd var/release
+          tar -czf ${{ matrix.output_name }}.tar.gz ${{ matrix.output_name }}
+
+      - name: Package (Windows)
+        if: matrix.os == 'windows'
+        shell: bash
+        run: |
+          cd var/release
+          7z a ${{ matrix.output_name }}.zip ${{ matrix.output_name }}.exe
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.output_name }}
+          path: |
+            var/release/${{ matrix.output_name }}.tar.gz
+            var/release/${{ matrix.output_name }}.zip
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List Artifacts
+        run: ls -lhR artifacts/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.zip

@@ -185,6 +185,7 @@ After pushing, verify that **all** GitHub Actions workflows pass:
 - **codestyle** — `mago format --check`
 - **coverage** — code coverage report
 - **security** — `composer audit`
+- **release** — standalone binary builds (triggered on version tags only)
 
 Check CI status with `gh run list` or in the PR. If any workflow fails,
 fix the issue locally and push again. Work is not done until CI is fully green.
@@ -225,3 +226,5 @@ If **any** step fails — fix and repeat from step 1.
   and troubleshooting guide.
 - See [docs/features.md](docs/features.md) for the feature roadmap, LSP
   capabilities checklist, and implementation priorities.
+- See [docs/binary-builds.md](docs/binary-builds.md) for standalone binary
+  builds via php-micro, release workflow, and platform support.
