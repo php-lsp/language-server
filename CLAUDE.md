@@ -245,3 +245,7 @@ If **any** step fails — fix and repeat from step 1.
   with other LSP implementations.
 - See [docs/positions.md](docs/positions.md) for position system documentation
   (LSP 0-based vs php-parser 1-based, byte offsets, conversion helpers).
+- See [docs/debug-index-inspector.md](docs/debug-index-inspector.md) for the
+  debug HTTP server (index browser, global search, batch actions, JSON API).
+- See [docs/e2e-testing.md](docs/e2e-testing.md) for end-to-end testing guide
+  (playground workspace, server lifecycle, LSP client).
