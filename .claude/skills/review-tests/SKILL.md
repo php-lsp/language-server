@@ -1,7 +1,7 @@
 ---
 name: review-tests
 description: Write and review tests — unit, functional, and E2E. Enforces test doubles over inline mocks, consistent structure, and coverage rules. Use when writing new tests or fixing existing ones.
-disable-model-invocation: true
+disable-model-invocation: false
 allowed-tools: Read, Glob, Grep, Edit, Write, Bash
 ---
 

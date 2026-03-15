@@ -1,7 +1,7 @@
 ---
 name: review-docs
 description: Review and synchronize documentation with code changes. Run after code changes, tests, and static analysis pass. Must run before /review-architecture.
-disable-model-invocation: true
+disable-model-invocation: false
 allowed-tools: Read, Glob, Grep, Edit, Write
 ---
 

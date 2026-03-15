@@ -1,7 +1,7 @@
 ---
 name: review-architecture
 description: Review architecture for dependency violations, layer boundary crossings, and coupling issues. Run last in the review pipeline — after tests, static analysis, and /review-docs.
-disable-model-invocation: true
+disable-model-invocation: false
 allowed-tools: Read, Glob, Grep
 ---
 
