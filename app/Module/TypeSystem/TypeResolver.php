@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\TypeSystem;
 
+use App\Core\UriHelper;
 use App\Module\PsiFile\InMemoryPsiFileManager;
 use App\Module\PsiFile\SourceFileRoot;
 use App\Module\PsiFile\Tree;
@@ -41,6 +42,9 @@ final class TypeResolver implements TypeResolverInterface
         }
 
         $filePath = UriHelper::toFilePath($textDocumentIdentifier->uri);
+        if ($filePath === null) {
+            return null;
+        }
 
         return $this->resolveNodeInFile($targetNode, $psiFile->ast, $filePath);
     }
@@ -121,6 +125,9 @@ final class TypeResolver implements TypeResolverInterface
         }
 
         $filePath = UriHelper::toFilePath($textDocumentIdentifier->uri);
+        if ($filePath === null) {
+            return null;
+        }
 
         $targetLine = Tree::toParserLine($position->line);
         $foundType = null;

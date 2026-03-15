@@ -9,6 +9,7 @@ use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Module\Declaration\GlobalConstantDeclarationContributor;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
 use App\Module\Indexing\Storage\IndexData\ConstantData;
+use App\Module\PsiFile\PositionResolver;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -27,9 +28,9 @@ final class GlobalConstantDeclarationContributorTest extends TestCase
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn(null);
-        $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
+        $positionResolver = new PositionResolver($fileManager, $this->createMock(DocumentIdentifierFactoryInterface::class));
 
-        $contributor = new GlobalConstantDeclarationContributor($lookup, $fileManager, $docFactory);
+        $contributor = new GlobalConstantDeclarationContributor($lookup, $fileManager, $positionResolver);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(
@@ -57,8 +58,9 @@ final class GlobalConstantDeclarationContributorTest extends TestCase
         $fileManager->method('findPsiFile')->willReturn($psiFile);
         $docFactory = $this->createMock(DocumentIdentifierFactoryInterface::class);
         $docFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///def.php'));
+        $positionResolver = new PositionResolver($fileManager, $docFactory);
 
-        $contributor = new GlobalConstantDeclarationContributor($lookup, $fileManager, $docFactory);
+        $contributor = new GlobalConstantDeclarationContributor($lookup, $fileManager, $positionResolver);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new DeclarationContext(

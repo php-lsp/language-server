@@ -807,25 +807,13 @@ count = 3
 [[issues]]
 file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
 code = "null-argument"
-message = 'Argument #2 of method `App\Module\Declaration\ClassConstantDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
+message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
 count = 1
 
 [[issues]]
 file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -933,25 +921,13 @@ count = 2
 [[issues]]
 file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
 code = "null-argument"
-message = 'Argument #2 of method `App\Module\Declaration\GlobalConstantDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
+message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
 count = 1
 
 [[issues]]
 file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -963,25 +939,13 @@ count = 3
 [[issues]]
 file = "app/Module/Declaration/PropertyDeclarationContributor.php"
 code = "null-argument"
-message = 'Argument #2 of method `App\Module\Declaration\PropertyDeclarationContributor::positiontorange` is `null`, but parameter type `int` does not accept it.'
+message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
 count = 1
 
 [[issues]]
 file = "app/Module/Declaration/PropertyDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/PropertyDeclarationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/PropertyDeclarationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -1342,18 +1306,6 @@ count = 1
 file = "app/Module/Implementation/InterfaceImplementationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Implementation/InterfaceImplementationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Implementation/InterfaceImplementationContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]
@@ -1945,6 +1897,18 @@ message = 'Argument #1 of method `PhpParser\NodeTraverser::traverse` is possibly
 count = 1
 
 [[issues]]
+file = "app/Module/PsiFile/PositionResolver.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/PositionResolver.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
+count = 1
+
+[[issues]]
 file = "app/Module/PsiFile/Tree.php"
 code = "imprecise-type"
 message = "Type `iterable` in return type of `getParentNodesIncluding` is imprecise, equivalent to `iterable<mixed, mixed>`."
@@ -2133,25 +2097,13 @@ count = 1
 [[issues]]
 file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
 code = "null-argument"
-message = 'Argument #2 of method `App\Module\TypeDefinition\TypeDefinitionTypeContributor::resolverange` is `null`, but parameter type `int` does not accept it.'
+message = 'Argument #2 of method `App\Module\PsiFile\PositionResolver::resolverange` is `null`, but parameter type `int` does not accept it.'
 count = 1
 
 [[issues]]
 file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
-count = 1
-
-[[issues]]
-file = "app/Module/TypeDefinition/TypeDefinitionTypeContributor.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
 
 [[issues]]

@@ -38,7 +38,9 @@ final class TypeDefinitionTypeContributorTest extends TestCase
         $docIdFactory = MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class);
         $docIdFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier());
 
-        return new TypeDefinitionTypeContributor($typeResolver, $lookup, $fileManager, $docIdFactory);
+        $positionResolver = new \App\Module\PsiFile\PositionResolver($fileManager, $docIdFactory);
+
+        return new TypeDefinitionTypeContributor($typeResolver, $lookup, $positionResolver);
     }
 
     #[TestDox('returns empty when type resolver returns null')]

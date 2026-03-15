@@ -38,7 +38,7 @@ final class IncrementalIndexListener
 
         try {
             $filePath = UriHelper::toFilePath($uriString);
-            if ($filePath === null || !file_exists($filePath)) {
+            if ($filePath === null) {
                 return;
             }
 

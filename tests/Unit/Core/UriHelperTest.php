@@ -36,11 +36,19 @@ final class UriHelperTest extends TestCase
         $this->assertNull($result);
     }
 
-    #[TestDox('handles file URI with spaces')]
-    public function testToFilePathWithSpaces(): void
+    #[TestDox('decodes percent-encoded characters')]
+    public function testToFilePathDecodesPercentEncoding(): void
     {
-        $result = UriHelper::toFilePath('file:///home/user/my project/test.php');
+        $result = UriHelper::toFilePath('file:///path%20with%20spaces/test.php');
 
-        $this->assertSame('/home/user/my project/test.php', $result);
+        $this->assertSame('/path with spaces/test.php', $result);
+    }
+
+    #[TestDox('handles Windows drive letter')]
+    public function testToFilePathHandlesWindowsDriveLetter(): void
+    {
+        $result = UriHelper::toFilePath('file:///C:/Users/dev/test.php');
+
+        $this->assertSame('C:/Users/dev/test.php', $result);
     }
 }

@@ -17,6 +17,8 @@ use Psr\Log\LoggerInterface;
 #[AsController, Route('textDocument/rangeFormatting')]
 final class RangeFormattingController
 {
+    private ?string $cachedMagoBinary = null;
+
     public function __construct(
         private readonly LoggerInterface $logger,
     ) {}
@@ -98,7 +100,7 @@ final class RangeFormattingController
 
             return $result !== false ? $result : null;
         } catch (\Throwable $e) {
-            $this->logger->error('Range formatting failed: ' . $e->getMessage());
+            $this->logger->error('Range formatting failed: {error}', ['error' => $e->getMessage()]);
 
             return null;
         } finally {
@@ -110,15 +112,22 @@ final class RangeFormattingController
 
     private function findMagoBinary(string $filePath): string
     {
+        if ($this->cachedMagoBinary !== null) {
+            return $this->cachedMagoBinary;
+        }
+
         $dir = dirname($filePath);
-        $vendorBin = $dir . '/vendor/bin/mago';
         while ($dir !== '/' && $dir !== '') {
+            $vendorBin = $dir . '/vendor/bin/mago';
             if (file_exists($vendorBin)) {
+                $this->cachedMagoBinary = $vendorBin;
+
                 return $vendorBin;
             }
             $dir = dirname($dir);
-            $vendorBin = $dir . '/vendor/bin/mago';
         }
+
+        $this->cachedMagoBinary = 'mago';
 
         return 'mago';
     }

@@ -8,18 +8,15 @@ use App\Core\Contracts\Implementation\AsImplementationContributor;
 use App\Core\Contracts\Implementation\ImplementationConsumer;
 use App\Core\Contracts\Implementation\ImplementationContext;
 use App\Core\Contracts\Implementation\ImplementationContributor;
-use App\Module\Document\DocumentIdentifierFactoryInterface;
 use App\Module\Indexing\Data\ClassData;
 use App\Module\Indexing\Data\InheritanceData;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\Indexer\InheritanceIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
-use App\Module\PsiFile\Tree;
+use App\Module\PsiFile\PositionResolver;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\Location;
-use Lsp\Protocol\Type\Position;
-use Lsp\Protocol\Type\Range;
 use Override;
 use PhpParser\Node;
 
@@ -29,7 +26,7 @@ final class InterfaceImplementationContributor implements ImplementationContribu
     public function __construct(
         private readonly IndexLookup $indexLookup,
         private readonly InMemoryPsiFileManager $fileManager,
-        private readonly DocumentIdentifierFactoryInterface $documentIdentifierFactory,
+        private readonly PositionResolver $positionResolver,
     ) {}
 
     #[Override]
@@ -68,27 +65,11 @@ final class InterfaceImplementationContributor implements ImplementationContribu
             /** @var ClassData $data */
             $data = $entry->value;
             if ($data->fqn === $fqn) {
-                $range = $this->resolveRange($entry->uri, $data->startPosition, $editor);
+                $range = $this->positionResolver->resolveRange($entry->uri, $data->startPosition, $editor);
                 $consumer(new Location(uri: $entry->uri, range: $range));
 
                 return;
             }
         }
-    }
-
-    private function resolveRange(string $uri, int $startPosition, EditorInterface $editor): Range
-    {
-        $textDocumentIdentifier = $this->documentIdentifierFactory->create($uri);
-        $source = $this->fileManager->findPsiFile($editor, $textDocumentIdentifier);
-        if ($source !== null) {
-            [$line, $column] = Tree::toLineColumn($source->ast->document, $startPosition);
-            $position = new Position($line, $column);
-
-            return new Range($position, $position);
-        }
-
-        $zeroPosition = new Position(0, 0);
-
-        return new Range($zeroPosition, $zeroPosition);
     }
 }

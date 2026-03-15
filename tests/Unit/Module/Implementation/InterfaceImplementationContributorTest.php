@@ -28,7 +28,7 @@ final class InterfaceImplementationContributorTest extends TestCase
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn(null);
 
-        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class));
+        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, new \App\Module\PsiFile\PositionResolver($fileManager, MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class)));
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new ImplementationContext(
@@ -50,7 +50,7 @@ final class InterfaceImplementationContributorTest extends TestCase
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
 
-        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class));
+        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, new \App\Module\PsiFile\PositionResolver($fileManager, MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class)));
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new ImplementationContext(
@@ -89,7 +89,9 @@ final class InterfaceImplementationContributorTest extends TestCase
         $docIdFactory = MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class);
         $docIdFactory->method('create')->willReturn(ProtocolFactory::textDocumentIdentifier('file:///impl.php'));
 
-        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, $docIdFactory);
+        $positionResolver = new \App\Module\PsiFile\PositionResolver($fileManager, $docIdFactory);
+
+        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, $positionResolver);
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new ImplementationContext(
@@ -119,7 +121,7 @@ final class InterfaceImplementationContributorTest extends TestCase
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
 
-        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class));
+        $contributor = new InterfaceImplementationContributor($lookup, $fileManager, new \App\Module\PsiFile\PositionResolver($fileManager, MockHelper::mock(\App\Module\Document\DocumentIdentifierFactoryInterface::class)));
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new ImplementationContext(
