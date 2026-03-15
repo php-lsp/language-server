@@ -27,3 +27,6 @@ services:
 
   App\Module\Indexing\IndexingStatus:
     shared: true
+
+  App\Core\Contracts\Notification\ProgressNotifierInterface:
+    alias: App\Module\Notification\ProgressNotifier
