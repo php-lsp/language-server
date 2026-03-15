@@ -44,6 +44,19 @@ final class DebugHttpServerTest extends TestCase
         return $handleRequest->invoke($this->server, $request);
     }
 
+    /**
+     * @param array<string, mixed> $body
+     */
+    private function postJson(string $uri, array $body): Response
+    {
+        $handleRequest = new \ReflectionMethod($this->server, 'handleRequest');
+
+        $request = new ServerRequest('POST', $uri, ['Content-Type' => 'application/json'], json_encode($body));
+
+        /** @var Response */
+        return $handleRequest->invoke($this->server, $request);
+    }
+
     // --- HTML views ---
 
     #[TestDox('GET / returns full HTML page with HTMX')]
@@ -363,6 +376,69 @@ final class DebugHttpServerTest extends TestCase
 
         $this->assertArrayHasKey('memory', $data['php.classes.fqn']);
         $this->assertGreaterThan(0, $data['php.classes.fqn']['memory']);
+    }
+
+    // --- Batch actions ---
+
+    #[TestDox('POST /api/batch with clear action clears selected indexes')]
+    public function testBatchClear(): void
+    {
+        $response = $this->postJson('/api/batch', ['action' => 'clear', 'indexes' => ['php.classes.fqn']]);
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('clear', $data['action']);
+        $this->assertSame(['php.classes.fqn'], $data['indexes']);
+        $this->assertSame('ok', $data['status']);
+
+        // Verify index was actually cleared
+        $this->assertSame(0, $this->storage->count('php.classes.fqn'));
+        // Other index should remain
+        $this->assertSame(1, $this->storage->count('php.functions.fqn'));
+    }
+
+    #[TestDox('POST /api/batch with export action returns selected index data')]
+    public function testBatchExport(): void
+    {
+        $response = $this->postJson('/api/batch', ['action' => 'export', 'indexes' => ['php.functions.fqn']]);
+        $data = json_decode((string) $response->getBody(), true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('export', $data['action']);
+        $this->assertArrayHasKey('php.functions.fqn', $data['data']);
+        $this->assertArrayNotHasKey('php.classes.fqn', $data['data']);
+    }
+
+    #[TestDox('POST /api/batch with no indexes returns 400')]
+    public function testBatchNoIndexes(): void
+    {
+        $response = $this->postJson('/api/batch', ['action' => 'clear', 'indexes' => []]);
+
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
+    #[TestDox('POST /api/batch with unknown index returns 404')]
+    public function testBatchUnknownIndex(): void
+    {
+        $response = $this->postJson('/api/batch', ['action' => 'clear', 'indexes' => ['nonexistent']]);
+
+        $this->assertSame(404, $response->getStatusCode());
+    }
+
+    #[TestDox('POST /api/batch with unknown action returns 400')]
+    public function testBatchUnknownAction(): void
+    {
+        $response = $this->postJson('/api/batch', ['action' => 'foobar', 'indexes' => ['php.classes.fqn']]);
+
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
+    #[TestDox('POST /api/batch reindex without indexer returns 503')]
+    public function testBatchReindexWithoutIndexer(): void
+    {
+        $response = $this->postJson('/api/batch', ['action' => 'reindex', 'indexes' => ['php.classes.fqn']]);
+
+        $this->assertSame(503, $response->getStatusCode());
     }
 
     // --- CORS ---

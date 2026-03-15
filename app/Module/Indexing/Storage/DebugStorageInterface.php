@@ -54,4 +54,11 @@ interface DebugStorageInterface extends StorageInterface
      * @return iterable<array{index: string, key: string, value: mixed, uri: string}>
      */
     public function searchAll(string $keyPattern, int $limit = 100): iterable;
+
+    /**
+     * Clear all entries from specific indexes.
+     *
+     * @param list<string> $indexKeys
+     */
+    public function clear(array $indexKeys): void;
 }

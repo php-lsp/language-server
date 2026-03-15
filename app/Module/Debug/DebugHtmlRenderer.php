@@ -80,6 +80,12 @@ final class DebugHtmlRenderer
   .htmx-indicator { display: none; }
   .htmx-request .htmx-indicator { display: inline; }
   .htmx-request.htmx-indicator { display: inline; }
+
+  .checkbox-cell { width: 30px; text-align: center; }
+  .batch-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .batch-actions .btn { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 6px 14px; color: #c9d1d9; cursor: pointer; font-size: 13px; }
+  .batch-actions .btn:hover:not(:disabled) { background: #30363d; }
+  .batch-actions .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -128,21 +134,93 @@ HTML;
             $urlKey = urlencode($info['key']);
             $memoryFormatted = $this->formatBytes($info['memory']);
             $rows .= <<<HTML
-            <tr class="clickable" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">
-              <td class="key">{$encodedKey}</td>
-              <td class="count">{$info['count']}</td>
-              <td class="memory">{$memoryFormatted}</td>
+            <tr class="clickable">
+              <td class="checkbox-cell" onclick="event.stopPropagation()"><input type="checkbox" name="indexes[]" value="{$encodedKey}" class="index-checkbox"></td>
+              <td class="key" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$encodedKey}</td>
+              <td class="count" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$info['count']}</td>
+              <td class="memory" hx-get="/views/indexes/{$urlKey}/keys" hx-target="#content" hx-push-url="/indexes/{$urlKey}">{$memoryFormatted}</td>
             </tr>
             HTML;
         }
 
+        $batchActions = <<<'HTML'
+        <div class="batch-actions">
+          <button type="button" class="btn batch-btn" id="batch-clear" disabled>Clear</button>
+          <button type="button" class="btn batch-btn" id="batch-reindex" disabled>Reindex</button>
+          <button type="button" class="btn batch-btn" id="batch-export" disabled>Export JSON</button>
+        </div>
+        <script>
+        (function() {
+          const selectAll = document.getElementById('select-all');
+          const form = document.getElementById('index-batch-form');
+
+          function updateButtons() {
+            const checked = form.querySelectorAll('.index-checkbox:checked');
+            form.querySelectorAll('.batch-btn').forEach(b => b.disabled = checked.length === 0);
+          }
+
+          selectAll.addEventListener('change', function() {
+            form.querySelectorAll('.index-checkbox').forEach(cb => cb.checked = this.checked);
+            updateButtons();
+          });
+
+          form.addEventListener('change', function(e) {
+            if (e.target.classList.contains('index-checkbox')) {
+              const all = form.querySelectorAll('.index-checkbox');
+              const checked = form.querySelectorAll('.index-checkbox:checked');
+              selectAll.checked = all.length === checked.length;
+              selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
+              updateButtons();
+            }
+          });
+
+          function getSelected() {
+            return Array.from(form.querySelectorAll('.index-checkbox:checked')).map(cb => cb.value);
+          }
+
+          function batchAction(action) {
+            const indexes = getSelected();
+            if (indexes.length === 0) return;
+
+            fetch('/api/batch', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({action: action, indexes: indexes})
+            }).then(r => r.json()).then(data => {
+              if (action === 'export') {
+                const blob = new Blob([JSON.stringify(data.data, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'indexes-export.json'; a.click();
+                URL.revokeObjectURL(url);
+              } else {
+                htmx.ajax('GET', '/views/indexes', {target: '#content'});
+              }
+            });
+          }
+
+          document.getElementById('batch-clear').addEventListener('click', () => batchAction('clear'));
+          document.getElementById('batch-reindex').addEventListener('click', () => batchAction('reindex'));
+          document.getElementById('batch-export').addEventListener('click', () => batchAction('export'));
+        })();
+        </script>
+        HTML;
+
         return <<<HTML
         {$breadcrumb}
         {$searchForm}
+        <form id="index-batch-form">
         <table>
-          <tr><th>Index Key</th><th>Entries</th><th>Memory</th></tr>
+          <tr>
+            <th><input type="checkbox" id="select-all"></th>
+            <th>Index Key</th>
+            <th>Entries</th>
+            <th>Memory</th>
+          </tr>
           {$rows}
         </table>
+        {$batchActions}
+        </form>
         HTML;
     }
 

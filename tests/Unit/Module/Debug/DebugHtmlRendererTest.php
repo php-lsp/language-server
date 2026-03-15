@@ -290,4 +290,22 @@ final class DebugHtmlRendererTest extends TestCase
         $html = $this->renderer->keysList('php.classes.fqn');
         $this->assertStringContainsString('delay:300ms', $html);
     }
+
+    #[TestDox('index list has checkboxes for batch selection')]
+    public function testIndexListHasCheckboxes(): void
+    {
+        $html = $this->renderer->indexList();
+        $this->assertStringContainsString('id="select-all"', $html);
+        $this->assertStringContainsString('class="index-checkbox"', $html);
+        $this->assertStringContainsString('index-batch-form', $html);
+    }
+
+    #[TestDox('index list has batch action buttons')]
+    public function testIndexListHasBatchActions(): void
+    {
+        $html = $this->renderer->indexList();
+        $this->assertStringContainsString('batch-clear', $html);
+        $this->assertStringContainsString('batch-reindex', $html);
+        $this->assertStringContainsString('batch-export', $html);
+    }
 }

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Module\Debug;
 
+use App\Module\Indexing\Indexer;
 use App\Module\Indexing\Storage\DebugStorageInterface;
+use App\Module\Workspace\ProjectManager;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\HttpServer;
 use React\Http\Message\Response;
@@ -17,6 +19,8 @@ class DebugHttpServer
     public function __construct(
         private readonly DebugStorageInterface $storage,
         private readonly DebugHtmlRenderer $renderer,
+        private readonly ?Indexer $indexer = null,
+        private readonly ?ProjectManager $projectManager = null,
     ) {}
 
     public function start(string $host, int $port): void
@@ -42,6 +46,7 @@ class DebugHttpServer
     {
         $path = $request->getUri()->getPath();
         $query = $request->getQueryParams();
+        $method = $request->getMethod();
 
         return match (true) {
             // HTML views (HTMX fragments + full page)
@@ -54,6 +59,7 @@ class DebugHttpServer
             $path === '/api/indexes' => $this->jsonResponse($this->apiIndexes()),
             $path === '/api/export' => $this->jsonResponse($this->apiExport()),
             $path === '/api/search' => $this->jsonResponse($this->apiGlobalSearch($query)),
+            $path === '/api/batch' && $method === 'POST' => $this->handleBatch($request),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
 
             default => $this->htmlResponse('<div class="empty">Not found.</div>', 404),
@@ -90,6 +96,102 @@ class DebugHttpServer
             'entries' => $this->htmlResponse($this->renderer->entryDetail($indexName, $actionParam ?? '')),
             default => $this->htmlResponse('<div class="empty">Unknown action.</div>', 404),
         };
+    }
+
+    // --- Batch actions ---
+
+    private function handleBatch(ServerRequestInterface $request): Response
+    {
+        $body = json_decode((string) $request->getBody(), true);
+
+        if (!is_array($body)) {
+            return $this->jsonResponse(['error' => 'Invalid JSON body'], 400);
+        }
+
+        $action = $body['action'] ?? '';
+        /** @var list<string> $indexes */
+        $indexes = $body['indexes'] ?? [];
+
+        if ($indexes === []) {
+            return $this->jsonResponse(['error' => 'No indexes selected'], 400);
+        }
+
+        // Validate indexes exist
+        $validKeys = $this->storage->getIndexKeys();
+        $invalid = array_diff($indexes, $validKeys);
+
+        if ($invalid !== []) {
+            return $this->jsonResponse([
+                'error' => 'Unknown indexes: ' . implode(', ', $invalid),
+                'available' => $validKeys,
+            ], 404);
+        }
+
+        return match ($action) {
+            'clear' => $this->batchClear($indexes),
+            'reindex' => $this->batchReindex($indexes),
+            'export' => $this->batchExport($indexes),
+            default => $this->jsonResponse(['error' => "Unknown action: {$action}"], 400),
+        };
+    }
+
+    /**
+     * @param list<string> $indexes
+     */
+    private function batchClear(array $indexes): Response
+    {
+        $this->storage->clear($indexes);
+
+        return $this->jsonResponse([
+            'action' => 'clear',
+            'indexes' => $indexes,
+            'status' => 'ok',
+        ]);
+    }
+
+    /**
+     * @param list<string> $indexes
+     */
+    private function batchReindex(array $indexes): Response
+    {
+        if ($this->indexer === null || $this->projectManager === null) {
+            return $this->jsonResponse(['error' => 'Reindexing is not available'], 503);
+        }
+
+        $this->storage->clear($indexes);
+        $this->indexer->index($this->projectManager->getProject());
+
+        return $this->jsonResponse([
+            'action' => 'reindex',
+            'indexes' => $indexes,
+            'status' => 'ok',
+        ]);
+    }
+
+    /**
+     * @param list<string> $indexes
+     */
+    private function batchExport(array $indexes): Response
+    {
+        $export = [];
+
+        foreach ($indexes as $indexKey) {
+            $entries = [];
+            foreach ($this->storage->read($indexKey) as $entry) {
+                $entries[] = [
+                    'key' => $entry->key,
+                    'value' => $this->serializeValue($entry->value),
+                    'uri' => $entry->uri,
+                ];
+            }
+            $export[$indexKey] = $entries;
+        }
+
+        return $this->jsonResponse([
+            'action' => 'export',
+            'indexes' => $indexes,
+            'data' => $export,
+        ]);
     }
 
     // --- JSON API routes ---

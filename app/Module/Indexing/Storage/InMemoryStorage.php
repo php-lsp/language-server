@@ -177,6 +177,20 @@ class InMemoryStorage implements DebugStorageInterface
         }
     }
 
+    public function clear(array $indexKeys): void
+    {
+        foreach ($indexKeys as $indexKey) {
+            unset($this->entries[$indexKey]);
+
+            // Clear secondary indexes for this index
+            foreach (array_keys($this->secondaryIndexes) as $compositeKey) {
+                if (str_starts_with($compositeKey, $indexKey . ':')) {
+                    unset($this->secondaryIndexes[$compositeKey]);
+                }
+            }
+        }
+    }
+
     private function updateSecondaryIndexes(string $indexKey, Entry $entry): void
     {
         foreach ($this->secondaryIndexes as $compositeKey => &$index) {
