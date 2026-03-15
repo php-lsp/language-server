@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Completion;
+
+use App\Core\Contracts\Completion\AsCompletionContributor;
+use App\Core\Contracts\Completion\CompletionConsumer;
+use App\Core\Contracts\Completion\CompletionContext;
+use App\Core\Contracts\Completion\CompletionContributor;
+use App\Core\Contracts\PrefixMatcher\StrContainsMatcher;
+use App\Module\Indexing\Indexer\GlobalConstantIndexer;
+use App\Module\Indexing\IndexLookup;
+use App\Module\PsiFile\Tree;
+use Lsp\Protocol\Type\CompletionItem;
+use Lsp\Protocol\Type\CompletionItemKind;
+use Override;
+
+#[AsCompletionContributor]
+final class ConstantCompletionContributor implements CompletionContributor
+{
+    public function __construct(
+        private readonly IndexLookup $indexLookup,
+    ) {}
+
+    #[Override]
+    public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
+    {
+        $element = $context->currentNode();
+        $string = Tree::toString($element);
+        $matcher = new StrContainsMatcher($string);
+
+        foreach ($this->indexLookup->findByKey(GlobalConstantIndexer::class) as $key => $value) {
+            $name = $value->value->name;
+            if (!$matcher->match($name)) {
+                continue;
+            }
+
+            $consumer(new CompletionItem(
+                label: $name,
+                kind: CompletionItemKind::ConstantKind,
+                detail: '[constant]',
+            ));
+        }
+    }
+}

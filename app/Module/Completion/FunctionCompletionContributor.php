@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Completion;
+
+use App\Core\Contracts\Completion\AsCompletionContributor;
+use App\Core\Contracts\Completion\CompletionConsumer;
+use App\Core\Contracts\Completion\CompletionContext;
+use App\Core\Contracts\Completion\CompletionContributor;
+use App\Core\Contracts\PrefixMatcher\StrContainsMatcher;
+use App\Module\Indexing\Data\FunctionData;
+use App\Module\Indexing\Indexer\FunctionIndexer;
+use App\Module\Indexing\IndexLookup;
+use App\Module\PsiFile\Tree;
+use Lsp\Protocol\Type\CompletionItem;
+use Lsp\Protocol\Type\CompletionItemKind;
+use Override;
+
+#[AsCompletionContributor]
+final class FunctionCompletionContributor implements CompletionContributor
+{
+    public function __construct(
+        private readonly IndexLookup $indexLookup,
+    ) {}
+
+    #[Override]
+    public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
+    {
+        $element = $context->currentNode();
+        $string = Tree::toString($element);
+        $matcher = new StrContainsMatcher($string);
+
+        foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $value) {
+            /** @var FunctionData $data */
+            $data = $value->value;
+
+            if (!$matcher->match($data->fqn)) {
+                continue;
+            }
+
+            $consumer(new CompletionItem(
+                label: $data->fqn,
+                kind: CompletionItemKind::FunctionKind,
+                detail: '[function]',
+            ));
+        }
+    }
+}

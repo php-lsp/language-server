@@ -1,0 +1,38 @@
+php-version = "8.4"
+
+[source]
+paths = ["app"]
+includes = ["vendor"]
+excludes = ["var/**"]
+
+[linter]
+baseline = "mago-lint-baseline.toml"
+integrations = ["symfony", "phpunit"]
+
+[linter.rules]
+no-variable-variable = { enabled = true }
+no-redundant-readonly = { enabled = true }
+sensitive-parameter = { enabled = true }
+no-redundant-use = { enabled = true }
+
+[formatter]
+preset = "default"
+trailing-comma = true
+empty-line-before-return = true
+preserve-breaking-argument-list = true
+preserve-breaking-parameter-list = true
+preserve-breaking-array-like = true
+inline-empty-method-braces = true
+inline-empty-constructor-braces = true
+
+[analyzer]
+baseline = "mago-analysis-baseline.toml"
+find-unused-expressions = true
+find-unused-definitions = true
+analyze-dead-code = true
+check-missing-override = true
+find-unused-parameters = true
+check-missing-type-hints = true
+check-closure-missing-type-hints = true
+check-arrow-function-missing-type-hints = true
+check-use-statements = true

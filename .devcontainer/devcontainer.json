@@ -1,0 +1,27 @@
+{
+    "name": "PHP Language Server",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "vscode",
+    "postCreateCommand": "bash .devcontainer/setup.sh",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "php-lsp.host": "127.0.0.1",
+                "php-lsp.port": 5007,
+                "php-lsp.enabled": true
+            },
+            "extensions": [
+                "${localWorkspaceFolder}/client/vscode"
+            ]
+        }
+    },
+    "forwardPorts": [5007],
+    "portsAttributes": {
+        "5007": {
+            "label": "PHP LSP Server",
+            "onAutoForward": "ignore"
+        }
+    }
+}

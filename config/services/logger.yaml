@@ -2,6 +2,10 @@ parameters:
   env(APP_LOGGER_NAME): 'php-lsp'
   app.logger.name: '%env(APP_LOGGER_NAME)%'
 
+  # Buggregator connection (host:port for trap server)
+  env(BUGGREGATOR_HOST): '127.0.0.1:9913'
+  app.buggregator.host: '%env(BUGGREGATOR_HOST)%'
+
 services:
   _defaults:
     autowire: true
@@ -14,7 +18,26 @@ services:
     class: Monolog\Handler\StreamHandler
     arguments:
       $stream: '%kernel.logs_dir%/%kernel.environment%.log'
-      $level: !php/enum Monolog\Level::Error
+      $level: !php/enum Monolog\Level::Debug
+
+  # Buggregator Monolog handler — sends JSON logs via TCP socket
+  app.logger.formatter.json:
+    class: Monolog\Formatter\JsonFormatter
+    arguments:
+      $appendNewline: true
+
+  app.logger.handler.buggregator.socket:
+    class: Monolog\Handler\SocketHandler
+    arguments:
+      $connectionString: '%app.buggregator.host%'
+      $level: !php/enum Monolog\Level::Debug
+    calls:
+      - [ 'setFormatter', [ '@app.logger.formatter.json' ] ]
+
+  app.logger.handler.buggregator:
+    class: Monolog\Handler\WhatFailureGroupHandler
+    arguments:
+      $handlers: [ '@app.logger.handler.buggregator.socket' ]
 
   Psr\Log\LoggerInterface:
     class: Monolog\Logger
@@ -22,6 +45,7 @@ services:
       $name: '%app.logger.name%'
     calls:
       - [ 'pushHandler', [ '@app.logger.handler.prod' ] ]
+      - [ 'pushHandler', [ '@app.logger.handler.buggregator' ] ]
       - [ 'pushProcessor', [ '@app.logger.processor.psr' ] ]
 
 when@dev:
@@ -43,7 +67,34 @@ when@dev:
       calls:
         - [ 'pushHandler', [ '@app.logger.handler.dev' ] ]
         - [ 'pushHandler', [ '@app.logger.handler.prod' ] ]
+        - [ 'pushHandler', [ '@app.logger.handler.buggregator' ] ]
         - [ 'pushProcessor', [ '@app.logger.processor.psr' ] ]
 
 
 
+    Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory: ~
+    Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface:
+      class: Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory
+
+    Lsp\Workspace\Project\ProjectFactory: ~
+    Lsp\Workspace\Project\ProjectFactoryInterface:
+      class: Lsp\Workspace\Project\ProjectFactory
+
+    Lsp\Workspace\File\FileFactory: ~
+    Lsp\Workspace\File\FileFactoryInterface:
+      class: Lsp\Workspace\File\FileFactory
+
+    App\Module\Document\InMemoryDocumentIdentifierFactory: ~
+    App\Module\Document\DocumentIdentifierFactoryInterface:
+      class: App\Module\Document\InMemoryDocumentIdentifierFactory
+
+    App\Module\Document\LocalFileDocumentLoader: ~
+    App\Module\Document\DocumentLoaderInterface:
+      class: App\Module\Document\LocalFileDocumentLoader
+
+    React\Filesystem\AdapterInterface:
+      factory: [React\Filesystem\Factory, create]
+
+    Lsp\Server\ConnectionStore: ~
+    Lsp\Server\ConnectionProviderInterface:
+      class: Lsp\Server\ConnectionStore

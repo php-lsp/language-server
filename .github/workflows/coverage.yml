@@ -1,0 +1,130 @@
+name: coverage
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Git To Use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: sockets
+          coverage: pcov
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Composer Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-8.4-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-8.4-composer-
+
+      - name: Install Dependencies
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run Tests with Coverage
+        run: php -dpcov.enabled=1 vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-text | tee coverage-output.txt
+
+      - name: Extract Coverage Percentage
+        id: coverage
+        run: |
+          COVERAGE=$(grep -oP 'Lines:\s+\K[\d.]+' coverage-output.txt | head -1)
+          echo "percentage=${COVERAGE:-0}" >> "$GITHUB_OUTPUT"
+          echo "Coverage: ${COVERAGE:-0}%"
+
+      - name: Setup Mago
+        uses: nhedger/setup-mago@v1
+
+      - name: Run Mago Lint
+        id: mago-lint
+        run: |
+          mago lint --baseline mago-lint-baseline.toml 2>&1 | tee mago-lint-output.txt || true
+          echo "output<<EOF_MAGO_LINT" >> "$GITHUB_OUTPUT"
+          cat mago-lint-output.txt >> "$GITHUB_OUTPUT"
+          echo "EOF_MAGO_LINT" >> "$GITHUB_OUTPUT"
+
+      - name: Run Mago Analyze
+        id: mago-analyze
+        run: |
+          mago analyze --baseline mago-analysis-baseline.toml 2>&1 | tee mago-analyze-output.txt || true
+          echo "output<<EOF_MAGO_ANALYZE" >> "$GITHUB_OUTPUT"
+          cat mago-analyze-output.txt >> "$GITHUB_OUTPUT"
+          echo "EOF_MAGO_ANALYZE" >> "$GITHUB_OUTPUT"
+
+      - name: Add Coverage PR Comment
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: |
+            ## Code Quality Report
+
+            ### Coverage
+
+            | Metric | Value |
+            |--------|-------|
+            | **Lines** | ${{ steps.coverage.outputs.percentage }}% |
+
+            ### Mago Lint
+
+            ```
+            ${{ steps.mago-lint.outputs.output }}
+            ```
+
+            ### Mago Analyze
+
+            ```
+            ${{ steps.mago-analyze.outputs.output }}
+            ```
+
+      - name: Generate Coverage Badge
+        if: github.ref == 'refs/heads/master'
+        run: |
+          COVERAGE=${{ steps.coverage.outputs.percentage }}
+          # Determine color based on coverage
+          if (( $(echo "$COVERAGE >= 80" | bc -l) )); then
+            COLOR="brightgreen"
+          elif (( $(echo "$COVERAGE >= 60" | bc -l) )); then
+            COLOR="yellow"
+          elif (( $(echo "$COVERAGE >= 40" | bc -l) )); then
+            COLOR="orange"
+          else
+            COLOR="red"
+          fi
+          # Download badge SVG from shields.io
+          curl -s "https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}" -o .github/coverage-badge.svg
+
+      - name: Commit Coverage Badge
+        if: github.ref == 'refs/heads/master'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/coverage-badge.svg
+          git diff --staged --quiet && exit 0
+          git commit -m "Update coverage badge [skip ci]"
+          git push

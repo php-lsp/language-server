@@ -1,0 +1,349 @@
+variant = "loose"
+
+[[issues]]
+file = "app/Controller/InitializeController.php"
+code = "literal-named-argument"
+message = "Literal argument `2` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "literal-named-argument"
+message = "Literal argument `1.0` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentSymbolController.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.74)."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.55)."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.0300000000000002)."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.61)."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "no-assign-in-condition"
+message = "Avoid assignments in conditions."
+count = 8
+
+[[issues]]
+file = "app/Module/Declaration/ClassDeclarationContributor.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 8
+
+[[issues]]
+file = "app/Module/Definition/ClassDefinitionContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/ClassDefinitionContributor.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/ClassDefinitionContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/ClassDefinitionContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.61)."
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/ClassDefinitionContributor.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 3
+
+[[issues]]
+file = "app/Module/Definition/ClassDefinitionContributor.php"
+code = "no-assign-in-condition"
+message = "Avoid assignments in conditions."
+count = 8
+
+[[issues]]
+file = "app/Module/Definition/ClassDefinitionContributor.php"
+code = "no-else-clause"
+message = "Avoid `elseif` clauses."
+count = 8
+
+[[issues]]
+file = "app/Module/Definition/MethodDefinitionContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/ClassDocumentationContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.9800000000000002)."
+count = 1
+
+[[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ClassData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ConstantData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/MethodData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/ParameterData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Data/PropertyData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/InheritanceIndexer.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.02)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/ClassData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/ConstantData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/MethodData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/IndexData/PropertyData.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
+code = "literal-named-argument"
+message = "Literal argument `1` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
+code = "literal-named-argument"
+message = "Literal argument `true` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/FifoCache.php"
+code = "no-boolean-flag-parameter"
+message = "Avoid boolean flag parameters."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (3.4200000000000004)."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "literal-named-argument"
+message = 'Literal argument `"\n"` should be passed as a named argument for clarity.'
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "no-assign-in-condition"
+message = "Avoid assignments in conditions."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "app/Module/References/VariableReferenceContributor.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/ConstructorSignatureContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/ConstructorSignatureContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.7000000000000002)."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/Signature/MethodSignatureContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.79)."
+count = 1

@@ -18,12 +18,14 @@
     "require": {
         "php": "^8.4",
         "monolog/monolog": "^3.8",
-        "php-lsp/kernel": "^1.0",
-        "php-lsp/protocol": "^1.0",
+        "nikic/php-parser": "^5.6",
         "php-lsp/bridge-hydrator-type-lang": "^1.0",
         "php-lsp/bridge-server-react": "^1.0",
         "php-lsp/ext-document-manager": "^1.0",
-        "php-lsp/workspace": "^1.0"
+        "php-lsp/kernel": "^1.0",
+        "php-lsp/protocol": "^1.0",
+        "php-lsp/workspace": "^1.0",
+        "phpstan/phpstan": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -31,12 +33,9 @@
         }
     },
     "require-dev": {
-        "behat/behat": "^3.16",
-        "friendsofphp/php-cs-fixer": "^3.64",
+        "buggregator/trap": "^1.13",
+        "carthage-software/mago": "^1.14",
         "php-lsp/protocol-generator": "^1.0",
-        "phpstan/phpstan": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0",
-        "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpunit/phpunit": "^10.5|^11.5",
         "symfony/var-dumper": "^6.4|^7.0"
     },
@@ -46,33 +45,41 @@
         }
     },
     "scripts-aliases": {
-        "linter:check": ["linter", "stan", "analyze", "phpstan"],
-        "phpcs:fix": ["phpcs", "per2", "per", "percs", "codestyle", "cs"],
+        "mago:lint": ["lint", "linter", "mago-lint"],
+        "mago:analyze": ["analyze", "mago-analyze"],
+        "mago:fix": ["fix", "mago-fix"],
+        "mago:baseline": ["baseline", "mago-baseline"],
+        "mago:format": ["format", "fmt", "cs", "codestyle"],
         "test:unit": ["phpunit", "unit"],
         "build:prod": ["build"],
         "build:run": ["run"]
     },
     "scripts-descriptions": {
-        "test": "Runs all types of tests in turn",
+        "test": "Runs all tests",
         "test:unit": "Runs unit tests only",
-        "test:feature": "Runs functional tests only",
-        "linter:check": "Runs static code analysis",
-        "linter:baseline": "Generates a baseline for current linter errors",
-        "phpcs:check": "Checks source code for codestyle errors",
-        "phpcs:fix": "Corrects codestyle in source code",
+        "mago:lint": "Runs Mago linter with baseline",
+        "mago:analyze": "Runs Mago analyzer with baseline",
+        "mago:fix": "Applies Mago auto-fixes to source code",
+        "mago:baseline": "Regenerates Mago baselines for lint and analysis",
+        "mago:format": "Formats source code with Mago formatter",
+        "mago:format:check": "Checks source code formatting (dry-run)",
         "build:prod": "Compiles PHAR and binary assembly of the LSP Server",
         "build:run": "Runs the compiled assembly",
         "build:run:local": "Runs the compiled PHAR (using local interpreter)",
         "build:prepare": "Prepare local environment for binary compilation"
     },
     "scripts": {
-        "test": ["@test:unit", "@test:feature"],
+        "test": "@test:unit",
         "test:unit": "phpunit --testdox",
-        "test:feature": "behat --format pretty",
-        "linter:check": "phpstan analyse --configuration phpstan.neon",
-        "linter:baseline": "phpstan analyse --configuration phpstan.neon --generate-baseline",
-        "phpcs:check": "php-cs-fixer fix --config=.php-cs-fixer.php --allow-risky=yes --dry-run --verbose --diff",
-        "phpcs:fix": "php-cs-fixer fix --config=.php-cs-fixer.php --allow-risky=yes --verbose --diff",
+        "mago:lint": "mago lint --baseline mago-lint-baseline.toml",
+        "mago:analyze": "mago analyze --baseline mago-analysis-baseline.toml",
+        "mago:fix": "mago lint --fix --potentially-unsafe --format-after-fix",
+        "mago:baseline": [
+            "mago lint --generate-baseline --baseline mago-lint-baseline.toml",
+            "mago analyze --generate-baseline --baseline mago-analysis-baseline.toml"
+        ],
+        "mago:format": "mago format",
+        "mago:format:check": "mago format --check",
         "build:prod": "./bin/build",
         "build:prepare": [
             "Composer\\Config::disableProcessTimeout",

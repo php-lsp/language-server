@@ -1,0 +1,5 @@
+{
+    "php-lsp.host": "127.0.0.1",
+    "php-lsp.port": 5007,
+    "php-lsp.enabled": true
+}
