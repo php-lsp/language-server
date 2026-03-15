@@ -103,12 +103,18 @@ Each controller:
 | `InitializeController` | `initialize` | Initialization, capability declaration, indexing trigger |
 | `InitializedController` | `initialized` | Initialization confirmation |
 | `SetTraceController` | `$/setTrace` | Trace level configuration |
+| `CancelRequestController` | `$/cancelRequest` | Request cancellation |
+| `WorkspaceSymbolController` | `workspace/symbol` | Project-wide symbol search |
 | `CompletionController` | `textDocument/completion` | Code completion |
 | `HoverController` | `textDocument/hover` | Hover documentation |
 | `DeclarationController` | `textDocument/declaration` | Go to declaration |
 | `DefinitionController` | `textDocument/definition` | Go to definition |
+| `TypeDefinitionController` | `textDocument/typeDefinition` | Go to type definition |
+| `ImplementationController` | `textDocument/implementation` | Find implementations |
+| `CodeActionController` | `textDocument/codeAction` | Code actions (import, remove unused) |
 | `DocumentHighlightController` | `textDocument/documentHighlight` | Highlight symbol occurrences |
 | `FormattingController` | `textDocument/formatting` | Document formatting |
+| `RangeFormattingController` | `textDocument/rangeFormatting` | Range formatting |
 | `ReferencesController` | `textDocument/references` | Find usages |
 | `RenameController` | `textDocument/rename` | Symbol rename |
 | `PrepareRenameController` | `textDocument/prepareRename` | Rename preparation |
@@ -116,6 +122,10 @@ Each controller:
 | `DiagnosticController` | `textDocument/diagnostic` | Pull diagnostics |
 | `PublishDiagnosticsController` | `textDocument/publishDiagnostics` | Push diagnostics to client |
 | `DocumentSymbolController` | `textDocument/documentSymbol` | Document symbols |
+| `DocumentOpenController` | `textDocument/didOpen` | Document open notification |
+| `DocumentCloseController` | `textDocument/didClose` | Document close notification |
+| `DocumentChangeController` | `textDocument/didChange` | Document change notification |
+| `DocumentSaveController` | `textDocument/didSave` | Document save notification |
 
 ### 3. PsiFile — the AST Layer
 
@@ -170,19 +180,27 @@ Indexer (orchestrator)
     ▼
 IndexerInterface[] (individual indexers)
     │
-    │  Declaration indexers:
+    │  Declaration indexers (10):
     ├── ClassIndexer              → key "php.classes.fqn"
     ├── InterfaceIndexer          → key "php.interfaces.fqn"
     ├── TraitIndexer              → key "php.traits.fqn"
+    ├── EnumIndexer               → key "php.enums.fqn"
     ├── FunctionIndexer           → key "php.functions.fqn"
-    ├── ClassMethodIndexer        → key "php.methods.fqn"
+    ├── ClassMethodIndexer        → key "php.classMethods.fqn"
+    ├── PropertyIndexer           → key "php.properties.fqn"
+    ├── ClassConstantIndexer      → key "php.classConstants.fqn"
+    ├── GlobalConstantIndexer     → key "php.constants.fqn"
+    ├── NamespaceIndexer          → key "php.namespaces.fqn"
     │
-    │  Usage indexers:
+    │  Usage indexers (5):
     ├── ClassUsageIndexer         → key "php.classUsages"
     ├── MethodCallUsageIndexer    → key "php.methodCallUsages"
     ├── FunctionCallUsageIndexer  → key "php.functionCallUsages"
     ├── PropertyAccessUsageIndexer→ key "php.propertyAccessUsages"
-    └── ClassConstantUsageIndexer → key "php.classConstantUsages"
+    ├── ClassConstantUsageIndexer → key "php.classConstantUsages"
+    │
+    │  Relationship indexers (1):
+    └── InheritanceIndexer        → key "php.inheritance"
          │
          ▼
     StorageInterface (InMemoryStorage)
@@ -339,25 +357,31 @@ app/
 │   │   ├── AsCompletionContributor.php  # - registration attribute
 │   │   ├── CompletionContext.php        # - request context
 │   │   └── CompletionConsumer.php       # - result accumulator
+│   ├── CodeAction/
 │   ├── Declaration/
+│   ├── Definition/
 │   ├── Documentation/
+│   ├── Highlight/
+│   ├── Implementation/
 │   ├── References/
 │   ├── Signature/
+│   ├── TypeDefinition/
 │   ├── Indexing/
+│   ├── PsiFile/
 │   └── PrefixMatcher/
 │
 ├── Module/                       # IMPLEMENTATIONS — concrete logic
-│   ├── Completion/               #   Completion contributors (5)
-│   │   ├── ClassesCompletionContributor.php
-│   │   ├── FunctionCompletionContributor.php
-│   │   ├── KeywordsCompletionContributor.php
-│   │   ├── ShortcutCompletionContributor.php
-│   │   └── SuperglobalsCompletionContributor.php
-│   ├── Declaration/              #   Go-to-definition contributors (3)
-│   ├── Documentation/            #   Hover documentation contributors (2)
+│   ├── Completion/               #   Completion contributors (15)
+│   ├── Declaration/              #   Declaration contributors (7)
+│   ├── Definition/               #   Definition contributors (4)
+│   ├── Documentation/            #   Hover documentation contributors (7)
+│   ├── Highlight/                #   Document highlight contributors (2)
 │   ├── References/               #   Find usages contributors (7)
-│   ├── Signature/                #   Function signature contributors (3)
-│   ├── Indexing/                 #   Indexers (10) + storage
+│   ├── Signature/                #   Signature contributors (3)
+│   ├── CodeAction/               #   Code action contributors (2)
+│   ├── Implementation/           #   Implementation contributors (1)
+│   ├── TypeDefinition/           #   Type definition contributors (1)
+│   ├── Indexing/                 #   Indexers (16) + storage
 │   ├── PsiFile/                  #   AST parsing and navigation
 │   ├── Document/                 #   Document loading
 │   ├── Workspace/                #   Project management

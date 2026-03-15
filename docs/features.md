@@ -19,6 +19,8 @@ and the [LSP 3.18 specification](https://github.com/microsoft/language-server-pr
 | `textDocument/hover`              | Done        | 7 documentation contributors                      |
 | `textDocument/declaration`        | Done        | 7 declaration contributors                        |
 | `textDocument/definition`         | Done        | 4 definition contributors (class, function, method, variable) |
+| `textDocument/typeDefinition`     | Done        | 1 contributor via TypeResolver                     |
+| `textDocument/implementation`     | Done        | 1 contributor via InheritanceIndexer               |
 | `textDocument/references`         | Done        | 7 reference contributors                          |
 | `textDocument/signatureHelp`      | Done        | 3 signature contributors                          |
 | `textDocument/prepareRename`      | Done        | Returns range of symbol under cursor               |
@@ -27,14 +29,17 @@ and the [LSP 3.18 specification](https://github.com/microsoft/language-server-pr
 | `textDocument/publishDiagnostics` | Done        | Push-model diagnostics                             |
 | `textDocument/documentSymbol`     | Done        | Classes, interfaces, traits, enums, functions, members |
 | `textDocument/documentHighlight`  | Done        | 2 contributors (variables, names)                  |
+| `textDocument/codeAction`         | Done        | 2 contributors (import symbol, remove unused import) |
 | `textDocument/formatting`         | Done        | Delegates to external formatter (php-cs-fixer/phpcbf) |
+| `textDocument/rangeFormatting`    | Done        | Range formatting via external formatter            |
+| `$/cancelRequest`                 | Done        | Request cancellation                               |
 | `workspace/symbol`               | Done        | Project-wide symbol search via index               |
 
 ### Indexing System (16 indexers)
 
-- **Declarations:** class, function, interface, trait, enum, class method, property, global constant, namespace
-- **Usages:** class, function call, method call, property access, class constant
-- **Relationships:** inheritance (extends/implements)
+- **Declarations (10):** class, function, interface, trait, enum, class method, property, class constant, global constant, namespace
+- **Usages (5):** class, function call, method call, property access, class constant
+- **Relationships (1):** inheritance (extends/implements)
 
 ---
 

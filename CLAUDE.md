@@ -87,7 +87,7 @@ app/
 │   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, constant
 │   ├── Signature/             # Signature contributors (3): function, method, constructor
 │   ├── TypeDefinition/        # Type definition contributors (1): type-aware navigation via TypeResolver
-│   ├── Indexing/              # Declaration indexers (11) + usage indexers (5) + storage + IndexData value objects
+│   ├── Indexing/              # Declaration indexers (10) + usage indexers (5) + relationship indexers (1) + storage + IndexData value objects
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── Document/              # Document loading and identification
 │   ├── Workspace/             # Workspace/project management
