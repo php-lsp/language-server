@@ -63,6 +63,9 @@ Pure data classes, interfaces, attributes, enums. No dependencies, no mocking ne
 | `Module/PsiFile/FifoCache.php` | Set/get, eviction at max size, remove, clear |
 | `Module/Workspace/ProjectManager.php` | `getProject()`/`setProject()` round-trip |
 | `Module/Notification/Result.php` | Static factory methods, verify values |
+| `Module/Notification/ActiveConnectionProvider.php` | `get()`/`set()` round-trip, null when unset |
+| `Module/Notification/ProgressNotifier.php` | create/begin/report/end methods, percentage clamping (0-100) |
+| `Module/Indexing/IndexerFileCollector.php` | File collection with ignored directories, nested traversal |
 
 ---
 
@@ -95,11 +98,13 @@ Interface dependencies that are simple to mock. Straightforward logic.
 |------|---------------------|-------------|
 | `Module/Document/InMemoryDocumentIdentifierFactory.php` | (self-contained, uses FifoCache) | Creates and caches TextDocumentIdentifier |
 
-#### Listeners (2 files)
+#### Listeners (4 files)
 | File | Dependencies to mock | What to test |
 |------|---------------------|-------------|
 | `Listener/MessageListener.php` | `LoggerInterface` | Verify logger called with message |
 | `Listener/ServerListener.php` | `LoggerInterface` | Verify logger called on server events |
+| `Listener/ActiveConnectionListener.php` | `ActiveConnectionProvider`, `MessageReceived` event | Verify connection is stored in provider |
+| `Listener/ExceptionNotificationListener.php` | `ServerNotificationSender`, `FailureResponseSent` event | Verify non-ignored error codes trigger notifications |
 
 #### Controllers — Simple (9 files)
 | File | Dependencies to mock | What to test |

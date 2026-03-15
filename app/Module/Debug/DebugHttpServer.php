@@ -60,7 +60,6 @@ class DebugHttpServer
                 $this->renderer->fileDetail(urldecode(substr($path, strlen('/views/files/')))),
             ),
             str_starts_with($path, '/views/indexes/') => $this->routeView($path, $query),
-
             // JSON API (for curl / agents)
             $path === '/api/indexes' => $this->jsonResponse($this->apiIndexes()),
             $path === '/api/export' => $this->jsonResponse($this->apiExport()),
@@ -74,7 +73,6 @@ class DebugHttpServer
             $path === '/api/autocomplete/uris' => $this->jsonResponse($this->apiAutocompleteUris($query)),
             $path === '/api/batch' && $method === 'POST' => $this->handleBatch($request),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
-
             default => $this->htmlResponse('<div class="empty">Not found.</div>', 404),
         };
     }
@@ -447,12 +445,14 @@ class DebugHttpServer
      */
     private function apiStatus(): array
     {
-        return $this->indexingStatus?->toArray() ?? [
-            'indexing' => false,
-            'filesIndexed' => 0,
-            'lastIndexedAt' => null,
-            'lastDuration' => null,
-        ];
+        return (
+            $this->indexingStatus?->toArray() ?? [
+                'indexing' => false,
+                'filesIndexed' => 0,
+                'lastIndexedAt' => null,
+                'lastDuration' => null,
+            ]
+        );
     }
 
     // --- File browser ---

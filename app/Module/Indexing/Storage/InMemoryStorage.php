@@ -86,9 +86,7 @@ class InMemoryStorage implements DebugStorageInterface
 
     public function count(string $indexKey): int
     {
-        return array_key_exists($indexKey, $this->entries)
-            ? \count($this->entries[$indexKey])
-            : 0;
+        return array_key_exists($indexKey, $this->entries) ? \count($this->entries[$indexKey]) : 0;
     }
 
     /**
@@ -101,9 +99,11 @@ class InMemoryStorage implements DebugStorageInterface
         }
 
         foreach ($this->entries[$indexKey] as $entry) {
-            if (\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
-                yield $entry;
+            if (!\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD | \FNM_NOESCAPE)) {
+                continue;
             }
+
+            yield $entry;
         }
     }
 
@@ -184,9 +184,11 @@ class InMemoryStorage implements DebugStorageInterface
 
             // Clear secondary indexes for this index
             foreach (array_keys($this->secondaryIndexes) as $compositeKey) {
-                if (str_starts_with($compositeKey, $indexKey . ':')) {
-                    unset($this->secondaryIndexes[$compositeKey]);
+                if (!str_starts_with($compositeKey, $indexKey . ':')) {
+                    continue;
                 }
+
+                unset($this->secondaryIndexes[$compositeKey]);
             }
         }
     }
@@ -236,9 +238,11 @@ class InMemoryStorage implements DebugStorageInterface
         foreach ($this->entries as $indexKey => $entries) {
             $matching = [];
             foreach ($entries as $entry) {
-                if ($entry->uri === $uri) {
-                    $matching[] = $entry;
+                if ($entry->uri !== $uri) {
+                    continue;
                 }
+
+                $matching[] = $entry;
             }
 
             if ($matching !== []) {

@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace App\Module\Notification;
 
-use Lsp\Contracts\Server\ConnectionInterface;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
 use Lsp\Protocol\Type\MessageType;
 use Lsp\Protocol\Type\ShowMessageParams;
 use Lsp\Rpc\Message\Notification;
-use Lsp\Server\ConnectionProviderInterface;
 use Psr\Log\LoggerInterface;
 
 final class ServerNotificationSender
 {
     public function __construct(
-        private readonly ConnectionProviderInterface $connectionProvider,
+        private readonly ActiveConnectionProvider $connectionProvider,
         private readonly ResultProviderInterface $resultProvider,
         private readonly LoggerInterface $logger,
     ) {}
@@ -35,14 +33,7 @@ final class ServerNotificationSender
 
     public function sendRawNotification(string $method, array|object|null $parameters): Result
     {
-        $connectionProvider = $this->connectionProvider;
-        $reflection = new \ReflectionObject($connectionProvider);
-        $connectionsProperty = $reflection->getProperty('connections');
-        /**
-         * @var \WeakMap<object, ConnectionInterface> $connections
-         */
-        $connections = $connectionsProperty->getValue($connectionProvider);
-        $connection = $connections->getIterator()->current();
+        $connection = $this->connectionProvider->get();
 
         if ($connection === null) {
             $this->logger->error('No active connection available');

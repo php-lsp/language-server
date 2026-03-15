@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Module\Indexing;
 
 use App\Core\Contracts\Indexing\IndexerInterface;
+use App\Core\Contracts\Notification\ProgressNotifierInterface;
 use App\Module\Indexing\Storage\StorageInterface;
-use Lsp\Workspace\File\FileFactoryInterface;
-use Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface;
 use Lsp\Workspace\File\VirtualFileInterface;
 use Lsp\Workspace\Project\Project;
-use Lsp\Workspace\Uri\Uri;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
@@ -19,6 +17,8 @@ use function React\Async\await;
 
 final class Indexer
 {
+    private const string PROGRESS_ID = 'indexing';
+
     /** @var IndexerInterface[] */
     private array $indexers;
 
@@ -27,8 +27,8 @@ final class Indexer
         iterable $indexers,
         private StorageInterface $storage,
         private LoggerInterface $logger,
-        private FilesystemReaderFactoryInterface $filesystemReaderFactory,
-        private FileFactoryInterface $files,
+        private IndexerFileCollector $fileCollector,
+        private ProgressNotifierInterface $progressNotifier,
         private readonly IndexingStatus $indexingStatus,
     ) {
         $this->indexers = iterator_to_array($indexers);
@@ -40,82 +40,47 @@ final class Indexer
 
         $this->indexingStatus->start();
 
-        $fileCount = 0;
-        foreach ($project as $file) {
-            $fileCount += $this->walkFilesInternal($file);
+        $this->progressNotifier->create(self::PROGRESS_ID);
+        $this->progressNotifier->begin(
+            token: self::PROGRESS_ID,
+            title: 'Indexing',
+            message: 'Collecting files...',
+            percentage: 0,
+        );
+
+        $filesToIndex = $this->fileCollector->collect($project);
+        $total = \count($filesToIndex);
+
+        $this->progressNotifier->report(
+            token: self::PROGRESS_ID,
+            message: \sprintf('Indexing %d files...', $total),
+            percentage: 0,
+        );
+
+        $indexed = 0;
+        foreach ($filesToIndex as $file) {
+            $this->runIndexers($file);
+            $this->indexingStatus->fileIndexed();
+            $indexed++;
+
+            if (($indexed % 50) === 0 || $indexed === $total) {
+                $percentage = $total > 0 ? (int) (($indexed / $total) * 100) : 100;
+                $this->progressNotifier->report(
+                    token: self::PROGRESS_ID,
+                    message: \sprintf('%d/%d files', $indexed, $total),
+                    percentage: $percentage,
+                );
+            }
         }
 
-        $realpath = realpath(__DIR__ . '/../../../resources/php-stubs');
-        $uri = Uri::createLocal('file://' . $realpath);
-        $stubs = $this->files->create($uri->path, $this->filesystemReaderFactory);
-
-        $fileCount += $this->walkFilesInternal($stubs);
+        $this->progressNotifier->end(
+            token: self::PROGRESS_ID,
+            message: \sprintf('Indexed %d files', $total),
+        );
 
         $this->indexingStatus->finish();
 
-        $this->logger->info('Indexing finished: {count} files indexed', ['count' => $fileCount]);
-    }
-
-    /**
-     * Maximum file size (bytes) to index. Files larger than this are skipped
-     * to prevent memory exhaustion on auto-generated code.
-     */
-    private const int MAX_FILE_SIZE = 500_000;
-
-    /**
-     * Default directories skipped during indexing.
-     */
-    private const array DEFAULT_IGNORED_DIRS = [
-        'node_modules',
-        '.git',
-        '.idea',
-        'config',
-        'resources',
-        'runtime',
-        'vendor',
-        'tests',
-    ];
-
-    /**
-     * @var list<string>
-     */
-    private array $ignoredDirs;
-
-    /**
-     * @param list<string> $extraIgnoredDirs
-     */
-    public function setIgnoredDirs(array $extraIgnoredDirs = []): void
-    {
-        $this->ignoredDirs = array_unique([...self::DEFAULT_IGNORED_DIRS, ...$extraIgnoredDirs]);
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function getIgnoredDirs(): array
-    {
-        return $this->ignoredDirs ?? self::DEFAULT_IGNORED_DIRS;
-    }
-
-    private function walkFilesInternal(VirtualFileInterface $file): int
-    {
-        if (in_array($file->name, $this->getIgnoredDirs(), strict: true)) {
-            return 0;
-        }
-
-        $count = 0;
-
-        if ($file->count() === 0) {
-            $this->runIndexers($file);
-            $this->indexingStatus->fileIndexed();
-            $count = 1;
-        }
-
-        foreach ($file as $child) {
-            $count += $this->walkFilesInternal($child);
-        }
-
-        return $count;
+        $this->logger->info('Indexing finished: {count} files indexed', ['count' => $total]);
     }
 
     public function reindexFile(VirtualFileInterface $file): void

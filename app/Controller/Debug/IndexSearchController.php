@@ -30,9 +30,7 @@ final class IndexSearchController
         $pattern = $params->pattern;
         $limit = isset($params->limit) ? \max(1, $params->limit) : 100;
 
-        $indexKeys = isset($params->index) && $params->index !== ''
-            ? [$params->index]
-            : $this->storage->getIndexKeys();
+        $indexKeys = isset($params->index) && $params->index !== '' ? [$params->index] : $this->storage->getIndexKeys();
 
         $results = [];
 

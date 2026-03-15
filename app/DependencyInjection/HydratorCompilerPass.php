@@ -17,11 +17,10 @@ final class HydratorCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        $container->register(TypeLangMapper::class, TypeLangMapper::class)
-            ->setArgument('$cache', new Reference(
-                id: CacheInterface::class,
-                invalidBehavior: ContainerInterface::NULL_ON_INVALID_REFERENCE,
-            ));
+        $container->register(TypeLangMapper::class, TypeLangMapper::class)->setArgument('$cache', new Reference(
+            id: CacheInterface::class,
+            invalidBehavior: ContainerInterface::NULL_ON_INVALID_REFERENCE,
+        ));
 
         $container->setAlias(HydratorInterface::class, TypeLangMapper::class);
         $container->setAlias(ExtractorInterface::class, TypeLangMapper::class);

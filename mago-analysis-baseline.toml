@@ -13,6 +13,48 @@ message = "Assigning `mixed` type to a variable may lead to unexpected behavior.
 count = 1
 
 [[issues]]
+file = "app/Controller/Debug/IndexKeysController.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #1 of `fnmatch`: expected `string`, but found `nonnull`."
+count = 1
+
+[[issues]]
+file = "app/Controller/Debug/IndexKeysController.php"
+code = "redundant-cast"
+message = "Redundant cast to `(string)`: the expression already has this type."
+count = 1
+
+[[issues]]
+file = "app/Controller/Debug/IndexListController.php"
+code = "invalid-return-statement"
+message = '''Invalid return type for function `app\controller\debug\indexlistcontroller::__invoke`: expected `array<string, array{'count': int, 'key': string}>`, but found `array<string, array{'count': int, 'key': string, 'memory': int}>`.'''
+count = 1
+
+[[issues]]
+file = "app/Controller/Debug/IndexSearchController.php"
+code = "less-specific-return-statement"
+message = '''Returned type `array<array-key, array{}|non-empty-list<array{'key': string, 'uri': string, 'value': mixed}>>` is less specific than the declared return type `array<string, list<array{'key': int|string, 'uri': string, 'value': mixed}>>` for function `app\controller\debug\indexsearchcontroller::__invoke`.'''
+count = 1
+
+[[issues]]
+file = "app/Controller/Debug/IndexSearchController.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Module\Indexing\Storage\DebugStorageInterface::search`: expected `string`, but found `nonnull`.'
+count = 1
+
+[[issues]]
+file = "app/Controller/Debug/IndexSearchController.php"
+code = "mixed-array-index"
+message = "Invalid index type `nonnull` used for array access on `array<array-key, array{}|non-empty-list<array{'key': string, 'uri': string, 'value': mixed}>>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/Debug/IndexSearchController.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
 file = "app/Controller/InitializeController.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #1 of `App\Module\Indexing\Indexer::index`: expected `Lsp\Workspace\Project\Project`, but provided type `Lsp\Workspace\Project\ProjectInterface` is less specific.'
@@ -51,6 +93,12 @@ count = 1
 [[issues]]
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "imprecise-type"
+message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "imprecise-type"
 message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
 
@@ -58,24 +106,6 @@ count = 1
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "invalid-property-assignment-value"
 message = 'Invalid type for property `$contributors`: expected `list<App\Core\Contracts\Completion\CompletionContributor>`, but got `array<array-key, mixed>`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "missing-return-type"
-message = "Function `__invoke` is missing a return type hint."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "missing-return-type"
-message = "Function `closure` is missing a return type hint."
-count = 2
-
-[[issues]]
-file = "app/Controller/TextDocument/CompletionController.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `array_merge`: expected `array<array-key, mixed>`, but possibly received `React\Promise\PromiseInterface<array<array-key, mixed>>|array<array-key, mixed>`.'
 count = 1
 
 [[issues]]
@@ -430,6 +460,90 @@ count = 8
 file = "app/Core/Contracts/Documentation/DocumentationConsumer.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$results` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/DependencyInjection/HydratorCompilerPass.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\DependencyInjection\HydratorCompilerPass::process`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/ClassWithoutNullsTypeBuilder.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\ClassWithoutNullsTypeBuilder::build`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/ClassWithoutNullsTypeBuilder.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\ClassWithoutNullsTypeBuilder::isSupported`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/LanguageServerPlatform.php"
+code = "imprecise-type"
+message = "Type `iterable` in return type of `getTypes` is imprecise, equivalent to `iterable<mixed, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Hydrator/LanguageServerPlatform.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\LanguageServerPlatform::getName`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/LanguageServerPlatform.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\LanguageServerPlatform::getTypes`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/LanguageServerPlatform.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Hydrator/NonNullCompositeType.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\NonNullCompositeType::cast`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/NonNullCompositeType.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\NonNullCompositeType::match`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/NonNullCompositeType.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Hydrator/ObjectWithoutNullsTypeBuilder.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\ObjectWithoutNullsTypeBuilder::build`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/ObjectWithoutNullsTypeBuilder.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\ObjectWithoutNullsTypeBuilder::isSupported`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/TypeLangMapper.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\TypeLangMapper::extract`.'
+count = 1
+
+[[issues]]
+file = "app/Hydrator/TypeLangMapper.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\TypeLangMapper::hydrate`.'
 count = 1
 
 [[issues]]
@@ -797,6 +911,150 @@ file = "app/Module/Completion/UseStatementCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 4
+
+[[issues]]
+file = "app/Module/Debug/DebugHtmlRenderer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "impossible-assignment"
+message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "impossible-type-comparison"
+message = "Impossible condition: variable `$rest` (type `non-empty-string`) can never be `false`."
+count = 2
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "invalid-return-statement"
+message = '''Invalid return type for function `app\module\debug\debughttpserver::apiindexes`: expected `array<string, array{'count': int, 'key': string}>`, but found `array<string, array{'count': int, 'key': string, 'memory': int}>`.'''
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Debug\DebugHtmlRenderer::filelist`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Debug\DebugHtmlRenderer::globalsearch`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Debug\DebugHttpServer::apiautocompletekeys`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Debug\DebugHttpServer::apiautocompleteuris`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Debug\DebugHttpServer::apifiles`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `App\Module\Debug\DebugHttpServer::apiglobalsearch`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #2 of `App\Module\Debug\DebugHttpServer::routeindexapi`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #2 of `App\Module\Debug\DebugHttpServer::routeview`: expected `array<string, string>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "missing-parameter-type"
+message = "Parameter `$e` is missing a type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "missing-return-type"
+message = "Function `arrow function` is missing a return type hint."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "never-return"
+message = "Cannot return value with type 'never' from this function."
+count = 2
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "non-existent-class"
+message = 'Class `React\Http\HttpServer` not found.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "non-existent-class"
+message = 'Class `React\Http\Message\Response` not found.'
+count = 2
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "non-existent-class-like"
+message = 'Cannot find class, interface, enum, or type alias `React\Http\Message\Response`.'
+count = 9
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `React\Http\HttpServer` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "non-existent-use-import"
+message = 'Imported class, interface, trait, or enum `React\Http\Message\Response` does not exist.'
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "redundant-comparison"
+message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
+count = 2
+
+[[issues]]
+file = "app/Module/Debug/DebugHttpServer.php"
+code = "redundant-logical-operation"
+message = "Redundant `||` operation: left operand is evaluated and right operand is always falsy."
+count = 2
 
 [[issues]]
 file = "app/Module/Declaration/ClassConstantDeclarationContributor.php"
@@ -1334,12 +1592,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
-code = "invalid-property-assignment-value"
-message = "Invalid type for property `$ignoredDirs`: expected `list<string>`, but got `non-empty-array<non-negative-int, string>`."
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
 code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
 count = 1
@@ -1348,12 +1600,6 @@ count = 1
 file = "app/Module/Indexing/Indexer.php"
 code = "mixed-property-type-coercion"
 message = 'A value with a less specific type `array<array-key, mixed>` is being assigned to property `$$indexers` (array<array-key, App\Core\Contracts\Indexing\IndexerInterface<mixed>>).'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer.php"
-code = "possibly-false-operand"
-message = "Possibly false right operand used in string concatenation (type `false|string`)."
 count = 1
 
 [[issues]]
@@ -1693,6 +1939,12 @@ message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 1
 
 [[issues]]
+file = "app/Module/Indexing/IndexerFileCollector.php"
+code = "invalid-property-assignment-value"
+message = "Invalid type for property `$ignoredDirs`: expected `list<string>`, but got `non-empty-array<non-negative-int, string>`."
+count = 1
+
+[[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "ambiguous-object-property-access"
 message = "Cannot statically verify property access on a generic `object` type."
@@ -1724,6 +1976,72 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::clearByUri`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::clear`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::count`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::findByUri`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::find`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::getIndexKeys`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::getUris`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::memoryUsage`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::searchAll`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::search`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\InMemoryStorage::stats`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "missing-return-type"
 message = "Function `arrow function` is missing a return type hint."
 count = 1
@@ -1738,7 +2056,7 @@ count = 3
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"
 code = "possibly-undefined-variable"
 message = "Variable `$entries` might not have been defined on all execution paths leading to this point."
-count = 1
+count = 2
 
 [[issues]]
 file = "app/Module/Indexing/Storage/InMemoryStorage.php"

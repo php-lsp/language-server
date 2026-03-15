@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Module\Notification;
 
+use App\Module\Notification\ActiveConnectionProvider;
 use App\Module\Notification\Result;
 use App\Module\Notification\ServerNotificationSender;
 use App\Tests\TestCase;
 use Lsp\Contracts\Server\ConnectionInterface;
 use Lsp\Dispatcher\Result\Provider\ResultProviderInterface;
-use Lsp\Server\ConnectionProviderInterface;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -17,23 +17,13 @@ use PHPUnit\Framework\Attributes\TestDox;
 #[Group('unit')]
 final class ServerNotificationSenderTest extends TestCase
 {
-    private ?object $anchor = null;
-
     private function createSender(
         ?ConnectionInterface $connection = null,
     ): ServerNotificationSender {
-        $weakMap = new \WeakMap();
+        $connectionProvider = new ActiveConnectionProvider();
         if ($connection !== null) {
-            $this->anchor = new \stdClass();
-            $weakMap[$this->anchor] = $connection;
+            $connectionProvider->set($connection);
         }
-
-        $connectionProvider = new class($weakMap) implements ConnectionProviderInterface {
-            public function __construct(
-                private \WeakMap $connections,
-            ) {}
-            public function getConnection(\Lsp\Contracts\Rpc\Message\MessageInterface $message): ?\Lsp\Contracts\Server\ConnectionInterface { return null; }
-        };
 
         $resultProvider = $this->createMock(ResultProviderInterface::class);
         $resultProvider->method('getResult')->willReturn(['method' => 'test']);

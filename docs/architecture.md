@@ -166,7 +166,10 @@ InMemoryPsiFileManager ──► caching + invalidation by document version
 ### 4. Indexing System
 
 Indexing is a background process that traverses all project files on open and
-builds a structured index for fast lookups.
+builds a structured index for fast lookups. `IndexerFileCollector` recursively
+walks the project tree and PHP stubs while skipping ignored directories
+(node_modules, .git, vendor, tests, etc.). `Indexer` orchestrates the process
+with WorkDoneProgress notifications via `ProgressNotifier`.
 
 ```
 Project Files
@@ -243,6 +246,17 @@ Server event handling via Symfony EventDispatcher:
 
 - **`ServerListener`** — logs server start/stop events
 - **`MessageListener`** — logs incoming/outgoing JSON-RPC messages
+- **`ActiveConnectionListener`** — captures the active `ConnectionInterface` from `MessageReceived` events and stores it in `ActiveConnectionProvider` for outbound notifications
+- **`ExceptionNotificationListener`** — listens for `FailureResponseSent` events and sends `window/showMessage` error notifications to the client (excludes protocol-level errors like MethodNotFound, ParseError)
+
+### 8. Server Notifications
+
+Notification infrastructure for sending messages from server to client:
+
+- **`ServerNotificationSender`** — sends JSON-RPC notifications to the client via `ActiveConnectionProvider`
+- **`ActiveConnectionProvider`** — simple holder for the current `ConnectionInterface`, populated by `ActiveConnectionListener` on every incoming message
+- **`ProgressNotifier`** — wraps the LSP WorkDoneProgress protocol (`window/workDoneProgress/create` and `$/progress`), used by `Indexer` to report indexing progress with percentage tracking
+- **`Result`** — value object indicating success or failure of a notification send operation
 
 ## How Small Parts Compose into the Whole
 

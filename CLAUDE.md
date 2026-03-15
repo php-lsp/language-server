@@ -20,8 +20,10 @@ the LSP standard.
 php ./bin/lsp serve App\\Application --port=5007
 
 # Tests
-composer test              # Run all tests
-composer test:unit         # PHPUnit unit tests
+composer test              # Run all tests (unit + functional + e2e)
+composer test:unit         # PHPUnit unit tests only
+composer test:functional   # Functional tests (server boot)
+composer test:e2e          # E2E playground tests (starts real LSP server)
 
 # Code quality
 composer mago:lint         # Mago linter (with baseline)
@@ -45,6 +47,7 @@ app/
 │   ├── InitializeController.php
 │   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
 │   ├── CancelRequestController.php  # $/cancelRequest — request cancellation
+│   ├── Debug/                 # Debug HTTP server controllers (index browser, search)
 │   └── TextDocument/          # textDocument/* method handlers
 │       ├── CodeActionController.php
 │       ├── CompletionController.php
@@ -76,6 +79,7 @@ app/
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
 │   ├── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
+│   ├── Notification/          # ProgressNotifierInterface
 │   └── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
 ├── Module/                    # Feature implementations
 │   ├── CodeAction/            # Code action contributors (2): import symbol, remove unused import
@@ -88,14 +92,15 @@ app/
 │   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, constant
 │   ├── Signature/             # Signature contributors (3): function, method, constructor
 │   ├── TypeDefinition/        # Type definition contributors (1): type-aware navigation via TypeResolver
-│   ├── Indexing/              # Declaration indexers (10) + usage indexers (5) + relationship indexers (1) + storage + IndexData value objects
+│   ├── Indexing/              # Declaration indexers (10) + usage indexers (5) + relationship indexers (1) + file collection + storage + IndexData value objects
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── Document/              # Document loading and identification
 │   ├── Workspace/             # Workspace/project management
 │   ├── TypeSystem/            # PHPStan-based type resolution (TypeResolver, PHPStanBootstrap)
-│   └── Notification/          # Server notification sender
+│   └── Notification/          # Server notifications: progress (WorkDoneProgress), error messages, connection state
+├── DependencyInjection/       # HydratorCompilerPass for JSON-RPC serialization
 ├── Infrastructure/Symfony/    # LSPCompilerPass for DI
-└── Listener/                  # Server, logger, message event listeners
+└── Listener/                  # Server, logger, message, connection, and error notification listeners
 config/
 ├── services.yaml              # Main DI config (imports services/*.yaml)
 └── services/                  # controllers.yaml, listeners.yaml, logger.yaml
@@ -170,7 +175,8 @@ all of them pass. If any check fails — fix the issues and re-run everything.
 composer test
 ```
 
-All unit tests must pass. Never finish work with failing tests.
+**All** tests must pass — unit, functional, and E2E. Always run `composer test`
+(not just `composer test:unit`). Never finish work with failing tests.
 
 ### 2. Static analysis must pass (Mago)
 
@@ -207,7 +213,7 @@ If coverage is below 80%, write additional tests.
 
 After pushing, verify that **all** GitHub Actions workflows pass:
 
-- **tests** — unit tests (PHP 8.4 + 8.5, ubuntu + windows)
+- **tests** — all tests: unit, functional, E2E (PHP 8.4 + 8.5, ubuntu + windows)
 - **mago** — lint + analyze
 - **codestyle** — `mago format --check`
 - **coverage** — code coverage report
@@ -226,7 +232,7 @@ After completing any code change:
 3. `composer mago:lint` — verify linter passes
 4. `composer mago:analyze` — verify analyzer passes
 5. `composer mago:format:check` — verify formatting
-6. `composer test` — verify all tests pass
+6. `composer test` — verify **all** tests pass (unit + functional + E2E)
 7. For new features: check coverage >= 80%
 8. `/review-docs` — synchronize documentation with code changes
 9. `/review-architecture` — check dependency violations and coupling

@@ -6,6 +6,20 @@ namespace App\Core;
 
 final class UriHelper
 {
+    public static function toFileUri(string $path): string
+    {
+        // Normalize backslashes to forward slashes (Windows)
+        $path = str_replace(search: '\\', replace: '/', subject: $path);
+
+        // Windows absolute path: C:/path → file:///C:/path
+        if (preg_match('#^[A-Za-z]:/#', $path)) {
+            return 'file:///' . $path;
+        }
+
+        // Unix absolute path: /path → file:///path
+        return 'file://' . $path;
+    }
+
     public static function toFilePath(string $uri): ?string
     {
         if (!str_starts_with($uri, 'file://')) {
