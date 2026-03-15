@@ -563,28 +563,26 @@ interface PsiFileManagerInterface
 All 96 dependencies should depend on interfaces, not on the concrete
 `InMemoryPsiFileManager` and `PHPPsiFile`.
 
-### 7.4. [HIGH] Indexed Data Structures for Lookup
+### 7.4. [IMPLEMENTED] Indexed Data Structures for Lookup
 
 **Problem:** Linear O(N) search on every completion/reference request.
 
-**Recommendation:** Add secondary indexes to StorageInterface:
+**Solution (implemented):** Added `readByField()` method to `InMemoryStorage`
+with lazy secondary indexes:
 
 ```php
-interface StorageInterface
-{
-    // Existing
-    public function read(string $indexKey): iterable;
-
-    // New: lookup by secondary key
-    public function findByField(string $indexKey, string $field, mixed $value): iterable;
-
-    // New: prefix search (for completion)
-    public function findByPrefix(string $indexKey, string $field, string $prefix): iterable;
-}
+// O(1) lookup by field value (secondary index built on first call)
+$storage->readByField('php.methods.fqn', 'className', $targetClass);
 ```
 
-In `InMemoryStorage` — HashMap by fields (`className`, `name`).
-In `SQLiteStorage` — SQL indexes.
+Secondary indexes are stored as `indexKey:field → fieldValue → list<Entry>`
+hash maps, built lazily on first access and maintained incrementally on writes.
+
+**Benchmark results:** 92% faster on 10K entries, 97% faster on 50K entries
+compared to linear scan.
+
+**Remaining:** Prefix search for completion (e.g., `findByPrefix`) and
+adding `readByField` to `StorageInterface` interface are not yet implemented.
 
 ### 7.5. [HIGH] Type-Aware Completion via TypeSystem
 

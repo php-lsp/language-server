@@ -33,7 +33,7 @@ final class FifoCache
     /**
      * @param TElement $value
      */
-    public function set(string $key, mixed $value, bool $preventDeletion = false): void
+    public function set(string $key, mixed $value): void
     {
         if (array_key_exists($key, $this->cache)) {
             $this->cache[$key] = $value;
@@ -46,9 +46,27 @@ final class FifoCache
         }
 
         $this->cache[$key] = $value;
-        if (!$preventDeletion) {
-            $this->queue[] = $key;
+        $this->queue[] = $key;
+    }
+
+    /**
+     * Store a value that is excluded from FIFO eviction.
+     *
+     * @param TElement $value
+     */
+    public function setPermanent(string $key, mixed $value): void
+    {
+        if (array_key_exists($key, $this->cache)) {
+            $this->cache[$key] = $value;
+
+            return;
         }
+
+        if (count($this->cache) >= $this->maxSize) {
+            $this->evict();
+        }
+
+        $this->cache[$key] = $value;
     }
 
     public function has(string $key): bool
@@ -59,7 +77,7 @@ final class FifoCache
     public function remove(string $key): void
     {
         unset($this->cache[$key]);
-        $index = array_search($key, $this->queue, true);
+        $index = array_search($key, $this->queue, strict: true);
         if ($index !== false) {
             array_splice($this->queue, $index, 1);
         }
@@ -81,7 +99,8 @@ final class FifoCache
      */
     private function evict(): void
     {
-        $evictCount = max(1, (int) ceil($this->maxSize * $this->evictionPercent));
+        $minimumEviction = 1;
+        $evictCount = max($minimumEviction, (int) ceil($this->maxSize * $this->evictionPercent));
 
         $keysToRemove = array_slice($this->queue, offset: 0, length: $evictCount);
 

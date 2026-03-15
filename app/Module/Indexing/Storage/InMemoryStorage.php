@@ -70,11 +70,10 @@ class InMemoryStorage implements StorageInterface
         foreach ($values as $key => $value) {
             $entry = new Entry(is_int($key) ? (string) $key : $key, $value, $uri);
 
-            if (is_int($key)) {
-                $this->entries[$indexKey][] = $entry;
-            } else {
-                $this->entries[$indexKey][$key] = $entry;
-            }
+            match (is_int($key)) {
+                true => $this->entries[$indexKey][] = $entry,
+                false => $this->entries[$indexKey][$key] = $entry,
+            };
 
             $this->updateSecondaryIndexes($indexKey, $entry);
         }

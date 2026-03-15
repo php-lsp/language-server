@@ -140,12 +140,14 @@ InMemoryPsiFileManager ──► caching + invalidation by document version
 - `findLastAtPosition(Position)` — the deepest (most specific) node at a position
 
 **`InMemoryPsiFileManager`** — manages the AST cache:
-- FIFO cache of 300 files
+- FIFO cache of 300 files with `setPermanent()` for pinning entries outside the eviction queue
 - Automatic invalidation when document version changes
 - On parse errors — sends diagnostics to the client via `textDocument/publishDiagnostics`
 
 **`Tree`** — utility class for AST operations:
-- Find child nodes by type
+- Find child nodes by type (`childrenOfType`, `childrenOfTypes`)
+- Navigate parent nodes (`parentOfType`, `getParentNodes`)
+- Position/range calculations with cached line offsets and binary search (`toLineColumn`)
 - Convert nodes to strings
 
 ### 4. Indexing System
@@ -181,7 +183,8 @@ IndexerInterface[] (individual indexers)
          │
          ▼
     StorageInterface (InMemoryStorage)
-         │
+         │  ├── read(indexKey) — iterate all entries
+         │  └── readByField(indexKey, field, value) — O(1) via secondary indexes
          ▼
     IndexLookup ──► used by contributors for lookups
 ```
