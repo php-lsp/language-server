@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace App\Controller\Debug;
 
-use App\Index\IndexRegistryInterface;
+use App\Module\Indexing\Storage\DebugStorageInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Router\Attribute\Route;
 
 /**
- * Lists all registered indexes with their summaries.
+ * Lists all index keys and their entry counts.
  *
  * Request:  { "method": "debug/index/list" }
- * Response: [{ "name": "classes", "count": 42, "keys": [...] }, ...]
+ * Response: { "php.classes.fqn": { "key": "php.classes.fqn", "count": 42 }, ... }
  */
 #[AsController, Route('debug/index/list')]
 final class IndexListController
 {
     public function __construct(
-        private readonly IndexRegistryInterface $registry,
+        private readonly DebugStorageInterface $storage,
     ) {}
 
     /**
-     * @return list<array{name: non-empty-string, count: int<0, max>, keys: list<array-key>}>
+     * @return array<string, array{key: string, count: int}>
      */
     public function __invoke(): array
     {
-        return $this->registry->summaries();
+        return $this->storage->stats();
     }
 }

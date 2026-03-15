@@ -6,7 +6,7 @@ namespace App\Module\Indexing\Storage;
 
 use Override;
 
-class InMemoryStorage implements StorageInterface
+class InMemoryStorage implements DebugStorageInterface
 {
     /**
      * @var Entry[]
@@ -77,6 +77,63 @@ class InMemoryStorage implements StorageInterface
 
             $this->updateSecondaryIndexes($indexKey, $entry);
         }
+    }
+
+    public function getIndexKeys(): array
+    {
+        return \array_keys($this->entries);
+    }
+
+    public function count(string $indexKey): int
+    {
+        return array_key_exists($indexKey, $this->entries)
+            ? \count($this->entries[$indexKey])
+            : 0;
+    }
+
+    /**
+     * @return iterable<Entry>
+     */
+    public function search(string $indexKey, string $keyPattern): iterable
+    {
+        if (!array_key_exists($indexKey, $this->entries)) {
+            return;
+        }
+
+        foreach ($this->entries[$indexKey] as $entry) {
+            if (\fnmatch($keyPattern, $entry->key, \FNM_CASEFOLD)) {
+                yield $entry;
+            }
+        }
+    }
+
+    public function find(string $indexKey, string $entryKey): ?Entry
+    {
+        if (!array_key_exists($indexKey, $this->entries)) {
+            return null;
+        }
+
+        foreach ($this->entries[$indexKey] as $entry) {
+            if ($entry->key === $entryKey) {
+                return $entry;
+            }
+        }
+
+        return null;
+    }
+
+    public function stats(): array
+    {
+        $result = [];
+
+        foreach ($this->entries as $indexKey => $entries) {
+            $result[$indexKey] = [
+                'key' => $indexKey,
+                'count' => \count($entries),
+            ];
+        }
+
+        return $result;
     }
 
     private function updateSecondaryIndexes(string $indexKey, Entry $entry): void

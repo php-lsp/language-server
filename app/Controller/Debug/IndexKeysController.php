@@ -4,43 +4,50 @@ declare(strict_types=1);
 
 namespace App\Controller\Debug;
 
-use App\Index\IndexRegistryInterface;
+use App\Module\Indexing\Storage\DebugStorageInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Router\Attribute\Route;
 
 /**
- * Returns keys of a specific index with optional glob filtering and pagination.
+ * Returns keys of a specific index with optional pattern filtering and pagination.
  *
- * Request:  { "method": "debug/index/keys", "params": { "index": "classes", "pattern": "App\\*", "limit": 50, "offset": 0 } }
- * Response: { "index": "classes", "total": 120, "keys": ["App\\Foo", ...], "limit": 50, "offset": 0 }
+ * Request:  { "method": "debug/index/keys", "params": { "index": "php.classes.fqn", "pattern": "App\\*", "limit": 50, "offset": 0 } }
+ * Response: { "index": "php.classes.fqn", "total": 120, "keys": ["App\\Foo", ...], "limit": 50, "offset": 0 }
  */
 #[AsController, Route('debug/index/keys')]
 final class IndexKeysController
 {
     public function __construct(
-        private readonly IndexRegistryInterface $registry,
+        private readonly DebugStorageInterface $storage,
     ) {}
 
     /**
-     * @param object{index: non-empty-string, pattern?: string, limit?: int, offset?: int} $params
+     * @param object{index: string, pattern?: string, limit?: int, offset?: int} $params
      * @return array<string, mixed>
      */
     public function __invoke(object $params): array
     {
-        $index = $this->registry->get($params->index);
+        $indexKeys = $this->storage->getIndexKeys();
 
-        if ($index === null) {
-            return ['error' => "Index '{$params->index}' not found", 'available' => $this->registry->names()];
+        if (!\in_array($params->index, $indexKeys, true)) {
+            return [
+                'error' => "Index '{$params->index}' not found",
+                'available' => $indexKeys,
+            ];
         }
 
-        $keys = $index->keys();
+        $keys = [];
 
-        // Filter by pattern if provided
-        if (isset($params->pattern) && $params->pattern !== '') {
-            $keys = \array_values(\array_filter(
-                $keys,
-                static fn(int|string $key): bool => \fnmatch($params->pattern, (string) $key, \FNM_CASEFOLD),
-            ));
+        foreach ($this->storage->read($params->index) as $entry) {
+            $key = $entry->key;
+
+            if (isset($params->pattern) && $params->pattern !== '') {
+                if (!\fnmatch($params->pattern, (string) $key, \FNM_CASEFOLD)) {
+                    continue;
+                }
+            }
+
+            $keys[] = $key;
         }
 
         $total = \count($keys);

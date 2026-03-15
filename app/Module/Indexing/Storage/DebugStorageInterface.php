@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Module\Indexing\Storage;
+
+/**
+ * Extended storage interface with debug introspection capabilities.
+ *
+ * Allows manual inspection of index contents at runtime:
+ * listing registered index keys, counting entries, searching by key patterns.
+ */
+interface DebugStorageInterface extends StorageInterface
+{
+    /**
+     * List all index keys that have been written to.
+     *
+     * @return list<string>
+     */
+    public function getIndexKeys(): array;
+
+    /**
+     * Count entries in a specific index.
+     */
+    public function count(string $indexKey): int;
+
+    /**
+     * Find entries by key pattern (fnmatch glob).
+     *
+     * @return iterable<Entry>
+     */
+    public function search(string $indexKey, string $keyPattern): iterable;
+
+    /**
+     * Get a single entry by exact key within an index.
+     */
+    public function find(string $indexKey, string $entryKey): ?Entry;
+
+    /**
+     * Get summary stats for all indexes.
+     *
+     * @return array<string, array{key: string, count: int}>
+     */
+    public function stats(): array;
+}
