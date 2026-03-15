@@ -48,6 +48,29 @@ services:
       - [ 'pushHandler', [ '@app.logger.handler.buggregator' ] ]
       - [ 'pushProcessor', [ '@app.logger.processor.psr' ] ]
 
+  Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory: ~
+  Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface:
+    class: Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory
+
+  Lsp\Workspace\Project\ProjectFactory: ~
+  Lsp\Workspace\Project\ProjectFactoryInterface:
+    class: Lsp\Workspace\Project\ProjectFactory
+
+  Lsp\Workspace\File\FileFactory: ~
+  Lsp\Workspace\File\FileFactoryInterface:
+    class: Lsp\Workspace\File\FileFactory
+
+  App\Module\Document\InMemoryDocumentIdentifierFactory: ~
+  App\Module\Document\DocumentIdentifierFactoryInterface:
+    class: App\Module\Document\InMemoryDocumentIdentifierFactory
+
+  App\Module\Document\LocalFileDocumentLoader: ~
+  App\Module\Document\DocumentLoaderInterface:
+    class: App\Module\Document\LocalFileDocumentLoader
+
+  React\Filesystem\AdapterInterface:
+    factory: [React\Filesystem\Factory, create]
+
 when@dev:
   services:
     _defaults:
@@ -71,29 +94,6 @@ when@dev:
         - [ 'pushProcessor', [ '@app.logger.processor.psr' ] ]
 
 
-
-    Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory: ~
-    Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactoryInterface:
-      class: Lsp\Workspace\File\FilesystemReader\FilesystemReaderFactory
-
-    Lsp\Workspace\Project\ProjectFactory: ~
-    Lsp\Workspace\Project\ProjectFactoryInterface:
-      class: Lsp\Workspace\Project\ProjectFactory
-
-    Lsp\Workspace\File\FileFactory: ~
-    Lsp\Workspace\File\FileFactoryInterface:
-      class: Lsp\Workspace\File\FileFactory
-
-    App\Module\Document\InMemoryDocumentIdentifierFactory: ~
-    App\Module\Document\DocumentIdentifierFactoryInterface:
-      class: App\Module\Document\InMemoryDocumentIdentifierFactory
-
-    App\Module\Document\LocalFileDocumentLoader: ~
-    App\Module\Document\DocumentLoaderInterface:
-      class: App\Module\Document\LocalFileDocumentLoader
-
-    React\Filesystem\AdapterInterface:
-      factory: [React\Filesystem\Factory, create]
 
     Lsp\Server\ConnectionStore: ~
     Lsp\Server\ConnectionProviderInterface:
