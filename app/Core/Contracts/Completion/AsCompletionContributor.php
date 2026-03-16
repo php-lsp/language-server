@@ -7,5 +7,7 @@ namespace App\Core\Contracts\Completion;
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class AsCompletionContributor
 {
-    public function __construct() {}
+    public function __construct(
+        public readonly int $priority = 0,
+    ) {}
 }

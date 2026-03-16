@@ -93,4 +93,49 @@ final class CompletionControllerTest extends TestCase
 
         $this->assertSame([], $result);
     }
+
+    #[TestDox('sortText is prefixed with group index based on contributor order')]
+    public function testSortTextPrefixedWithGroupIndex(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+
+        $contributor1 = new class implements CompletionContributor {
+            public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
+            {
+                ($consumer)(new CompletionItem(label: 'alpha'));
+                ($consumer)(new CompletionItem(label: 'beta', sortText: 'custom'));
+            }
+        };
+
+        $contributor2 = new class implements CompletionContributor {
+            public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
+            {
+                ($consumer)(new CompletionItem(label: 'gamma'));
+            }
+        };
+
+        $controller = new CompletionController(
+            [$contributor1, $contributor2],
+            $logger,
+            $fileManager,
+            new NoopTracer(),
+        );
+        $editor = MockHelper::mock(EditorInterface::class);
+        $params = new CompletionParams(
+            textDocument: ProtocolFactory::textDocumentIdentifier(),
+            position: ProtocolFactory::position(),
+        );
+
+        $result = $controller($editor, $params);
+
+        $this->assertCount(3, $result);
+
+        // First contributor items get prefix "000"
+        $this->assertSame('000alpha', $result[0]->sortText);
+        $this->assertSame('000custom', $result[1]->sortText);
+
+        // Second contributor items get prefix "001"
+        $this->assertSame('001gamma', $result[2]->sortText);
+    }
 }

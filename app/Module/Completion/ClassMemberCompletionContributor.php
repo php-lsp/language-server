@@ -19,7 +19,7 @@ use Override;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 
-#[AsCompletionContributor]
+#[AsCompletionContributor(priority: 100)]
 final class ClassMemberCompletionContributor implements CompletionContributor
 {
     public function __construct(

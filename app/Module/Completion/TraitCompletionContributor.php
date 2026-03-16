@@ -16,7 +16,7 @@ use Lsp\Protocol\Type\CompletionItem;
 use Lsp\Protocol\Type\CompletionItemKind;
 use Override;
 
-#[AsCompletionContributor]
+#[AsCompletionContributor(priority: 50)]
 final class TraitCompletionContributor implements CompletionContributor
 {
     public function __construct(

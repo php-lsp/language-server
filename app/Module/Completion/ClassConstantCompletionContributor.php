@@ -16,7 +16,7 @@ use Lsp\Protocol\Type\CompletionItemKind;
 use Override;
 use PhpParser\Node;
 
-#[AsCompletionContributor]
+#[AsCompletionContributor(priority: 80)]
 final class ClassConstantCompletionContributor implements CompletionContributor
 {
     public function __construct(

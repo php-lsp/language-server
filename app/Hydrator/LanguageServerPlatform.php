@@ -20,6 +20,7 @@ final class LanguageServerPlatform extends StandardPlatform
     public function getTypes(): iterable
     {
         yield new Builder\SimpleTypeBuilder('non-empty-string', Type\StringType::class);
+        yield new StringLiteralTypeBuilder();
 
         foreach (parent::getTypes() as $builder) {
             yield match (true) {
