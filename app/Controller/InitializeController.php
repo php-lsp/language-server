@@ -21,6 +21,7 @@ use Lsp\Protocol\Type\HoverOptions;
 use Lsp\Protocol\Type\ImplementationOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
+use Lsp\Protocol\Type\InlayHintOptions;
 use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\RenameOptions;
 use Lsp\Protocol\Type\SelectionRangeOptions;
@@ -71,6 +72,7 @@ final class InitializeController
                 implementationProvider: new ImplementationOptions(),
                 documentHighlightProvider: new DocumentHighlightOptions(),
                 foldingRangeProvider: new FoldingRangeOptions(),
+                inlayHintProvider: new InlayHintOptions(),
                 documentFormattingProvider: new DocumentFormattingOptions(),
                 documentRangeFormattingProvider: new DocumentRangeFormattingOptions(),
                 codeActionProvider: new CodeActionOptions(

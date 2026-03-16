@@ -290,6 +290,25 @@ abstract class PlaygroundTestCase extends TestCase
     }
 
     /**
+     * Send a textDocument/inlayHint request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @param array{line: int, character: int} $start Zero-based start position
+     * @param array{line: int, character: int} $end Zero-based end position
+     * @return array<string, mixed> The response
+     */
+    protected static function inlayHint(string $relativePath, array $start, array $end): array
+    {
+        return self::$client->request('textDocument/inlayHint', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'range' => [
+                'start' => $start,
+                'end' => $end,
+            ],
+        ], static::$requestTimeout);
+    }
+
+    /**
      * Send a textDocument/selectionRange request.
      *
      * @param string $relativePath File path relative to playground/
