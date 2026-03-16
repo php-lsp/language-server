@@ -8,7 +8,7 @@ use App\Controller\TextDocument\CompletionController;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
 use App\Core\Contracts\Completion\CompletionContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
 use App\Tests\TestCase;
@@ -27,7 +27,7 @@ final class CompletionControllerTest extends TestCase
     public function testReturnsEmptyWithNoContributors(): void
     {
         $logger = $this->createMock(LoggerInterface::class);
-        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
 
         $controller = new CompletionController([], $logger, $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
@@ -45,7 +45,7 @@ final class CompletionControllerTest extends TestCase
     public function testCollectsFromContributors(): void
     {
         $logger = $this->createMock(LoggerInterface::class);
-        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
 
         $contributor = new class implements CompletionContributor {
             public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
@@ -73,7 +73,7 @@ final class CompletionControllerTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())->method('error');
 
-        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
 
         $contributor = new class implements CompletionContributor {
             public function contribute(CompletionContext $context, CompletionConsumer $consumer): void
@@ -98,7 +98,7 @@ final class CompletionControllerTest extends TestCase
     public function testSortTextPrefixedWithGroupIndex(): void
     {
         $logger = $this->createMock(LoggerInterface::class);
-        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
 
         $contributor1 = new class implements CompletionContributor {
             public function contribute(CompletionContext $context, CompletionConsumer $consumer): void

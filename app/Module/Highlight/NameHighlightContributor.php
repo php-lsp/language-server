@@ -33,7 +33,7 @@ final class NameHighlightContributor implements DocumentHighlightContributor
 
         // Find all FullyQualified names in the file with the same string
         $finder = new NodeFinder();
-        $allNames = $finder->findInstanceOf($file->ast->children, Node\Name\FullyQualified::class);
+        $allNames = $finder->findInstanceOf($file->getChildren(), Node\Name\FullyQualified::class);
 
         foreach ($allNames as $name) {
             if ($name->toString() !== $targetName) {

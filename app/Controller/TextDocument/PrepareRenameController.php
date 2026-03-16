@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\TextDocument;
 
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\PsiFile\Tree;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
@@ -17,7 +17,7 @@ use PhpParser\Node;
 final class PrepareRenameController
 {
     public function __construct(
-        private InMemoryPsiFileManager $fileManager,
+        private PsiFileManagerInterface $fileManager,
     ) {}
 
     public function __invoke(EditorInterface $editor, PrepareRenameParams $params): ?Range

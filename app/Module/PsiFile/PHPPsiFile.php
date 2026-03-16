@@ -17,6 +17,21 @@ class PHPPsiFile implements PsiFileInterface
         public readonly SourceFileRoot $ast,
     ) {}
 
+    #[Override]
+    public function getDocument(): Document
+    {
+        return $this->ast->document;
+    }
+
+    /**
+     * @return array<Node>
+     */
+    #[Override]
+    public function getChildren(): array
+    {
+        return $this->ast->children;
+    }
+
     /**
      * @return array<Node>
      */

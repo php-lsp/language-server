@@ -21,7 +21,7 @@ final class PrepareRenameControllerTest extends TestCase
     #[TestDox('returns null when file not found')]
     public function testReturnsNullWhenNoFile(): void
     {
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(\App\Core\Contracts\PsiFile\PsiFileManagerInterface::class);
         $fileManager->method('findPsiFile')->willReturn(null);
 
         $controller = new PrepareRenameController($fileManager);
@@ -40,7 +40,7 @@ final class PrepareRenameControllerTest extends TestCase
     public function testReturnsRangeForNode(): void
     {
         $psiFile = PsiFileFactory::fromCode('<?php class Foo {}');
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(\App\Core\Contracts\PsiFile\PsiFileManagerInterface::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
 
         $controller = new PrepareRenameController($fileManager);

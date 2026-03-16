@@ -30,7 +30,7 @@ final class AstFoldingRangeContributor implements FoldingRangeContributor
 
         $finder = new NodeFinder();
         $nodes = $finder->find(
-            $file->ast->children,
+            $file->getChildren(),
             FoldableNodeMatcher::isFoldable(...),
         );
 

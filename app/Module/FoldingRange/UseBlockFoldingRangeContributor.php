@@ -31,7 +31,7 @@ final class UseBlockFoldingRangeContributor implements FoldingRangeContributor
             return;
         }
 
-        $stmts = $file->ast->children;
+        $stmts = $file->getChildren();
 
         // Handle namespace-wrapped statements
         foreach ($stmts as $stmt) {

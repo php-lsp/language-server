@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Core\Contracts\FoldingRange;
 
 use App\Core\Contracts\FoldingRange\FoldingRangeContext;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
 use App\Tests\TestCase;
@@ -21,7 +21,7 @@ final class FoldingRangeContextTest extends TestCase
     {
         $textDoc = ProtocolFactory::textDocumentIdentifier();
         $editor = MockHelper::mock(EditorInterface::class);
-        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
 
         $context = new FoldingRangeContext($textDoc, $editor, $fileManager);
 

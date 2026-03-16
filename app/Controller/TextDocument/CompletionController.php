@@ -7,7 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
 use App\Core\Contracts\Completion\CompletionContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
@@ -29,7 +29,7 @@ final class CompletionController
         #[AutowireIterator('lsp.completionContributors')]
         iterable $contributors,
         private LoggerInterface $logger,
-        private InMemoryPsiFileManager $fileManager,
+        private PsiFileManagerInterface $fileManager,
         private TracerInterface $tracer,
     ) {
         $this->contributors = iterator_to_array($contributors);

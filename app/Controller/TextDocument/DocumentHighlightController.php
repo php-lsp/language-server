@@ -7,7 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\Highlight\DocumentHighlightConsumer;
 use App\Core\Contracts\Highlight\DocumentHighlightContext;
 use App\Core\Contracts\Highlight\DocumentHighlightContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
@@ -26,7 +26,7 @@ final class DocumentHighlightController
     public function __construct(
         #[AutowireIterator('lsp.documentHighlightContributors')]
         iterable $contributors,
-        private InMemoryPsiFileManager $fileManager,
+        private PsiFileManagerInterface $fileManager,
         private readonly TracerInterface $tracer,
     ) {
         $this->contributors = iterator_to_array($contributors);

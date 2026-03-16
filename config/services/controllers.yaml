@@ -30,3 +30,6 @@ services:
 
   App\Core\Contracts\Notification\ProgressNotifierInterface:
     alias: App\Module\Notification\ProgressNotifier
+
+  App\Core\Contracts\PsiFile\PsiFileManagerInterface:
+    alias: App\Module\PsiFile\InMemoryPsiFileManager

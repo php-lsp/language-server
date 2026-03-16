@@ -7,7 +7,7 @@ namespace App\Tests\Support;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
 use App\Core\Contracts\Completion\CompletionContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\PsiFile\PHPPsiFile;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\CompletionItem;
@@ -30,10 +30,9 @@ final class CompletionTestHelper
         ?PHPPsiFile $psiFile = null,
     ): CompletionContext {
         $fileManager = self::generator()->testDouble(
-            InMemoryPsiFileManager::class,
+            PsiFileManagerInterface::class,
             mockObject: true,
             markAsMockObject: true,
-            callOriginalConstructor: false,
         );
         $fileManager->method('findPsiFile')->willReturn($psiFile);
 

@@ -31,7 +31,7 @@ final class CommentFoldingRangeContributor implements FoldingRangeContributor
         $seen = [];
 
         $finder = new NodeFinder();
-        $allNodes = $finder->find($file->ast->children, static fn(): bool => true);
+        $allNodes = $finder->find($file->getChildren(), static fn(): bool => true);
 
         foreach ($allNodes as $node) {
             foreach ($node->getComments() as $comment) {

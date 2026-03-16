@@ -7,7 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\InlayHint\InlayHintConsumer;
 use App\Core\Contracts\InlayHint\InlayHintContext;
 use App\Core\Contracts\InlayHint\InlayHintContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
@@ -30,7 +30,7 @@ final class InlayHintController
     public function __construct(
         #[AutowireIterator('lsp.inlayHintContributors')]
         iterable $contributors,
-        private readonly InMemoryPsiFileManager $fileManager,
+        private readonly PsiFileManagerInterface $fileManager,
         private readonly TracerInterface $tracer,
     ) {
         /** @var list<InlayHintContributor> */

@@ -8,7 +8,7 @@ use App\Controller\TextDocument\CompletionController;
 use App\Core\Contracts\Completion\CompletionConsumer;
 use App\Core\Contracts\Completion\CompletionContext;
 use App\Core\Contracts\Completion\CompletionContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\Telemetry\TracerInterface;
 use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
@@ -53,7 +53,7 @@ final class CompletionControllerTest extends TestCase
         return new CompletionController(
             new \ArrayIterator($contributors),
             new NullLogger(),
-            $this->createMock(InMemoryPsiFileManager::class),
+            $this->createMock(PsiFileManagerInterface::class),
             $this->createTracer(),
         );
     }

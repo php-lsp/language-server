@@ -8,7 +8,7 @@ use App\Controller\TextDocument\FoldingRangeController;
 use App\Core\Contracts\FoldingRange\FoldingRangeConsumer;
 use App\Core\Contracts\FoldingRange\FoldingRangeContext;
 use App\Core\Contracts\FoldingRange\FoldingRangeContributor;
-use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
 use App\Module\Telemetry\NoopTracer;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
@@ -26,7 +26,7 @@ final class FoldingRangeControllerTest extends TestCase
     #[TestDox('returns empty array with no contributors')]
     public function testReturnsEmptyWithNoContributors(): void
     {
-        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
         $controller = new FoldingRangeController([], $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new FoldingRangeParams(
@@ -50,7 +50,7 @@ final class FoldingRangeControllerTest extends TestCase
             }
         };
 
-        $fileManager = MockHelper::mock(InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
         $controller = new FoldingRangeController([$contributor], $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new FoldingRangeParams(

@@ -22,7 +22,7 @@ final class DocumentHighlightContextTest extends TestCase
         $textDoc = ProtocolFactory::textDocumentIdentifier();
         $position = ProtocolFactory::position(5, 10);
         $editor = $this->createMock(EditorInterface::class);
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(\App\Core\Contracts\PsiFile\PsiFileManagerInterface::class);
 
         $context = new DocumentHighlightContext($textDoc, $position, $editor, $fileManager);
 

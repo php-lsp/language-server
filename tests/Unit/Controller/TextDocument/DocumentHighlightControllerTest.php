@@ -25,7 +25,7 @@ final class DocumentHighlightControllerTest extends TestCase
     #[TestDox('returns empty array with no contributors')]
     public function testReturnsEmptyWithNoContributors(): void
     {
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(\App\Core\Contracts\PsiFile\PsiFileManagerInterface::class);
         $controller = new DocumentHighlightController([], $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DocumentHighlightParams(
@@ -53,7 +53,7 @@ final class DocumentHighlightControllerTest extends TestCase
             }
         };
 
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(\App\Core\Contracts\PsiFile\PsiFileManagerInterface::class);
         $controller = new DocumentHighlightController([$contributor], $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DocumentHighlightParams(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Module\PsiFile;
 
+use App\Core\Contracts\PsiFile\PsiFileInterface;
 use Lsp\Extension\DocumentManager\Editor\Document\Document;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
@@ -156,16 +157,18 @@ class Tree
         );
     }
 
-    public static function getRange(Node $node, PHPPsiFile $file): Range
+    public static function getRange(Node $node, PsiFileInterface $file): Range
     {
+        $document = $file->getDocument();
+
         return new Range(
             start: new Position(
                 $node->getStartLine() - 1,
-                self::toColumn($file->ast->document, $node->getStartFilePos() - 1),
+                self::toColumn($document, $node->getStartFilePos() - 1),
             ),
             end: new Position(
                 $node->getEndLine() - 1,
-                self::toColumn($file->ast->document, $node->getEndFilePos()),
+                self::toColumn($document, $node->getEndFilePos()),
             ),
         );
     }
