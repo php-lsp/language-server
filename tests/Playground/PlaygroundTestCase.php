@@ -290,6 +290,21 @@ abstract class PlaygroundTestCase extends TestCase
     }
 
     /**
+     * Send a textDocument/selectionRange request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @param list<array{line: int, character: int}> $positions Zero-based positions
+     * @return array<string, mixed> The response
+     */
+    protected static function selectionRange(string $relativePath, array $positions): array
+    {
+        return self::$client->request('textDocument/selectionRange', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'positions' => $positions,
+        ], static::$requestTimeout);
+    }
+
+    /**
      * Assert that the response JSON matches the expected structure.
      *
      * Compares the full message structure. The `id` and `jsonrpc` fields are

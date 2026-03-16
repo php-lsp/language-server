@@ -23,6 +23,7 @@ use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
 use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\RenameOptions;
+use Lsp\Protocol\Type\SelectionRangeOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
 use Lsp\Protocol\Type\SignatureHelpOptions;
@@ -87,6 +88,7 @@ final class InitializeController
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
                 ),
+                selectionRangeProvider: new SelectionRangeOptions(),
                 workspaceSymbolProvider: new WorkspaceSymbolOptions(),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(

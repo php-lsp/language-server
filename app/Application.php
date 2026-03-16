@@ -14,6 +14,7 @@ use App\Core\Contracts\Highlight\AsDocumentHighlightContributor;
 use App\Core\Contracts\Implementation\AsImplementationContributor;
 use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\References\AsReferenceContributor;
+use App\Core\Contracts\SelectionRange\AsSelectionRangeContributor;
 use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Core\Contracts\TypeDefinition\AsTypeDefinitionContributor;
 use App\DependencyInjection\HydratorCompilerPass;
@@ -38,6 +39,7 @@ final class Application extends LanguageServerKernel
         AsFoldingRangeContributor::class => 'lsp.foldingRangeContributors',
         AsDocumentHighlightContributor::class => 'lsp.documentHighlightContributors',
         AsImplementationContributor::class => 'lsp.implementationContributors',
+        AsSelectionRangeContributor::class => 'lsp.selectionRangeContributors',
         AsSignatureContributor::class => 'lsp.signatureContributors',
         AsTypeDefinitionContributor::class => 'lsp.typeDefinitionContributors',
     ];
