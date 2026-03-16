@@ -137,7 +137,7 @@ final class CompletionTest extends PlaygroundTestCase
             $response = self::completion('src/Calculator.php', 21, 15);
         } catch (\RuntimeException $e) {
             if (str_contains($e->getMessage(), 'Timeout')) {
-                self::markTestSkipped('Member completion timed out — known performance issue with large index');
+                self::markTestSkipped('Member completion timed out — indexing may still be in progress');
             }
             throw $e;
         }

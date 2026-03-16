@@ -47,27 +47,20 @@ final class MethodSignatureContributor implements SignatureContributor
 
         $lookupKey = $className . '::' . $methodName;
 
-        foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($entry->key !== $lookupKey) {
-                continue;
-            }
-
+        $entry = $this->indexLookup->findEntry(ClassMethodIndexer::class, $lookupKey);
+        if ($entry !== null) {
             /** @var non-empty-string $uri */
             $uri = $entry->uri;
             $source = $this->fileManager->findPsiFile(
                 $context->editor,
                 new TextDocumentIdentifier($uri),
             );
-            if ($source === null) {
-                continue;
+            if ($source !== null) {
+                $definition = $this->findMethodDefinition($source->ast->children, $className, $methodName);
+                if ($definition !== null) {
+                    $consumer($definition);
+                }
             }
-
-            $definition = $this->findMethodDefinition($source->ast->children, $className, $methodName);
-            if ($definition === null) {
-                continue;
-            }
-
-            $consumer($definition);
         }
     }
 

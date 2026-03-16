@@ -55,13 +55,9 @@ final class FunctionDeclarationContributor implements DeclarationContributor
 
         $functionName = $node->name->toString();
 
-        foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $value) {
+        foreach ($this->indexLookup->findByField(FunctionIndexer::class, 'fqn', $functionName) as $value) {
             /** @var FunctionData $data */
             $data = $value->value;
-
-            if ($data->fqn !== $functionName) {
-                continue;
-            }
 
             $textDocumentIdentifier = $this->documentIdentifierFactory->create($value->uri);
             $source = $this->fileManager->findPsiFile($context->editor, $textDocumentIdentifier);

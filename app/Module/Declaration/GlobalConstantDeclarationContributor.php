@@ -57,11 +57,7 @@ final class GlobalConstantDeclarationContributor implements DeclarationContribut
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(GlobalConstantIndexer::class) as $entry) {
-            if ($entry->value->name !== $constName) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(GlobalConstantIndexer::class, 'name', $constName) as $entry) {
             $consumer(new Location(
                 uri: $entry->uri,
                 range: $this->positionResolver->resolveRange(

@@ -79,11 +79,7 @@ final class TypeDefinitionTypeContributor implements TypeDefinitionContributor
         $indexers = [ClassIndexer::class, InterfaceIndexer::class, EnumIndexer::class];
 
         foreach ($indexers as $indexerClass) {
-            foreach ($this->indexLookup->findByKey($indexerClass) as $entry) {
-                if ($entry->value->fqn !== $className) {
-                    continue;
-                }
-
+            foreach ($this->indexLookup->findByField($indexerClass, 'fqn', $className) as $entry) {
                 $range = $this->positionResolver->resolveRange($entry->uri, $entry->value->startPosition, $editor);
                 $consumer(new Location(uri: $entry->uri, range: $range));
 

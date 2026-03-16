@@ -41,8 +41,12 @@ final class ConstantDocumentationContributor implements DocumentationContributor
                 $className = $constFetch->class->toString();
                 $constName = $element->toString();
 
-                foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-                    if ($entry->value->className !== $className || $entry->value->name !== $constName) {
+                foreach ($this->indexLookup->findByField(
+                    ClassConstantIndexer::class,
+                    'className',
+                    $className,
+                ) as $entry) {
+                    if ($entry->value->name !== $constName) {
                         continue;
                     }
 
@@ -67,11 +71,7 @@ final class ConstantDocumentationContributor implements DocumentationContributor
                     return;
                 }
 
-                foreach ($this->indexLookup->findByKey(GlobalConstantIndexer::class) as $entry) {
-                    if ($entry->value->name !== $constName) {
-                        continue;
-                    }
-
+                foreach ($this->indexLookup->findByField(GlobalConstantIndexer::class, 'name', $constName) as $entry) {
                     $signature = 'const ' . $entry->value->name;
 
                     $consumer(sprintf("```php\n%s\n```", $signature));

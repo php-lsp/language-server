@@ -8,9 +8,6 @@ use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
-use App\Module\Indexing\Data\ClassData;
-use App\Module\Indexing\Data\InterfaceData;
-use App\Module\Indexing\Data\TraitData;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\Indexer\InterfaceIndexer;
 use App\Module\Indexing\Indexer\TraitIndexer;
@@ -53,36 +50,21 @@ final class ClassDeclarationContributor implements DeclarationContributor
         $zeroPosition = new Position(0, 0);
         $defaultRange = new Range($zeroPosition, $zeroPosition);
 
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $value) {
-            /** @var ClassData $data */
-            $data = $value->value;
-            if ($data->fqn !== $className) {
-                continue;
-            }
+        foreach ($this->indexLookup->findByField(ClassIndexer::class, 'fqn', $className) as $value) {
             $consumer(new Location(
                 uri: $value->uri,
                 range: $defaultRange,
             ));
         }
 
-        foreach ($this->indexLookup->findByKey(InterfaceIndexer::class) as $value) {
-            /** @var InterfaceData $data */
-            $data = $value->value;
-            if ($data->fqn !== $className) {
-                continue;
-            }
+        foreach ($this->indexLookup->findByField(InterfaceIndexer::class, 'fqn', $className) as $value) {
             $consumer(new Location(
                 uri: $value->uri,
                 range: $defaultRange,
             ));
         }
 
-        foreach ($this->indexLookup->findByKey(TraitIndexer::class) as $value) {
-            /** @var TraitData $data */
-            $data = $value->value;
-            if ($data->fqn !== $className) {
-                continue;
-            }
+        foreach ($this->indexLookup->findByField(TraitIndexer::class, 'fqn', $className) as $value) {
             $consumer(new Location(
                 uri: $value->uri,
                 range: $defaultRange,

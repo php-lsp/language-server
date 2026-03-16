@@ -53,11 +53,7 @@ final class ClassConstantCompletionContributor implements CompletionContributor
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-            if ($entry->value->className !== $className) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(ClassConstantIndexer::class, 'className', $className) as $entry) {
             $detail = 'const';
             if ($entry->value->type !== null) {
                 $detail .= ' ' . $entry->value->type;

@@ -43,11 +43,7 @@ final class FunctionDocumentationContributor implements DocumentationContributor
 
         $funcName = $element->toString();
 
-        foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $entry) {
-            if ($entry->value->fqn !== $funcName) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(FunctionIndexer::class, 'fqn', $funcName) as $entry) {
             $params = [];
             foreach ($entry->value->parameters as $param) {
                 $paramStr = '';

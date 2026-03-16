@@ -60,8 +60,8 @@ final class MethodDocumentationContributor implements DocumentationContributor
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($entry->value->className !== $className || $entry->value->name !== $methodName) {
+        foreach ($this->indexLookup->findByField(ClassMethodIndexer::class, 'className', $className) as $entry) {
+            if ($entry->value->name !== $methodName) {
                 continue;
             }
 

@@ -8,7 +8,6 @@ use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
 use App\Core\Contracts\Signature\SignatureContributor;
-use App\Module\Indexing\Data\ClassData;
 use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\Indexing\Indexer\ClassIndexer;
 use App\Module\Indexing\IndexLookup;
@@ -43,13 +42,7 @@ final class ConstructorSignatureContributor implements SignatureContributor
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
-            /** @var ClassData $data */
-            $data = $entry->value;
-            if ($data->fqn !== $className) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(ClassIndexer::class, 'fqn', $className) as $entry) {
             /** @var non-empty-string $uri */
             $uri = $entry->uri;
             $source = $this->fileManager->findPsiFile(

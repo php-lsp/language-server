@@ -95,11 +95,7 @@ final class ClassMemberCompletionContributor implements CompletionContributor
         }
 
         // Suggest methods
-        foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($entry->value->className !== $className) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(ClassMethodIndexer::class, 'className', $className) as $entry) {
             $params = [];
             foreach ($entry->value->parameters as $param) {
                 $paramStr = '';
@@ -123,11 +119,7 @@ final class ClassMemberCompletionContributor implements CompletionContributor
         }
 
         // Suggest properties
-        foreach ($this->indexLookup->findByKey(PropertyIndexer::class) as $entry) {
-            if ($entry->value->className !== $className) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(PropertyIndexer::class, 'className', $className) as $entry) {
             $detail = $entry->value->visibility->value;
             if ($entry->value->type !== null) {
                 $detail .= ' ' . $entry->value->type;

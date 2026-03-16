@@ -60,8 +60,8 @@ final class PropertyDeclarationContributor implements DeclarationContributor
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(PropertyIndexer::class) as $entry) {
-            if ($entry->value->className !== $className || $entry->value->name !== $propertyName) {
+        foreach ($this->indexLookup->findByField(PropertyIndexer::class, 'className', $className) as $entry) {
+            if ($entry->value->name !== $propertyName) {
                 continue;
             }
 

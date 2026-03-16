@@ -72,11 +72,8 @@ final class MethodDefinitionContributor implements DefinitionContributor
 
         $lookupKey = $className . '::' . $methodName;
 
-        foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($entry->key !== $lookupKey) {
-                continue;
-            }
-
+        $entry = $this->indexLookup->findEntry(ClassMethodIndexer::class, $lookupKey);
+        if ($entry !== null) {
             $consumer(new Location(
                 uri: $entry->uri,
                 range: $startRange,

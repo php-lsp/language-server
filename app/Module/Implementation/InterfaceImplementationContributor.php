@@ -61,15 +61,13 @@ final class InterfaceImplementationContributor implements ImplementationContribu
         EditorInterface $editor,
         ImplementationConsumer $consumer,
     ): void {
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
+        foreach ($this->indexLookup->findByField(ClassIndexer::class, 'fqn', $fqn) as $entry) {
             /** @var ClassData $data */
             $data = $entry->value;
-            if ($data->fqn === $fqn) {
-                $range = $this->positionResolver->resolveRange($entry->uri, $data->startPosition, $editor);
-                $consumer(new Location(uri: $entry->uri, range: $range));
+            $range = $this->positionResolver->resolveRange($entry->uri, $data->startPosition, $editor);
+            $consumer(new Location(uri: $entry->uri, range: $range));
 
-                return;
-            }
+            return;
         }
     }
 }

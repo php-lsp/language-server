@@ -38,11 +38,8 @@ final class EnumCaseCompletionContributor implements CompletionContributor
         if ($constFetch !== null && $constFetch->class instanceof Node\Name) {
             $name = $constFetch->class->toString();
             // Check if this name is an enum
-            foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $entry) {
-                if ($entry->value->fqn !== $name) {
-                    continue;
-                }
-
+            $enumEntries = $this->indexLookup->findByField(EnumIndexer::class, 'fqn', $name);
+            foreach ($enumEntries as $entry) {
                 $enumName = $name;
                 break;
             }
@@ -52,11 +49,7 @@ final class EnumCaseCompletionContributor implements CompletionContributor
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-            if ($entry->value->className !== $enumName) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(ClassConstantIndexer::class, 'className', $enumName) as $entry) {
             $consumer(new CompletionItem(
                 label: $entry->value->name,
                 kind: CompletionItemKind::EnumMemberKind,

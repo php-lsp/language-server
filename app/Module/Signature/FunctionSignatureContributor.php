@@ -42,13 +42,9 @@ final class FunctionSignatureContributor implements SignatureContributor
 
         $functionName = $node->name->toString();
 
-        foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $value) {
+        foreach ($this->indexLookup->findByField(FunctionIndexer::class, 'fqn', $functionName) as $value) {
             /** @var FunctionData $data */
             $data = $value->value;
-
-            if ($data->fqn !== $functionName) {
-                continue;
-            }
 
             $paramLabels = [];
             $parameters = [];

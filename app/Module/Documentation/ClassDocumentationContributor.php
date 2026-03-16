@@ -40,11 +40,7 @@ final class ClassDocumentationContributor implements DocumentationContributor
 
         $name = $element->toString();
 
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
-            if ($entry->value->fqn !== $name) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(ClassIndexer::class, 'fqn', $name) as $entry) {
             $parts = [];
             if ($entry->value->isAbstract) {
                 $parts[] = 'abstract';
@@ -68,11 +64,7 @@ final class ClassDocumentationContributor implements DocumentationContributor
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(InterfaceIndexer::class) as $entry) {
-            if ($entry->value->fqn !== $name) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(InterfaceIndexer::class, 'fqn', $name) as $entry) {
             $signature = 'interface ' . $entry->value->fqn;
             if ($entry->value->extends !== []) {
                 $signature .= ' extends ' . implode(', ', $entry->value->extends);
@@ -83,21 +75,13 @@ final class ClassDocumentationContributor implements DocumentationContributor
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(TraitIndexer::class) as $entry) {
-            if ($entry->value->fqn !== $name) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(TraitIndexer::class, 'fqn', $name) as $entry) {
             $consumer(sprintf("```php\ntrait %s\n```", $entry->value->fqn));
 
             return;
         }
 
-        foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $entry) {
-            if ($entry->value->fqn !== $name) {
-                continue;
-            }
-
+        foreach ($this->indexLookup->findByField(EnumIndexer::class, 'fqn', $name) as $entry) {
             $signature = 'enum ' . $entry->value->fqn;
             if ($entry->value->backedType !== null) {
                 $signature .= ': ' . $entry->value->backedType;
