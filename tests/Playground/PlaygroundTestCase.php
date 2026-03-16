@@ -180,6 +180,38 @@ abstract class PlaygroundTestCase extends TestCase
     }
 
     /**
+     * Send a textDocument/definition request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @param int $line Zero-based line number
+     * @param int $character Zero-based character offset
+     * @return array<string, mixed> The response
+     */
+    protected static function definition(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/definition', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/typeDefinition request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @param int $line Zero-based line number
+     * @param int $character Zero-based character offset
+     * @return array<string, mixed> The response
+     */
+    protected static function typeDefinition(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/typeDefinition', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
      * Send a textDocument/hover request.
      *
      * @param string $relativePath File path relative to playground/
@@ -241,6 +273,34 @@ abstract class PlaygroundTestCase extends TestCase
         return self::$client->request('textDocument/signatureHelp', [
             'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
             'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/foldingRange request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @return array<string, mixed> The response
+     */
+    protected static function foldingRange(string $relativePath): array
+    {
+        return self::$client->request('textDocument/foldingRange', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/selectionRange request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @param list<array{line: int, character: int}> $positions Zero-based positions
+     * @return array<string, mixed> The response
+     */
+    protected static function selectionRange(string $relativePath, array $positions): array
+    {
+        return self::$client->request('textDocument/selectionRange', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'positions' => $positions,
         ], static::$requestTimeout);
     }
 

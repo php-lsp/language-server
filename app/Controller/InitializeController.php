@@ -16,12 +16,14 @@ use Lsp\Protocol\Type\DocumentFormattingOptions;
 use Lsp\Protocol\Type\DocumentHighlightOptions;
 use Lsp\Protocol\Type\DocumentRangeFormattingOptions;
 use Lsp\Protocol\Type\DocumentSymbolOptions;
+use Lsp\Protocol\Type\FoldingRangeOptions;
 use Lsp\Protocol\Type\HoverOptions;
 use Lsp\Protocol\Type\ImplementationOptions;
 use Lsp\Protocol\Type\InitializeParams;
 use Lsp\Protocol\Type\InitializeResult;
 use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\RenameOptions;
+use Lsp\Protocol\Type\SelectionRangeOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
 use Lsp\Protocol\Type\SignatureHelpOptions;
@@ -68,6 +70,7 @@ final class InitializeController
                 typeDefinitionProvider: new TypeDefinitionOptions(),
                 implementationProvider: new ImplementationOptions(),
                 documentHighlightProvider: new DocumentHighlightOptions(),
+                foldingRangeProvider: new FoldingRangeOptions(),
                 documentFormattingProvider: new DocumentFormattingOptions(),
                 documentRangeFormattingProvider: new DocumentRangeFormattingOptions(),
                 codeActionProvider: new CodeActionOptions(
@@ -85,6 +88,7 @@ final class InitializeController
                     interFileDependencies: true,
                     workspaceDiagnostics: false,
                 ),
+                selectionRangeProvider: new SelectionRangeOptions(),
                 workspaceSymbolProvider: new WorkspaceSymbolOptions(),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(
