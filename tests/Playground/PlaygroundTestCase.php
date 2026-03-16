@@ -180,6 +180,38 @@ abstract class PlaygroundTestCase extends TestCase
     }
 
     /**
+     * Send a textDocument/definition request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @param int $line Zero-based line number
+     * @param int $character Zero-based character offset
+     * @return array<string, mixed> The response
+     */
+    protected static function definition(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/definition', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/typeDefinition request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @param int $line Zero-based line number
+     * @param int $character Zero-based character offset
+     * @return array<string, mixed> The response
+     */
+    protected static function typeDefinition(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/typeDefinition', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
      * Send a textDocument/hover request.
      *
      * @param string $relativePath File path relative to playground/
