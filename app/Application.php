@@ -9,6 +9,7 @@ use App\Core\Contracts\Completion\AsCompletionContributor;
 use App\Core\Contracts\Declaration\AsDeclarationContributor;
 use App\Core\Contracts\Definition\AsDefinitionContributor;
 use App\Core\Contracts\Documentation\AsDocumentationContributor;
+use App\Core\Contracts\FoldingRange\AsFoldingRangeContributor;
 use App\Core\Contracts\Highlight\AsDocumentHighlightContributor;
 use App\Core\Contracts\Implementation\AsImplementationContributor;
 use App\Core\Contracts\Indexing\AsIndexer;
@@ -34,6 +35,7 @@ final class Application extends LanguageServerKernel
         AsDeclarationContributor::class => 'lsp.declarationContributors',
         AsDefinitionContributor::class => 'lsp.definitionContributors',
         AsDocumentationContributor::class => 'lsp.documentationContributors',
+        AsFoldingRangeContributor::class => 'lsp.foldingRangeContributors',
         AsDocumentHighlightContributor::class => 'lsp.documentHighlightContributors',
         AsImplementationContributor::class => 'lsp.implementationContributors',
         AsSignatureContributor::class => 'lsp.signatureContributors',

@@ -277,6 +277,19 @@ abstract class PlaygroundTestCase extends TestCase
     }
 
     /**
+     * Send a textDocument/foldingRange request.
+     *
+     * @param string $relativePath File path relative to playground/
+     * @return array<string, mixed> The response
+     */
+    protected static function foldingRange(string $relativePath): array
+    {
+        return self::$client->request('textDocument/foldingRange', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+        ], static::$requestTimeout);
+    }
+
+    /**
      * Assert that the response JSON matches the expected structure.
      *
      * Compares the full message structure. The `id` and `jsonrpc` fields are

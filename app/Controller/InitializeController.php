@@ -16,6 +16,7 @@ use Lsp\Protocol\Type\DocumentFormattingOptions;
 use Lsp\Protocol\Type\DocumentHighlightOptions;
 use Lsp\Protocol\Type\DocumentRangeFormattingOptions;
 use Lsp\Protocol\Type\DocumentSymbolOptions;
+use Lsp\Protocol\Type\FoldingRangeOptions;
 use Lsp\Protocol\Type\HoverOptions;
 use Lsp\Protocol\Type\ImplementationOptions;
 use Lsp\Protocol\Type\InitializeParams;
@@ -68,6 +69,7 @@ final class InitializeController
                 typeDefinitionProvider: new TypeDefinitionOptions(),
                 implementationProvider: new ImplementationOptions(),
                 documentHighlightProvider: new DocumentHighlightOptions(),
+                foldingRangeProvider: new FoldingRangeOptions(),
                 documentFormattingProvider: new DocumentFormattingOptions(),
                 documentRangeFormattingProvider: new DocumentRangeFormattingOptions(),
                 codeActionProvider: new CodeActionOptions(
