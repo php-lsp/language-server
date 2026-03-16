@@ -24,15 +24,12 @@ final class ProjectManagerTest extends TestCase
         $this->assertSame($project, $manager->getProject());
     }
 
-    #[TestDox('setProject accepts null')]
+    #[TestDox('setProject accepts null and getProject returns null')]
     public function testSetNull(): void
     {
         $manager = new ProjectManager();
         $manager->setProject(null);
 
-        // getProject has return type Project, so calling it after setProject(null)
-        // throws TypeError — this verifies setProject accepts nullable
-        $this->expectException(\TypeError::class);
-        $manager->getProject();
+        $this->assertNull($manager->getProject());
     }
 }

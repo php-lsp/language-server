@@ -42,16 +42,13 @@ final class ConstantDocumentationContributor implements DocumentationContributor
                 $constName = $element->toString();
 
                 foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-                    if ($entry->value->ownerFqn !== $className || $entry->value->name !== $constName) {
+                    if ($entry->value->className !== $className || $entry->value->name !== $constName) {
                         continue;
                     }
 
                     $signature = 'const ' . $className . '::' . $entry->value->name;
                     if ($entry->value->type !== null) {
                         $signature .= ': ' . $entry->value->type;
-                    }
-                    if ($entry->value->value !== null) {
-                        $signature .= ' = ' . $entry->value->value;
                     }
 
                     $consumer(sprintf("```php\n%s\n```", $signature));
@@ -76,9 +73,6 @@ final class ConstantDocumentationContributor implements DocumentationContributor
                     }
 
                     $signature = 'const ' . $entry->value->name;
-                    if ($entry->value->value !== null) {
-                        $signature .= ' = ' . $entry->value->value;
-                    }
 
                     $consumer(sprintf("```php\n%s\n```", $signature));
 

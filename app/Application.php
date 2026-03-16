@@ -48,8 +48,9 @@ final class Application extends LanguageServerKernel
         foreach (self::ATTRIBUTES as $class => $tag) {
             $container->registerAttributeForAutoconfiguration(
                 attributeClass: $class,
-                configurator: static function (ChildDefinition $definition) use ($tag): void {
-                    $definition->addTag($tag);
+                configurator: static function (ChildDefinition $definition, object $attribute) use ($tag): void {
+                    $priority = property_exists($attribute, 'priority') ? (int) $attribute->priority : 0;
+                    $definition->addTag($tag, ['priority' => $priority]);
                 },
             );
         }

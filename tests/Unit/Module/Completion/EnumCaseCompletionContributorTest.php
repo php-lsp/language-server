@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Module\Completion;
 
 use App\Module\Completion\EnumCaseCompletionContributor;
-use App\Module\Indexing\Storage\IndexData\ConstantData;
-use App\Module\Indexing\Storage\IndexData\EnumData;
+use App\Module\Indexing\Data\ConstantData;
+use App\Module\Indexing\Data\EnumData;
 use App\Tests\Support\CompletionTestHelper;
 use App\Tests\Support\IndexTestHelper;
 use App\Tests\Support\PsiFileFactory;

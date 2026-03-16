@@ -7,6 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\Definition\DefinitionConsumer;
 use App\Core\Contracts\Definition\DefinitionContext;
 use App\Core\Contracts\Definition\DefinitionContributor;
+use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\DefinitionParams;
@@ -24,19 +25,28 @@ final class DefinitionController
     public function __construct(
         #[AutowireIterator('lsp.definitionContributors')]
         iterable $contributors,
+        private readonly TracerInterface $tracer,
     ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
     public function __invoke(EditorInterface $editor, DefinitionParams $params): array
     {
-        $context = new DefinitionContext($params->textDocument, $params->position, $editor);
-        $consumer = new DefinitionConsumer();
+        return $this->tracer->trace('textDocument/definition', function () use ($editor, $params): array {
+            $context = new DefinitionContext($params->textDocument, $params->position, $editor);
+            $consumer = new DefinitionConsumer();
 
-        foreach ($this->contributors as $contributor) {
-            $contributor->contribute($context, $consumer);
-        }
+            foreach ($this->contributors as $contributor) {
+                $this->tracer->trace($contributor::class, static function () use (
+                    $contributor,
+                    $context,
+                    $consumer,
+                ): void {
+                    $contributor->contribute($context, $consumer);
+                });
+            }
 
-        return $consumer->results;
+            return $consumer->results;
+        });
     }
 }

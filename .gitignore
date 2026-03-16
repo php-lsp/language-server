@@ -1,6 +1,11 @@
 .idea/
 vendor/
 var/
+
+# Environment overrides (local secrets, dev settings)
+# .env is committed with safe defaults; use .env.local for overrides
+.env.local
+.env.*.local
 tools/
 composer.phar
 composer.lock

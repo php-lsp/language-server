@@ -13,6 +13,7 @@ use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\ReferenceParams;
 use Lsp\Protocol\Type\ReferenceContext as LspReferenceContext;
+use App\Module\Telemetry\NoopTracer;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -22,7 +23,7 @@ final class ReferencesControllerTest extends TestCase
     #[TestDox('returns empty when no contributors')]
     public function testEmptyContributors(): void
     {
-        $controller = new ReferencesController([]);
+        $controller = new ReferencesController([], new NoopTracer());
         $editor = $this->createMock(EditorInterface::class);
         $params = new ReferenceParams(
             context: new LspReferenceContext(includeDeclaration: false),
@@ -45,7 +46,7 @@ final class ReferencesControllerTest extends TestCase
             }
         };
 
-        $controller = new ReferencesController([$contributor]);
+        $controller = new ReferencesController([$contributor], new NoopTracer());
         $editor = $this->createMock(EditorInterface::class);
         $params = new ReferenceParams(
             context: new LspReferenceContext(includeDeclaration: false),

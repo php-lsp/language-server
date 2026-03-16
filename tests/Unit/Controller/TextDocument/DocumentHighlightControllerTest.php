@@ -15,6 +15,7 @@ use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\DocumentHighlight;
 use Lsp\Protocol\Type\DocumentHighlightKind;
 use Lsp\Protocol\Type\DocumentHighlightParams;
+use App\Module\Telemetry\NoopTracer;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -25,7 +26,7 @@ final class DocumentHighlightControllerTest extends TestCase
     public function testReturnsEmptyWithNoContributors(): void
     {
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
-        $controller = new DocumentHighlightController([], $fileManager);
+        $controller = new DocumentHighlightController([], $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DocumentHighlightParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -53,7 +54,7 @@ final class DocumentHighlightControllerTest extends TestCase
         };
 
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
-        $controller = new DocumentHighlightController([$contributor], $fileManager);
+        $controller = new DocumentHighlightController([$contributor], $fileManager, new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DocumentHighlightParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),

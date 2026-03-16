@@ -119,15 +119,16 @@ final class DebugIndexTest extends PlaygroundTestCase
 
         $this->assertGreaterThan(0, $data['total']);
 
-        $expectedClasses = [
-            'Playground\\Calculator',
-            'Playground\\User',
-            'Playground\\UserService',
-            'Playground\\Greeter',
+        $expectedMethods = [
+            'Playground\\Calculator::',
+            'Playground\\User::',
+            'Playground\\UserService::',
+            'Playground\\Greeter::',
         ];
 
-        foreach ($expectedClasses as $class) {
-            $this->assertContains($class, $data['keys'], "Methods for '{$class}' should be indexed");
+        $allKeys = implode("\n", $data['keys']);
+        foreach ($expectedMethods as $prefix) {
+            $this->assertStringContainsString($prefix, $allKeys, "Methods for '{$prefix}' should be indexed");
         }
     }
 

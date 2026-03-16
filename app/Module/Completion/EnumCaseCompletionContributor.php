@@ -17,7 +17,7 @@ use Lsp\Protocol\Type\CompletionItemKind;
 use Override;
 use PhpParser\Node;
 
-#[AsCompletionContributor]
+#[AsCompletionContributor(priority: 80)]
 final class EnumCaseCompletionContributor implements CompletionContributor
 {
     public function __construct(
@@ -53,7 +53,7 @@ final class EnumCaseCompletionContributor implements CompletionContributor
         }
 
         foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-            if ($entry->value->ownerFqn !== $enumName) {
+            if ($entry->value->className !== $enumName) {
                 continue;
             }
 

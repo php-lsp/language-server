@@ -4,22 +4,30 @@ declare(strict_types=1);
 
 namespace App\Listener;
 
+use App\Module\Telemetry\TracerInterface;
 use Lsp\Contracts\Rpc\Message\NotificationInterface;
 use Lsp\Contracts\Rpc\Message\RequestInterface;
 use Lsp\Server\Event\Message\MessageReceived;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 /**
- * Traces all incoming LSP requests with timing information.
+ * Traces all incoming LSP requests with timing information and APM spans.
  *
- * Logs method name, request ID, and parameters for each incoming
- * request/notification. Works with Buggregator UI for visual tracing.
+ * Creates OpenTelemetry spans for each incoming request/notification,
+ * exporting them to an OTLP-compatible backend (SigNoz, Jaeger, etc.)
+ * when configured.
  *
  * @api
  */
 #[AsEventListener]
-final class RequestTracingListener extends LoggerListener
+final class RequestTracingListener
 {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly TracerInterface $tracer,
+    ) {}
+
     public function __invoke(MessageReceived $event): void
     {
         $message = $event->message;

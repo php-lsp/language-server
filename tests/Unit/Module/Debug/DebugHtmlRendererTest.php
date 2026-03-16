@@ -49,12 +49,12 @@ final class DebugHtmlRendererTest extends TestCase
         $this->assertStringContainsString('LSP Debug', $html);
     }
 
-    #[TestDox('layout contains HTMX trigger for initial load')]
-    public function testLayoutContainsHtmxTrigger(): void
+    #[TestDox('layout contains hash-based routing for initial load')]
+    public function testLayoutContainsHashRouting(): void
     {
         $html = $this->renderer->layout();
-        $this->assertStringContainsString('hx-get="/views/indexes"', $html);
-        $this->assertStringContainsString('hx-trigger="load"', $html);
+        $this->assertStringContainsString('navigateToHash', $html);
+        $this->assertStringContainsString('hashchange', $html);
     }
 
     #[TestDox('layout contains CSS styles')]
@@ -353,7 +353,7 @@ final class DebugHtmlRendererTest extends TestCase
         $html = $this->renderer->fileList();
         $this->assertStringContainsString('Foo.php', $html);
         $this->assertStringContainsString('functions.php', $html);
-        $this->assertStringContainsString('2 files', $html);
+        $this->assertStringContainsString('of 2', $html);
     }
 
     #[TestDox('file list has navigation tabs')]

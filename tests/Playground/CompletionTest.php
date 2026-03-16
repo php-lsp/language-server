@@ -62,11 +62,9 @@ final class CompletionTest extends PlaygroundTestCase
         $userItem = self::findItemByLabel($items, 'Playground\User');
 
         self::assertNotNull($userItem, 'Should contain Playground\User completion item');
-        self::assertSame([
-            'label' => 'Playground\User',
-            'kind' => 7,
-            'detail' => '[class]',
-        ], $userItem);
+        self::assertSame('Playground\User', $userItem['label']);
+        self::assertSame(7, $userItem['kind']);
+        self::assertSame('[class]', $userItem['detail']);
     }
 
     #[TestDox('Completion item for enum has correct kind')]
@@ -76,11 +74,9 @@ final class CompletionTest extends PlaygroundTestCase
         $enumItem = self::findItemByLabel($items, 'Playground\StatusEnum');
 
         self::assertNotNull($enumItem, 'Should contain Playground\StatusEnum completion item');
-        self::assertSame([
-            'label' => 'Playground\StatusEnum',
-            'kind' => 13,
-            'detail' => '[enum]',
-        ], $enumItem);
+        self::assertSame('Playground\StatusEnum', $enumItem['label']);
+        self::assertSame(13, $enumItem['kind']);
+        self::assertSame('[enum]', $enumItem['detail']);
     }
 
     #[TestDox('Completion item for interface has correct kind')]
@@ -90,11 +86,9 @@ final class CompletionTest extends PlaygroundTestCase
         $ifaceItem = self::findItemByLabel($items, 'Playground\AppInterface');
 
         self::assertNotNull($ifaceItem, 'Should contain Playground\AppInterface completion item');
-        self::assertSame([
-            'label' => 'Playground\AppInterface',
-            'kind' => 8,
-            'detail' => '[interface]',
-        ], $ifaceItem);
+        self::assertSame('Playground\AppInterface', $ifaceItem['label']);
+        self::assertSame(8, $ifaceItem['kind']);
+        self::assertSame('[interface]', $ifaceItem['detail']);
     }
 
     #[TestDox('Completion at file scope includes PHP keywords')]

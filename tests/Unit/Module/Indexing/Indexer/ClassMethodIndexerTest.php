@@ -25,15 +25,14 @@ final class ClassMethodIndexerTest extends TestCase
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
         $this->assertCount(1, $results);
-        $this->assertArrayHasKey('Foo', $results);
-        $this->assertCount(1, $results['Foo']);
-        $this->assertInstanceOf(MethodData::class, $results['Foo'][0]);
-        $this->assertSame('bar', $results['Foo'][0]->name);
-        $this->assertSame('Foo', $results['Foo'][0]->className);
-        $this->assertSame(Visibility::Public, $results['Foo'][0]->visibility);
-        $this->assertSame('void', $results['Foo'][0]->returnType);
-        $this->assertFalse($results['Foo'][0]->isStatic);
-        $this->assertFalse($results['Foo'][0]->isAbstract);
+        $this->assertArrayHasKey('Foo::bar', $results);
+        $this->assertInstanceOf(MethodData::class, $results['Foo::bar']);
+        $this->assertSame('bar', $results['Foo::bar']->name);
+        $this->assertSame('Foo', $results['Foo::bar']->className);
+        $this->assertSame(Visibility::Public, $results['Foo::bar']->visibility);
+        $this->assertSame('void', $results['Foo::bar']->returnType);
+        $this->assertFalse($results['Foo::bar']->isStatic);
+        $this->assertFalse($results['Foo::bar']->isAbstract);
     }
 
     public function testIndexPrivateMethod(): void
@@ -41,7 +40,7 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php class Foo { private function secret() {} }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertSame(Visibility::Private, $results['Foo'][0]->visibility);
+        $this->assertSame(Visibility::Private, $results['Foo::secret']->visibility);
     }
 
     public function testIndexProtectedMethod(): void
@@ -49,7 +48,7 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php class Foo { protected function internal() {} }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertSame(Visibility::Protected, $results['Foo'][0]->visibility);
+        $this->assertSame(Visibility::Protected, $results['Foo::internal']->visibility);
     }
 
     public function testIndexStaticMethod(): void
@@ -57,7 +56,7 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php class Foo { public static function create(): self {} }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertTrue($results['Foo'][0]->isStatic);
+        $this->assertTrue($results['Foo::create']->isStatic);
     }
 
     public function testIndexAbstractMethod(): void
@@ -65,7 +64,7 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php abstract class Foo { abstract public function run(): void; }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertTrue($results['Foo'][0]->isAbstract);
+        $this->assertTrue($results['Foo::run']->isAbstract);
     }
 
     public function testIndexMethodWithParameters(): void
@@ -73,7 +72,7 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php class Foo { public function bar(string $name, int $age = 0) {} }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $params = $results['Foo'][0]->parameters;
+        $params = $results['Foo::bar']->parameters;
         $this->assertCount(2, $params);
         $this->assertSame('$name', $params[0]->name);
         $this->assertSame('string', $params[0]->type);
@@ -86,8 +85,8 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php interface Foo { public function bar(): void; }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('Foo', $results);
-        $this->assertSame('bar', $results['Foo'][0]->name);
+        $this->assertArrayHasKey('Foo::bar', $results);
+        $this->assertSame('bar', $results['Foo::bar']->name);
     }
 
     public function testIndexTraitMethods(): void
@@ -95,8 +94,8 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php trait Foo { public function bar(): void {} }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('Foo', $results);
-        $this->assertSame('bar', $results['Foo'][0]->name);
+        $this->assertArrayHasKey('Foo::bar', $results);
+        $this->assertSame('bar', $results['Foo::bar']->name);
     }
 
     public function testIndexMultipleMethodsInClass(): void
@@ -104,7 +103,7 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php class Foo { public function a() {} private function b() {} protected function c() {} }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertCount(3, $results['Foo']);
+        $this->assertCount(3, $results);
     }
 
     public function testEmptyClassSkipped(): void
@@ -120,6 +119,6 @@ final class ClassMethodIndexerTest extends TestCase
         $code = '<?php namespace App; class Foo { public function bar() {} }';
         $results = IndexerTestHelper::runIndexer(new ClassMethodIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('App\\Foo', $results);
+        $this->assertArrayHasKey('App\\Foo::bar', $results);
     }
 }

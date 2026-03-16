@@ -8,7 +8,6 @@ use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Core\Contracts\Signature\SignatureConsumer;
 use App\Core\Contracts\Signature\SignatureContext;
 use App\Core\Contracts\Signature\SignatureContributor;
-use App\Module\Indexing\Data\MethodData;
 use App\Module\Indexing\Data\NodeTypeExtractor;
 use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\IndexLookup;
@@ -46,23 +45,10 @@ final class MethodSignatureContributor implements SignatureContributor
 
         [$className, $methodName] = $call;
 
+        $lookupKey = $className . '::' . $methodName;
+
         foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($entry->key !== $className) {
-                continue;
-            }
-
-            /** @var list<MethodData> $methods */
-            $methods = $entry->value;
-            $found = false;
-            foreach ($methods as $method) {
-                if ($method->name !== $methodName) {
-                    continue;
-                }
-
-                $found = true;
-                break;
-            }
-            if (!$found) {
+            if ($entry->key !== $lookupKey) {
                 continue;
             }
 

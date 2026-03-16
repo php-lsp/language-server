@@ -7,6 +7,7 @@ namespace App\Controller\TextDocument;
 use App\Core\Contracts\Declaration\DeclarationConsumer;
 use App\Core\Contracts\Declaration\DeclarationContext;
 use App\Core\Contracts\Declaration\DeclarationContributor;
+use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\DeclarationParams;
@@ -24,19 +25,28 @@ final class DeclarationController
     public function __construct(
         #[AutowireIterator('lsp.declarationContributors')]
         iterable $contributors,
+        private readonly TracerInterface $tracer,
     ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
     public function __invoke(EditorInterface $editor, DeclarationParams $params): array
     {
-        $context = new DeclarationContext($params->textDocument, $params->position, $editor);
-        $consumer = new DeclarationConsumer();
+        return $this->tracer->trace('textDocument/declaration', function () use ($editor, $params): array {
+            $context = new DeclarationContext($params->textDocument, $params->position, $editor);
+            $consumer = new DeclarationConsumer();
 
-        foreach ($this->contributors as $contributor) {
-            $contributor->contribute($context, $consumer);
-        }
+            foreach ($this->contributors as $contributor) {
+                $this->tracer->trace($contributor::class, static function () use (
+                    $contributor,
+                    $context,
+                    $consumer,
+                ): void {
+                    $contributor->contribute($context, $consumer);
+                });
+            }
 
-        return $consumer->results;
+            return $consumer->results;
+        });
     }
 }

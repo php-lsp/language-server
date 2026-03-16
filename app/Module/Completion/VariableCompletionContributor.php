@@ -15,7 +15,7 @@ use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 
-#[AsCompletionContributor]
+#[AsCompletionContributor(priority: 100)]
 final class VariableCompletionContributor implements CompletionContributor
 {
     #[Override]

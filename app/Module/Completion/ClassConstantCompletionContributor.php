@@ -16,7 +16,7 @@ use Lsp\Protocol\Type\CompletionItemKind;
 use Override;
 use PhpParser\Node;
 
-#[AsCompletionContributor]
+#[AsCompletionContributor(priority: 80)]
 final class ClassConstantCompletionContributor implements CompletionContributor
 {
     public function __construct(
@@ -54,16 +54,13 @@ final class ClassConstantCompletionContributor implements CompletionContributor
         }
 
         foreach ($this->indexLookup->findByKey(ClassConstantIndexer::class) as $entry) {
-            if ($entry->value->ownerFqn !== $className) {
+            if ($entry->value->className !== $className) {
                 continue;
             }
 
             $detail = 'const';
             if ($entry->value->type !== null) {
                 $detail .= ' ' . $entry->value->type;
-            }
-            if ($entry->value->value !== null) {
-                $detail .= ' = ' . $entry->value->value;
             }
 
             $consumer(new CompletionItem(

@@ -76,6 +76,42 @@ if (!in_array(PHP_SAPI, ['cli', 'phpdbg', 'embed', 'micro'], true)) {
 
 
 // -----------------------------------------------------------------------------
+//  Load Environment Variables
+// -----------------------------------------------------------------------------
+
+(static function (): void {
+    if (!class_exists(\Symfony\Component\Dotenv\Dotenv::class)) {
+        return;
+    }
+
+    $dotenv = new \Symfony\Component\Dotenv\Dotenv();
+    $dotenv->usePutenv();
+
+    $packageDir = dirname(__DIR__);
+    $projectDir = getcwd() ?: $packageDir;
+
+    // 1. Package .env — default values shipped with the package
+    $packageEnv = $packageDir . '/.env';
+    if (is_file($packageEnv)) {
+        $dotenv->load($packageEnv);
+    }
+
+    // 2. Project .env — user overrides (only when installed as dependency)
+    $projectEnv = $projectDir . '/.env';
+    if (is_file($projectEnv) && realpath($projectEnv) !== realpath($packageEnv)) {
+        $dotenv->load($projectEnv);
+    }
+
+    // 3. Project .env.local — local overrides (never committed)
+    $localEnv = $projectDir . '/.env.local';
+    if (is_file($localEnv)) {
+        $dotenv->load($localEnv);
+    }
+})();
+
+
+
+// -----------------------------------------------------------------------------
 //  Execute An Application
 // -----------------------------------------------------------------------------
 

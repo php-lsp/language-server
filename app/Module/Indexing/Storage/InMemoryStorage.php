@@ -51,6 +51,7 @@ class InMemoryStorage implements DebugStorageInterface
      *
      * @return iterable<Entry>
      */
+    #[Override]
     public function readByField(string $indexKey, string $field, string $value): iterable
     {
         if (!array_key_exists($indexKey . ':' . $field, $this->secondaryIndexes)) {

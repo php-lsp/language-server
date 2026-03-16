@@ -59,7 +59,7 @@ final class PropertyDocumentationContributor implements DocumentationContributor
                 continue;
             }
 
-            $parts = [$entry->value->visibility];
+            $parts = [$entry->value->visibility->value];
             if ($entry->value->isStatic) {
                 $parts[] = 'static';
             }

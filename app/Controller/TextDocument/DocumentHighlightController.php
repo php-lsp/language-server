@@ -8,6 +8,7 @@ use App\Core\Contracts\Highlight\DocumentHighlightConsumer;
 use App\Core\Contracts\Highlight\DocumentHighlightContext;
 use App\Core\Contracts\Highlight\DocumentHighlightContributor;
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\Telemetry\TracerInterface;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\DocumentHighlightParams;
@@ -26,24 +27,33 @@ final class DocumentHighlightController
         #[AutowireIterator('lsp.documentHighlightContributors')]
         iterable $contributors,
         private InMemoryPsiFileManager $fileManager,
+        private readonly TracerInterface $tracer,
     ) {
         $this->contributors = iterator_to_array($contributors);
     }
 
     public function __invoke(EditorInterface $editor, DocumentHighlightParams $params): array
     {
-        $context = new DocumentHighlightContext(
-            $params->textDocument,
-            $params->position,
-            $editor,
-            $this->fileManager,
-        );
-        $consumer = new DocumentHighlightConsumer();
+        return $this->tracer->trace('textDocument/documentHighlight', function () use ($editor, $params): array {
+            $context = new DocumentHighlightContext(
+                $params->textDocument,
+                $params->position,
+                $editor,
+                $this->fileManager,
+            );
+            $consumer = new DocumentHighlightConsumer();
 
-        foreach ($this->contributors as $contributor) {
-            $contributor->contribute($context, $consumer);
-        }
+            foreach ($this->contributors as $contributor) {
+                $this->tracer->trace($contributor::class, static function () use (
+                    $contributor,
+                    $context,
+                    $consumer,
+                ): void {
+                    $contributor->contribute($context, $consumer);
+                });
+            }
 
-        return $consumer->results;
+            return $consumer->results;
+        });
     }
 }

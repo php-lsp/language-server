@@ -13,6 +13,7 @@ use App\Tests\Support\ProtocolFactory;
 use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\DeclarationParams;
+use App\Module\Telemetry\NoopTracer;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -22,7 +23,7 @@ final class DeclarationControllerTest extends TestCase
     #[TestDox('returns empty array with no contributors')]
     public function testReturnsEmptyWithNoContributors(): void
     {
-        $controller = new DeclarationController([]);
+        $controller = new DeclarationController([], new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DeclarationParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -46,7 +47,7 @@ final class DeclarationControllerTest extends TestCase
             }
         };
 
-        $controller = new DeclarationController([$contributor]);
+        $controller = new DeclarationController([$contributor], new NoopTracer());
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DeclarationParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),

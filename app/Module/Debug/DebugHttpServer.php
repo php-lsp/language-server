@@ -51,8 +51,7 @@ class DebugHttpServer
         $method = $request->getMethod();
 
         return match (true) {
-            // HTML views (HTMX fragments + full page)
-            $path === '/' => $this->htmlResponse($this->renderer->layout()),
+            // HTML views (HTMX fragments)
             $path === '/views/indexes' => $this->htmlResponse($this->renderer->indexList()),
             $path === '/views/search' => $this->htmlResponse($this->renderer->globalSearch($query)),
             $path === '/views/files' => $this->htmlResponse($this->renderer->fileList($query)),
@@ -72,8 +71,11 @@ class DebugHttpServer
             $path === '/api/autocomplete/keys' => $this->jsonResponse($this->apiAutocompleteKeys($query)),
             $path === '/api/autocomplete/uris' => $this->jsonResponse($this->apiAutocompleteUris($query)),
             $path === '/api/batch' && $method === 'POST' => $this->handleBatch($request),
+            $path === '/api/reindex' && $method === 'POST' => $this->handleReindex($request),
+            $path === '/api/indexers' => $this->jsonResponse($this->apiIndexers()),
             str_starts_with($path, '/api/indexes/') => $this->routeIndexApi($path, $query),
-            default => $this->htmlResponse('<div class="empty">Not found.</div>', 404),
+            // Full page — always return layout (hash routing handles the rest)
+            default => $this->htmlResponse($this->renderer->layout()),
         };
     }
 
@@ -107,6 +109,52 @@ class DebugHttpServer
             'entries' => $this->htmlResponse($this->renderer->entryDetail($indexName, $actionParam ?? '')),
             default => $this->htmlResponse('<div class="empty">Unknown action.</div>', 404),
         };
+    }
+
+    // --- Reindex ---
+
+    private function handleReindex(ServerRequestInterface $request): Response
+    {
+        if ($this->indexer === null || $this->projectManager === null) {
+            return $this->jsonResponse(['error' => 'Indexer is not available'], 503);
+        }
+
+        $project = $this->projectManager->getProject();
+        if ($project === null) {
+            return $this->jsonResponse(['error' => 'Project is not initialized. Open a workspace first.'], 503);
+        }
+
+        $body = json_decode((string) $request->getBody(), true);
+        $indexerKey = is_array($body) ? $body['indexer'] ?? null : null;
+
+        try {
+            if ($indexerKey !== null && $indexerKey !== '') {
+                $available = $this->indexer->getIndexerKeys();
+                if (!in_array($indexerKey, $available, true)) {
+                    return $this->jsonResponse([
+                        'error' => "Unknown indexer: {$indexerKey}",
+                        'available' => $available,
+                    ], 404);
+                }
+                $this->indexer->indexByKey($project, $indexerKey);
+
+                return $this->jsonResponse(['status' => 'ok', 'indexer' => $indexerKey]);
+            }
+
+            $this->indexer->index($project);
+
+            return $this->jsonResponse(['status' => 'ok', 'indexer' => 'all']);
+        } catch (\Throwable $e) {
+            return $this->jsonResponse(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function apiIndexers(): array
+    {
+        return $this->indexer?->getIndexerKeys() ?? [];
     }
 
     // --- Batch actions ---
@@ -169,8 +217,17 @@ class DebugHttpServer
             return $this->jsonResponse(['error' => 'Reindexing is not available'], 503);
         }
 
-        $this->storage->clear($indexes);
-        $this->indexer->index($this->projectManager->getProject());
+        $project = $this->projectManager->getProject();
+        if ($project === null) {
+            return $this->jsonResponse(['error' => 'Project is not initialized. Open a workspace first.'], 503);
+        }
+
+        try {
+            $this->storage->clear($indexes);
+            $this->indexer->index($project);
+        } catch (\Throwable $e) {
+            return $this->jsonResponse(['error' => $e->getMessage()], 500);
+        }
 
         return $this->jsonResponse([
             'action' => 'reindex',

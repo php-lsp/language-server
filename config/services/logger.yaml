@@ -1,9 +1,5 @@
 parameters:
-  env(APP_LOGGER_NAME): 'php-lsp'
   app.logger.name: '%env(APP_LOGGER_NAME)%'
-
-  # Buggregator connection (host:port for trap server)
-  env(BUGGREGATOR_HOST): '127.0.0.1:9913'
   app.buggregator.host: '%env(BUGGREGATOR_HOST)%'
 
 services:
@@ -96,6 +92,3 @@ when@dev:
         - [ 'pushHandler', [ '@app.logger.handler.prod' ] ]
         - [ 'pushHandler', [ '@app.logger.handler.buggregator' ] ]
         - [ 'pushProcessor', [ '@app.logger.processor.psr' ] ]
-
-
-

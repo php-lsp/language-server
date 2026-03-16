@@ -24,12 +24,12 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php class Foo { const BAR = 1; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('Foo', $results);
-        $this->assertCount(1, $results['Foo']);
-        $this->assertInstanceOf(ConstantData::class, $results['Foo'][0]);
-        $this->assertSame('BAR', $results['Foo'][0]->name);
-        $this->assertSame('Foo', $results['Foo'][0]->className);
-        $this->assertSame(Visibility::Public, $results['Foo'][0]->visibility);
+        $this->assertArrayHasKey('Foo::BAR', $results);
+        $this->assertCount(1, $results);
+        $this->assertInstanceOf(ConstantData::class, $results['Foo::BAR']);
+        $this->assertSame('BAR', $results['Foo::BAR']->name);
+        $this->assertSame('Foo', $results['Foo::BAR']->className);
+        $this->assertSame(Visibility::Public, $results['Foo::BAR']->visibility);
     }
 
     public function testIndexPrivateConstant(): void
@@ -37,7 +37,7 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php class Foo { private const SECRET = "s"; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertSame(Visibility::Private, $results['Foo'][0]->visibility);
+        $this->assertSame(Visibility::Private, $results['Foo::SECRET']->visibility);
     }
 
     public function testIndexProtectedConstant(): void
@@ -45,7 +45,7 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php class Foo { protected const INTERNAL = true; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertSame(Visibility::Protected, $results['Foo'][0]->visibility);
+        $this->assertSame(Visibility::Protected, $results['Foo::INTERNAL']->visibility);
     }
 
     public function testIndexTypedConstant(): void
@@ -53,7 +53,7 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php class Foo { public const string NAME = "foo"; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertSame('string', $results['Foo'][0]->type);
+        $this->assertSame('string', $results['Foo::NAME']->type);
     }
 
     public function testIndexInterfaceConstant(): void
@@ -61,8 +61,8 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php interface Foo { const BAR = 1; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('Foo', $results);
-        $this->assertSame('BAR', $results['Foo'][0]->name);
+        $this->assertArrayHasKey('Foo::BAR', $results);
+        $this->assertSame('BAR', $results['Foo::BAR']->name);
     }
 
     public function testIndexEnumConstant(): void
@@ -70,7 +70,7 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php enum Foo { const BAR = 1; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('Foo', $results);
+        $this->assertArrayHasKey('Foo::BAR', $results);
     }
 
     public function testIndexTraitConstant(): void
@@ -78,7 +78,7 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php trait Foo { const BAR = 1; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('Foo', $results);
+        $this->assertArrayHasKey('Foo::BAR', $results);
     }
 
     public function testIndexMultipleConstants(): void
@@ -86,7 +86,7 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php class Foo { const A = 1; const B = 2; const C = 3; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertCount(3, $results['Foo']);
+        $this->assertCount(3, $results);
     }
 
     public function testEmptyClassSkipped(): void
@@ -102,6 +102,6 @@ final class ClassConstantIndexerTest extends TestCase
         $code = '<?php namespace App; class Foo { const BAR = 1; }';
         $results = IndexerTestHelper::runIndexer(new ClassConstantIndexer($this->createMock(\App\Module\PsiFile\InMemoryPsiFileManager::class)), $code);
 
-        $this->assertArrayHasKey('App\\Foo', $results);
+        $this->assertArrayHasKey('App\\Foo::BAR', $results);
     }
 }

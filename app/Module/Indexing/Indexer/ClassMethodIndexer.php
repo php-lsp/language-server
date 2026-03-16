@@ -16,7 +16,7 @@ use PhpParser\Node\Stmt\Interface_;
 use PhpParser\Node\Stmt\Trait_;
 
 /**
- * @extends AbstractPhpIndexer<list<MethodData>>
+ * @extends AbstractPhpIndexer<MethodData>
  */
 #[AsIndexer]
 class ClassMethodIndexer extends AbstractPhpIndexer
@@ -41,10 +41,10 @@ class ClassMethodIndexer extends AbstractPhpIndexer
             $className = $classLike->namespacedName?->toString() ?? $classLike->name->toString();
             $methods = Tree::childrenOfType($classLike, ClassMethod::class);
 
-            $methodDataList = [];
             foreach ($methods as $method) {
-                $methodDataList[] = new MethodData(
-                    name: $method->name->toString(),
+                $methodName = $method->name->toString();
+                $results[$className . '::' . $methodName] = new MethodData(
+                    name: $methodName,
                     className: $className,
                     startPosition: $method->getStartFilePos(),
                     endPosition: $method->getEndFilePos(),
@@ -54,10 +54,6 @@ class ClassMethodIndexer extends AbstractPhpIndexer
                     returnType: NodeTypeExtractor::typeToString($method->returnType),
                     parameters: NodeTypeExtractor::extractParameters($method),
                 );
-            }
-
-            if ($methodDataList !== []) {
-                $results[$className] = $methodDataList;
             }
         }
 

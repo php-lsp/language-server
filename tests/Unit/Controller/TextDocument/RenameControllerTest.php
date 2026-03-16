@@ -9,6 +9,7 @@ use App\Tests\Support\ProtocolFactory;
 use App\Tests\TestCase;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\RenameParams;
+use App\Module\Telemetry\NoopTracer;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 
@@ -18,7 +19,7 @@ final class RenameControllerTest extends TestCase
     #[TestDox('invokes without error')]
     public function testInvokesWithoutError(): void
     {
-        $controller = new RenameController([]);
+        $controller = new RenameController([], new NoopTracer());
         $editor = $this->createMock(EditorInterface::class);
         $params = new RenameParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -41,7 +42,7 @@ final class RenameControllerTest extends TestCase
             }
         };
 
-        $controller = new RenameController([$contributor]);
+        $controller = new RenameController([$contributor], new NoopTracer());
         $editor = $this->createMock(EditorInterface::class);
         $params = new RenameParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),

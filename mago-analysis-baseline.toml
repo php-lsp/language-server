@@ -1,18 +1,6 @@
 variant = "loose"
 
 [[issues]]
-file = "app/Controller/CancelRequestController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `App\Core\Cancellation\CancellationTokenRegistry::cancel`: expected `int|string`, but found `nonnull`.'
-count = 1
-
-[[issues]]
-file = "app/Controller/CancelRequestController.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
 file = "app/Controller/Debug/IndexKeysController.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `fnmatch`: expected `string`, but found `nonnull`."
@@ -81,6 +69,12 @@ count = 1
 [[issues]]
 file = "app/Controller/TextDocument/CodeActionController.php"
 code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CodeActionController.php"
+code = "imprecise-type"
 message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
 
@@ -94,6 +88,12 @@ count = 1
 file = "app/Controller/TextDocument/CompletionController.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/CompletionController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
@@ -117,6 +117,12 @@ count = 1
 [[issues]]
 file = "app/Controller/TextDocument/DeclarationController.php"
 code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DeclarationController.php"
+code = "imprecise-type"
 message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
 
@@ -130,6 +136,12 @@ count = 1
 file = "app/Controller/TextDocument/DefinitionController.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DefinitionController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
@@ -178,6 +190,12 @@ count = 1
 file = "app/Controller/TextDocument/DocumentHighlightController.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/DocumentHighlightController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
@@ -315,6 +333,12 @@ count = 1
 [[issues]]
 file = "app/Controller/TextDocument/ImplementationController.php"
 code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/ImplementationController.php"
+code = "imprecise-type"
 message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
 
@@ -369,6 +393,12 @@ count = 1
 [[issues]]
 file = "app/Controller/TextDocument/ReferencesController.php"
 code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/ReferencesController.php"
+code = "imprecise-type"
 message = "Type `iterable` in parameter `$contributors` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
 
@@ -406,6 +436,12 @@ count = 1
 file = "app/Controller/TextDocument/TypeDefinitionController.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Controller/TextDocument/TypeDefinitionController.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `closure` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
@@ -547,6 +583,12 @@ message = 'Missing `#[Override]` attribute on overriding method `App\Hydrator\Ty
 count = 1
 
 [[issues]]
+file = "app/Listener/RequestTracingListener.php"
+code = "unused-property"
+message = "Property `$tracer` is never used."
+count = 1
+
+[[issues]]
 file = "app/Module/CodeAction/ImportSymbolCodeActionContributor.php"
 code = "less-specific-nested-return-statement"
 message = '''Returned type `array{}|non-empty-list<mixed>` is less specific than the declared return type `list<string>` for function `app\module\codeaction\importsymbolcodeactioncontributor::findmatchingsymbols` due to nested 'mixed'.'''
@@ -592,13 +634,13 @@ count = 2
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
 code = "invalid-operand"
 message = "Invalid type `never` for right operand in string concatenation."
-count = 2
+count = 1
 
 [[issues]]
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 4
+count = 3
 
 [[issues]]
 file = "app/Module/Completion/ClassConstantCompletionContributor.php"
@@ -670,6 +712,12 @@ count = 1
 file = "app/Module/Completion/ClassMemberCompletionContributor.php"
 code = "null-operand"
 message = "Implicit conversion of `null` to empty string for left operand in string concatenation."
+count = 2
+
+[[issues]]
+file = "app/Module/Completion/ClassMemberCompletionContributor.php"
+code = "null-property-access"
+message = "Attempting to access a property on an expression that is always `null`."
 count = 2
 
 [[issues]]
@@ -914,14 +962,20 @@ count = 4
 
 [[issues]]
 file = "app/Module/Debug/DebugHtmlRenderer.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+code = "imprecise-type"
+message = "Type `array` in parameter `$a` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
-file = "app/Module/Debug/DebugHttpServer.php"
-code = "impossible-assignment"
-message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
+file = "app/Module/Debug/DebugHtmlRenderer.php"
+code = "imprecise-type"
+message = "Type `array` in parameter `$b` is imprecise, equivalent to `array<array-key, mixed>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Debug/DebugHtmlRenderer.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
 
 [[issues]]
@@ -1000,48 +1054,12 @@ count = 1
 file = "app/Module/Debug/DebugHttpServer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
+count = 3
 
 [[issues]]
 file = "app/Module/Debug/DebugHttpServer.php"
 code = "mixed-assignment"
 message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "app/Module/Debug/DebugHttpServer.php"
-code = "never-return"
-message = "Cannot return value with type 'never' from this function."
-count = 2
-
-[[issues]]
-file = "app/Module/Debug/DebugHttpServer.php"
-code = "non-existent-class"
-message = 'Class `React\Http\HttpServer` not found.'
-count = 1
-
-[[issues]]
-file = "app/Module/Debug/DebugHttpServer.php"
-code = "non-existent-class"
-message = 'Class `React\Http\Message\Response` not found.'
-count = 2
-
-[[issues]]
-file = "app/Module/Debug/DebugHttpServer.php"
-code = "non-existent-class-like"
-message = 'Cannot find class, interface, enum, or type alias `React\Http\Message\Response`.'
-count = 9
-
-[[issues]]
-file = "app/Module/Debug/DebugHttpServer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `React\Http\HttpServer` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/Debug/DebugHttpServer.php"
-code = "non-existent-use-import"
-message = 'Imported class, interface, trait, or enum `React\Http\Message\Response` does not exist.'
 count = 1
 
 [[issues]]
@@ -1115,6 +1133,18 @@ file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 2
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
 
 [[issues]]
 file = "app/Module/Declaration/ClassMethodDeclarationContributor.php"
@@ -1322,6 +1352,18 @@ count = 2
 
 [[issues]]
 file = "app/Module/Definition/MethodDefinitionContributor.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/MethodDefinitionContributor.php"
+code = "mixed-operand"
+message = "Invalid right operand: type `nonnull` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/MethodDefinitionContributor.php"
 code = "non-existent-method"
 message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
 count = 2
@@ -1420,13 +1462,13 @@ count = 11
 file = "app/Module/Documentation/ConstantDocumentationContributor.php"
 code = "invalid-operand"
 message = "Invalid type `never` for right operand in string concatenation."
-count = 3
+count = 1
 
 [[issues]]
 file = "app/Module/Documentation/ConstantDocumentationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 6
+count = 4
 
 [[issues]]
 file = "app/Module/Documentation/FunctionDocumentationContributor.php"
@@ -1513,6 +1555,12 @@ message = "Implicit conversion of `null` to empty string for left operand in str
 count = 1
 
 [[issues]]
+file = "app/Module/Documentation/MethodDocumentationContributor.php"
+code = "null-property-access"
+message = "Attempting to access a property on an expression that is always `null`."
+count = 1
+
+[[issues]]
 file = "app/Module/Documentation/NodesTraceDocumentationContributor.php"
 code = "missing-return-type"
 message = "Function `arrow function` is missing a return type hint."
@@ -1529,6 +1577,12 @@ file = "app/Module/Documentation/PropertyDocumentationContributor.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
 count = 6
+
+[[issues]]
+file = "app/Module/Documentation/PropertyDocumentationContributor.php"
+code = "null-property-access"
+message = "Attempting to access a property on an expression that is always `null`."
+count = 1
 
 [[issues]]
 file = "app/Module/Highlight/NameHighlightContributor.php"
@@ -1576,7 +1630,7 @@ count = 1
 file = "app/Module/Indexing/IndexLookup.php"
 code = "possibly-static-access-on-interface"
 message = 'Potential static method call on interface `App\Core\Contracts\Indexing\IndexerInterface` via `class-string`.'
-count = 1
+count = 3
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
@@ -1588,18 +1642,30 @@ count = 1
 file = "app/Module/Indexing/Indexer.php"
 code = "invalid-argument"
 message = '''Invalid argument type for argument #1 of `React\Async\async`: expected `(callable(('A1.react\async\async() extends mixed), ('A2.react\async\async() extends mixed), ('A3.react\async\async() extends mixed), ('A4.react\async\async() extends mixed), ('A5.react\async\async() extends mixed)): React\Promise\PromiseInterface<void>)`, but found `(closure(): void)`.'''
+count = 2
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `app\module\indexing\indexer::getindexerkeys`: expected `list<string>`, but found `array<array-key, string>|list<string>`.'
 count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
 code = "missing-return-type"
 message = "Function `closure` is missing a return type hint."
-count = 1
+count = 2
 
 [[issues]]
 file = "app/Module/Indexing/Indexer.php"
 code = "mixed-property-type-coercion"
 message = 'A value with a less specific type `array<array-key, mixed>` is being assigned to property `$$indexers` (array<array-key, App\Core\Contracts\Indexing\IndexerInterface<mixed>>).'
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer.php"
+code = "non-existent-method"
+message = 'Method `clear` does not exist on type `App\Module\Indexing\Storage\StorageInterface`.'
 count = 1
 
 [[issues]]
@@ -1628,12 +1694,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
-code = "mixed-array-index"
-message = 'Invalid index type `mixed` used for array access on `array<array-key, non-empty-list<App\Module\Indexing\Data\ConstantData>>`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1642,6 +1702,12 @@ count = 1
 file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassConstantIndexer.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
 count = 1
 
 [[issues]]
@@ -1700,12 +1766,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
-code = "mixed-array-index"
-message = 'Invalid index type `mixed` used for array access on `array<array-key, array{}|non-empty-list<App\Module\Indexing\Data\MethodData>>`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1714,6 +1774,12 @@ count = 1
 file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/ClassMethodIndexer.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
 count = 1
 
 [[issues]]
@@ -1892,12 +1958,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
-code = "mixed-array-index"
-message = 'Invalid index type `mixed` used for array access on `array<array-key, non-empty-list<App\Module\Indexing\Data\PropertyData>>`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1906,6 +1966,12 @@ count = 1
 file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Indexer/PropertyIndexer.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
 count = 1
 
 [[issues]]
@@ -1942,6 +2008,12 @@ count = 1
 file = "app/Module/Indexing/IndexerFileCollector.php"
 code = "invalid-property-assignment-value"
 message = "Invalid type for property `$ignoredDirs`: expected `list<string>`, but got `non-empty-array<non-negative-int, string>`."
+count = 1
+
+[[issues]]
+file = "app/Module/Indexing/Storage/DebugStorageInterface.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\Indexing\Storage\DebugStorageInterface::find`.'
 count = 1
 
 [[issues]]
@@ -2710,16 +2782,4 @@ count = 1
 file = "app/Module/TypeSystem/TypeResult.php"
 code = "non-existent-use-import"
 message = 'Imported class, interface, trait, or enum `PHPStan\Type\VerbosityLevel` does not exist.'
-count = 1
-
-[[issues]]
-file = "app/Module/Workspace/ProjectManager.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `app\module\workspace\projectmanager::getproject`: expected `Lsp\Workspace\Project\Project`, but found `Lsp\Workspace\Project\Project|null`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Workspace/ProjectManager.php"
-code = "nullable-return-statement"
-message = 'Function `app\module\workspace\projectmanager::getproject` is declared to return `Lsp\Workspace\Project\Project` but possibly returns a nullable value (inferred as `Lsp\Workspace\Project\Project|null`).'
 count = 1
