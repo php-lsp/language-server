@@ -32,8 +32,12 @@ and the [LSP 3.18 specification](https://github.com/microsoft/language-server-pr
 | `textDocument/codeAction`         | Done        | 2 contributors (import symbol, remove unused import) |
 | `textDocument/formatting`         | Done        | Delegates to external formatter (php-cs-fixer/phpcbf) |
 | `textDocument/rangeFormatting`    | Done        | Range formatting via external formatter            |
+| `textDocument/foldingRange`       | Done        | 3 folding range contributors (AST, comments, use blocks) |
+| `textDocument/selectionRange`     | Done        | 1 selection range contributor (AST-based smart select) |
+| `textDocument/inlayHint`          | Done        | 1 inlay hint contributor (parameter names)         |
 | `$/cancelRequest`                 | Done        | Request cancellation                               |
 | `workspace/symbol`               | Done        | Project-wide symbol search via index               |
+| `workspace/didChangeWatchedFiles` | Done        | File system change notifications, incremental re-indexing |
 
 ### Indexing System (16 indexers)
 
@@ -103,23 +107,19 @@ Essential features that every competitive PHP LSP provides.
 
 Features that significantly improve developer experience.
 
-- [ ] **`textDocument/foldingRange`** (`foldingRangeProvider`)
-  Code folding for classes, methods, use-blocks, comments, arrays, heredocs.
-  - *Implementation:* AST walk returning `FoldingRange[]` with `FoldingRangeKind`
-  - *Intelephense premium feature*
+- [x] **`textDocument/foldingRange`** (`foldingRangeProvider`)
+  Implemented with 3 contributors: AST node folding (classes, methods, arrays,
+  etc.), comment block folding, use-block folding.
+  - *Architecture:* `FoldingRangeContributor` interface + `#[AsFoldingRangeContributor]`
 
-- [ ] **`textDocument/selectionRange`** (`selectionRangeProvider`)
-  Smart select — expand/shrink selection based on AST structure.
-  - *Implementation:* at cursor position, build a chain of AST node ranges
-    from innermost to outermost
-  - *Phpactor and Intelephense premium support this*
+- [x] **`textDocument/selectionRange`** (`selectionRangeProvider`)
+  Implemented with 1 contributor: AST-based smart selection. Builds a chain of
+  AST node ranges from innermost to outermost at cursor position.
+  - *Architecture:* `SelectionRangeContributor` interface + `#[AsSelectionRangeContributor]`
 
-- [ ] **`textDocument/inlayHint`** (`inlayHintProvider`)
-  Inline type/parameter hints displayed in the editor. Show:
-  - Parameter names at call sites: `foo(/* name: */ "bar")`
-  - Inferred return types on closures
-  - Variable types on assignments
-  - *Use `TypeResolver`* for inferred types
+- [x] **`textDocument/inlayHint`** (`inlayHintProvider`)
+  Implemented with 1 contributor: parameter name hints at call sites.
+  - *Architecture:* `InlayHintContributor` interface + `#[AsInlayHintContributor]`
 
 - [ ] **`textDocument/codeLens`** (`codeLensProvider`)
   Actionable annotations above declarations. Show:
@@ -128,9 +128,9 @@ Features that significantly improve developer experience.
   - Override indicator: `overrides Parent::method`
   - *Intelephense premium feature*
 
-- [ ] **`workspace/didChangeWatchedFiles`**
-  React to file system changes (create/rename/delete) outside the editor.
-  Re-index affected files.
+- [x] **`workspace/didChangeWatchedFiles`**
+  Implemented. Reacts to file system changes (create/rename/delete) outside
+  the editor and re-indexes affected files.
 
 - [ ] **`textDocument/onTypeFormatting`** (`documentOnTypeFormattingProvider`)
   Auto-format on certain triggers (`;`, `}`, `\n`).

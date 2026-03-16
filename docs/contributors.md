@@ -21,8 +21,11 @@ the others.
 | Go to definition | `DefinitionContributor` | `#[AsDefinitionContributor]` | `lsp.definitionContributors` |
 | Documentation (hover) | `DocumentationContributor` | `#[AsDocumentationContributor]` | `lsp.documentationContributors` |
 | Document highlight | `DocumentHighlightContributor` | `#[AsDocumentHighlightContributor]` | `lsp.documentHighlightContributors` |
+| Folding range | `FoldingRangeContributor` | `#[AsFoldingRangeContributor]` | `lsp.foldingRangeContributors` |
 | Find implementations | `ImplementationContributor` | `#[AsImplementationContributor]` | `lsp.implementationContributors` |
+| Inlay hint | `InlayHintContributor` | `#[AsInlayHintContributor]` | `lsp.inlayHintContributors` |
 | Find references | `ReferenceContributor` | `#[AsReferenceContributor]` | `lsp.referenceContributors` |
+| Selection range | `SelectionRangeContributor` | `#[AsSelectionRangeContributor]` | `lsp.selectionRangeContributors` |
 | Function signatures | `SignatureContributor` | `#[AsSignatureContributor]` | `lsp.signatureContributors` |
 | Go to type definition | `TypeDefinitionContributor` | `#[AsTypeDefinitionContributor]` | `lsp.typeDefinitionContributors` |
 | Indexing | `IndexerInterface` | `#[AsIndexer]` | `lsp.indexers` |

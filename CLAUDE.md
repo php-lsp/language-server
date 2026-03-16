@@ -4,8 +4,8 @@
 
 PHP Language Server Protocol (LSP) implementation — a modular server providing
 code intelligence (completion, definition, declaration, hover, references,
-rename, document highlight, formatting, diagnostics) to IDEs and editors via
-the LSP standard.
+rename, document highlight, formatting, diagnostics, folding ranges, inlay
+hints, selection ranges) to IDEs and editors via the LSP standard.
 
 - **Language:** PHP 8.4+
 - **Framework:** php-lsp/kernel + Symfony DependencyInjection
@@ -43,72 +43,96 @@ composer build:run:local   # Run compiled PHAR
 ```
 app/
 ├── Application.php            # Kernel — extends LanguageServerKernel
-├── Controller/                # LSP request handlers (routes via #[Route] attributes)
+├── Controller/                # LSP request handlers (34 controllers, routes via #[Route] attributes)
 │   ├── InitializeController.php
-│   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
+│   ├── InitializedController.php
+│   ├── SetTraceController.php       # $/setTrace — trace level configuration
 │   ├── CancelRequestController.php  # $/cancelRequest — request cancellation
-│   ├── Debug/                 # Debug HTTP server controllers (index browser, search)
-│   └── TextDocument/          # textDocument/* method handlers
-│       ├── CodeActionController.php
-│       ├── CompletionController.php
-│       ├── DeclarationController.php
-│       ├── DefinitionController.php
-│       ├── DocumentHighlightController.php
-│       ├── DocumentSymbolController.php
-│       ├── FormattingController.php
-│       ├── RangeFormattingController.php
-│       ├── HoverController.php
-│       ├── ImplementationController.php
-│       ├── TypeDefinitionController.php
-│       ├── RenameController.php
-│       ├── PrepareRenameController.php
-│       ├── DiagnosticController.php
-│       └── ...
+│   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
+│   ├── Debug/                 # Debug HTTP server controllers (4): index list, get, search, keys
+│   ├── TextDocument/          # textDocument/* method handlers (24 controllers)
+│   │   ├── CodeActionController.php
+│   │   ├── CompletionController.php
+│   │   ├── DeclarationController.php
+│   │   ├── DefinitionController.php
+│   │   ├── DiagnosticController.php
+│   │   ├── DocumentChangeController.php
+│   │   ├── DocumentCloseController.php
+│   │   ├── DocumentHighlightController.php
+│   │   ├── DocumentOpenController.php
+│   │   ├── DocumentSaveController.php
+│   │   ├── DocumentSymbolController.php
+│   │   ├── FoldingRangeController.php
+│   │   ├── FormattingController.php
+│   │   ├── HoverController.php
+│   │   ├── ImplementationController.php
+│   │   ├── InlayHintController.php
+│   │   ├── PrepareRenameController.php
+│   │   ├── PublishDiagnosticsController.php
+│   │   ├── RangeFormattingController.php
+│   │   ├── ReferencesController.php
+│   │   ├── RenameController.php
+│   │   ├── SelectionRangeController.php
+│   │   ├── SignatureHelpController.php
+│   │   └── TypeDefinitionController.php
+│   └── Workspace/             # workspace/* method handlers
+│       └── DidChangeWatchedFilesController.php
 ├── Core/UriHelper.php         # URI → file path conversion utility
 ├── Core/Cancellation/         # CancellationToken, CancellationTokenRegistry (with auto-eviction)
-├── Core/Contracts/            # Plugin interfaces and attributes
+├── Core/Contracts/            # Plugin interfaces and attributes (18 directories)
 │   ├── CodeAction/            # CodeActionContributor, AsCodeActionContributor
 │   ├── Completion/            # CompletionContributor, AsCompletionContributor
 │   ├── Declaration/           # DeclarationContributor, AsDeclarationContributor
 │   ├── Definition/            # DefinitionContributor, AsDefinitionContributor
 │   ├── Documentation/         # DocumentationContributor, AsDocumentationContributor
+│   ├── FoldingRange/          # FoldingRangeContributor, AsFoldingRangeContributor
 │   ├── Highlight/             # DocumentHighlightContributor, AsDocumentHighlightContributor
 │   ├── Implementation/        # ImplementationContributor, AsImplementationContributor
 │   ├── Indexing/              # IndexerInterface, AsIndexer
+│   ├── InlayHint/             # InlayHintContributor, AsInlayHintContributor
+│   ├── Notification/          # ProgressNotifierInterface
+│   ├── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
 │   ├── PsiFile/               # PsiFileInterface, PsiFileManagerInterface
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
+│   ├── SelectionRange/        # SelectionRangeContributor, AsSelectionRangeContributor
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
-│   ├── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
-│   ├── Notification/          # ProgressNotifierInterface
-│   └── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
-├── Module/                    # Feature implementations
+│   └── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
+├── Module/                    # Feature implementations (22 modules)
 │   ├── CodeAction/            # Code action contributors (2): import symbol, remove unused import
 │   ├── Completion/            # Completion contributors (15): keywords, classes, functions, interfaces, traits, enums, constants, superglobals, shortcuts, class members, class constants, enum cases, use statements, namespaces, variables
+│   ├── Debug/                 # Debug HTTP server (DebugHttpServer, DebugHtmlRenderer)
 │   ├── Declaration/           # Declaration contributors (7): class, method, function, property, class constant, global constant, variable
 │   ├── Definition/            # Definition contributors (4): class, function, method, variable
 │   ├── Documentation/         # Documentation/hover contributors (7): docblock, nodes-trace, class, function, method, property, constant
+│   ├── Document/              # Document loading and identification
+│   ├── FoldingRange/          # Folding range contributors (3): AST nodes, comments, use blocks
 │   ├── Highlight/             # Document highlight contributors (2): variable, name
 │   ├── Implementation/        # Implementation contributors (1): interface/class implementations
-│   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, constant
-│   ├── Signature/             # Signature contributors (3): function, method, constructor
-│   ├── TypeDefinition/        # Type definition contributors (1): type-aware navigation via TypeResolver
 │   ├── Indexing/              # Declaration indexers (10) + usage indexers (5) + relationship indexers (1) + file collection + storage + IndexData value objects
-│   ├── PsiFile/               # AST parsing via nikic/php-parser
-│   ├── Document/              # Document loading and identification
-│   ├── Workspace/             # Workspace/project management
-│   ├── TypeSystem/            # PHPStan-based type resolution (TypeResolver, PHPStanBootstrap)
+│   ├── InlayHint/             # Inlay hint contributors (1): parameter names at call sites
 │   ├── Notification/          # Server notifications: progress (WorkDoneProgress), error messages, connection state
-│   └── Telemetry/             # APM tracing (OpenTelemetry + SigNoz)
+│   ├── PsiFile/               # AST parsing via nikic/php-parser
+│   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, class constant
+│   ├── SelectionRange/        # Selection range contributors (1): AST-based smart selection
+│   ├── Signature/             # Signature contributors (3): function, method, constructor
+│   ├── Telemetry/             # APM tracing (OpenTelemetry + SigNoz)
+│   ├── TypeDefinition/        # Type definition contributors (1): type-aware navigation via TypeResolver
+│   ├── TypeSystem/            # PHPStan-based type resolution (TypeResolver, PHPStanBootstrap)
+│   └── Workspace/             # Workspace/project management
 ├── DependencyInjection/       # HydratorCompilerPass for JSON-RPC serialization
-├── Infrastructure/Symfony/    # LSPCompilerPass for DI
-└── Listener/                  # Server, logger, message, connection, and error notification listeners
+├── Infrastructure/Symfony/    # LSPCompilerPass, DocumentManagerCompilerPass for DI
+└── Listener/                  # Server event listeners (9): server, logger, message, connection, debug, document cache, incremental index, request tracing, error notification
 config/
 ├── services.yaml              # Main DI config (imports services/*.yaml)
 └── services/                  # controllers.yaml, listeners.yaml, logger.yaml, telemetry.yaml
 docker/
 └── signoz/                    # Docker Compose for SigNoz APM
 tests/
-└── Unit/                      # PHPUnit unit tests
+├── Unit/                      # PHPUnit unit tests
+├── Functional/                # Functional tests (server boot)
+├── Playground/                # E2E tests (starts real LSP server)
+├── Benchmark/                 # Performance benchmarks
+└── Support/                   # Test utilities and helpers
 .env                           # Default environment variables (committed)
 .env.example                   # Environment variable reference template
 ```
@@ -137,8 +161,11 @@ Available contributor types and their DI tags:
 | `#[AsDefinitionContributor]` | `lsp.definitionContributors`   |
 | `#[AsDocumentationContributor]`| `lsp.documentationContributors`|
 | `#[AsDocumentHighlightContributor]`| `lsp.documentHighlightContributors`|
+| `#[AsFoldingRangeContributor]`| `lsp.foldingRangeContributors` |
 | `#[AsImplementationContributor]`| `lsp.implementationContributors`|
+| `#[AsInlayHintContributor]`  | `lsp.inlayHintContributors`    |
 | `#[AsReferenceContributor]`  | `lsp.referenceContributors`    |
+| `#[AsSelectionRangeContributor]`| `lsp.selectionRangeContributors`|
 | `#[AsSignatureContributor]`  | `lsp.signatureContributors`    |
 | `#[AsTypeDefinitionContributor]`| `lsp.typeDefinitionContributors`|
 | `#[AsIndexer]`               | `lsp.indexers`                 |
@@ -298,3 +325,11 @@ Skill definitions: [.claude/skills/](.claude/skills/)
   (playground workspace, server lifecycle, LSP client).
 - See [docs/apm.md](docs/apm.md) for APM integration (OpenTelemetry + SigNoz),
   tracing configuration, and Docker setup.
+- See [docs/type-system-guide.md](docs/type-system-guide.md) for the type
+  system implementation guide (PHPStan integration, TypeResolver usage).
+- See [docs/testing/coverage-plan.md](docs/testing/coverage-plan.md) for the
+  unit test coverage plan and testability tiers.
+- See [docs/expansion-plan.md](docs/expansion-plan.md) for the indexers,
+  contributors, and providers expansion plan.
+- See [docs/lsp-testing-strategy.md](docs/lsp-testing-strategy.md) for LSP
+  testing strategy research and conformance approaches.

@@ -44,7 +44,7 @@ Transport (php-lsp/kernel + ReactPHP)
     |
 Routing (#[Route] attributes)
     |
-Controllers (14 total)
+Controllers (34 total)
     |
 Context + Contributors (parallel) + Consumer
     |
@@ -69,10 +69,10 @@ Infrastructure: Indexing, PsiFile (AST), TypeSystem, DocumentManager
 
 | Metric | Value |
 |--------|-------|
-| PHP files in `app/` | 150 |
-| PHP files in `tests/` | 121 |
-| Lines of code (`app/`) | 8,217 |
-| Test-to-code ratio | 0.81 (by file count) |
+| PHP files in `app/` | 245 |
+| PHP files in `tests/` | 202 |
+| Lines of code (`app/`) | 14,729 |
+| Test-to-code ratio | 0.82 (by file count) |
 
 ### Module Size (LOC)
 
@@ -86,8 +86,8 @@ Infrastructure: Indexing, PsiFile (AST), TypeSystem, DocumentManager
 | Documentation | 534 | 7 | Hover documentation |
 | Signature | 426 | 3 | Function signatures |
 | TypeSystem | 310 | 5 | Type resolution |
-| Controller | 1,004 | 14 | Request handlers |
-| Core/Contracts | 433 | 24 | Interfaces and contracts |
+| Controller | 1,004 | 34 | Request handlers |
+| Core/Contracts | 433 | 46 | Interfaces and contracts |
 
 ### Coupling (Module Dependencies)
 
@@ -155,11 +155,11 @@ number of dependent modules.
 
 | Pattern | Necessity | Status |
 |---------|----------|--------|
-| **Demand-driven computation / Incremental** | Critical | Missing |
-| **Cancel token / Cancellation** | High | Missing |
+| **Demand-driven computation / Incremental** | Critical | Partial (incremental re-indexing on file change) |
+| **Cancel token / Cancellation** | High | Implemented (CancellationToken, CancellationTokenRegistry, $/cancelRequest) |
 | **Virtual File System (VFS)** | High | Partial (Document layer) |
 | **Persistent index / Serialization** | High | Missing |
-| **Workspace change tracking** | High | Missing |
+| **Workspace change tracking** | High | Implemented (workspace/didChangeWatchedFiles) |
 
 ---
 
@@ -253,40 +253,18 @@ $ignored = [
 
 **Severity:** MEDIUM
 
-### 4.5. Indexing Disabled at Initialization
+### 4.5. ~~Indexing Disabled at Initialization~~ (RESOLVED)
 
-**Problem:** In `InitializeController::walkWorkspaceFolder()`, there is
-an early `return` before the indexing call:
+**Status:** Fixed. The early `return` has been removed and indexing runs
+on initialization. `InitializeController::walkWorkspaceFolder()` now calls
+`$this->indexer->index($project)` as expected.
 
-```php
-private function walkWorkspaceFolder(WorkspaceFolder $folder): void
-{
-    $project = $this->projectFactory->create($folder->uri, $folder->name);
-    $this->projectManager->setProject($project);
+### 4.6. ~~No Cancellation or Progress Notifications~~ (RESOLVED)
 
-    return;  // <-- Indexing disabled!
-    $this->indexer->index($project);
-}
-```
-
-**Consequences:**
-- The index is always empty.
-- All contributors that depend on the index do not work.
-- Class/function completion is effectively non-functional.
-
-**Severity:** CRITICAL
-
-### 4.6. No Cancellation or Progress Notifications
-
-**Problem:** There is no request cancellation mechanism. If the user
-types quickly, each `textDocument/completion` request executes fully,
-even when the result is no longer needed.
-
-**Consequences:**
-- Server load during fast typing.
-- Response delays — the IDE may display stale results.
-
-**Severity:** MEDIUM
+**Status:** Fixed. Cancellation is implemented via `CancellationToken` and
+`CancellationTokenRegistry` (`app/Core/Cancellation/`). The `$/cancelRequest`
+handler (`CancelRequestController`) cancels in-flight requests. Progress
+notifications use `ProgressNotifier` with WorkDoneProgress protocol.
 
 ### 4.7. PsiFile — God Object Tendency
 

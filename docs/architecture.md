@@ -96,7 +96,7 @@ Each controller:
 4. Invokes all registered **Contributors**
 5. Collects results via a **Consumer** and builds the LSP response
 
-**Current controllers:**
+**Current controllers (34 total):**
 
 | Controller | LSP Method | Description |
 |------------|-----------|-------------|
@@ -105,6 +105,7 @@ Each controller:
 | `SetTraceController` | `$/setTrace` | Trace level configuration |
 | `CancelRequestController` | `$/cancelRequest` | Request cancellation |
 | `WorkspaceSymbolController` | `workspace/symbol` | Project-wide symbol search |
+| `DidChangeWatchedFilesController` | `workspace/didChangeWatchedFiles` | File system change notifications |
 | `CompletionController` | `textDocument/completion` | Code completion |
 | `HoverController` | `textDocument/hover` | Hover documentation |
 | `DeclarationController` | `textDocument/declaration` | Go to declaration |
@@ -113,11 +114,14 @@ Each controller:
 | `ImplementationController` | `textDocument/implementation` | Find implementations |
 | `CodeActionController` | `textDocument/codeAction` | Code actions (import, remove unused) |
 | `DocumentHighlightController` | `textDocument/documentHighlight` | Highlight symbol occurrences |
+| `FoldingRangeController` | `textDocument/foldingRange` | Code folding ranges |
 | `FormattingController` | `textDocument/formatting` | Document formatting |
 | `RangeFormattingController` | `textDocument/rangeFormatting` | Range formatting |
+| `InlayHintController` | `textDocument/inlayHint` | Inline parameter name hints |
 | `ReferencesController` | `textDocument/references` | Find usages |
 | `RenameController` | `textDocument/rename` | Symbol rename |
 | `PrepareRenameController` | `textDocument/prepareRename` | Rename preparation |
+| `SelectionRangeController` | `textDocument/selectionRange` | Smart selection expand/shrink |
 | `SignatureHelpController` | `textDocument/signatureHelp` | Function signatures |
 | `DiagnosticController` | `textDocument/diagnostic` | Pull diagnostics |
 | `PublishDiagnosticsController` | `textDocument/publishDiagnostics` | Push diagnostics to client |
@@ -126,6 +130,10 @@ Each controller:
 | `DocumentCloseController` | `textDocument/didClose` | Document close notification |
 | `DocumentChangeController` | `textDocument/didChange` | Document change notification |
 | `DocumentSaveController` | `textDocument/didSave` | Document save notification |
+| `IndexListController` | `debug/index/list` | Debug: list all indexes |
+| `IndexGetController` | `debug/index/get` | Debug: get entry by key |
+| `IndexSearchController` | `debug/index/search` | Debug: search entries |
+| `IndexKeysController` | `debug/index/keys` | Debug: list index keys |
 
 ### 3. PsiFile — the AST Layer
 
@@ -365,7 +373,7 @@ app/
 │       ├── CompletionController.php
 │       └── ...
 │
-├── Core/Contracts/               # CONTRACTS — interfaces and attributes
+├── Core/Contracts/               # CONTRACTS — interfaces and attributes (18 directories)
 │   ├── Completion/               #   For each contributor type:
 │   │   ├── CompletionContributor.php    # - interface
 │   │   ├── AsCompletionContributor.php  # - registration attribute
@@ -375,31 +383,39 @@ app/
 │   ├── Declaration/
 │   ├── Definition/
 │   ├── Documentation/
+│   ├── FoldingRange/
 │   ├── Highlight/
 │   ├── Implementation/
+│   ├── InlayHint/
 │   ├── References/
+│   ├── SelectionRange/
 │   ├── Signature/
 │   ├── TypeDefinition/
 │   ├── Indexing/
 │   ├── PsiFile/
 │   └── PrefixMatcher/
 │
-├── Module/                       # IMPLEMENTATIONS — concrete logic
+├── Module/                       # IMPLEMENTATIONS — concrete logic (22 modules)
 │   ├── Completion/               #   Completion contributors (15)
 │   ├── Declaration/              #   Declaration contributors (7)
 │   ├── Definition/               #   Definition contributors (4)
 │   ├── Documentation/            #   Hover documentation contributors (7)
+│   ├── FoldingRange/             #   Folding range contributors (3)
 │   ├── Highlight/                #   Document highlight contributors (2)
+│   ├── InlayHint/                #   Inlay hint contributors (1)
 │   ├── References/               #   Find usages contributors (7)
+│   ├── SelectionRange/           #   Selection range contributors (1)
 │   ├── Signature/                #   Signature contributors (3)
 │   ├── CodeAction/               #   Code action contributors (2)
 │   ├── Implementation/           #   Implementation contributors (1)
 │   ├── TypeDefinition/           #   Type definition contributors (1)
 │   ├── Indexing/                 #   Indexers (16) + storage
+│   ├── Debug/                    #   Debug HTTP server
 │   ├── PsiFile/                  #   AST parsing and navigation
 │   ├── Document/                 #   Document loading
 │   ├── Workspace/                #   Project management
 │   ├── TypeSystem/               #   PHPStan-based type resolution
+│   ├── Telemetry/                #   APM tracing
 │   └── Notification/             #   Server notifications
 │
 ├── Infrastructure/Symfony/       # INFRASTRUCTURE — DI compiler passes
