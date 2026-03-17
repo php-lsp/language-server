@@ -35,6 +35,7 @@ and the [LSP 3.18 specification](https://github.com/microsoft/language-server-pr
 | `textDocument/foldingRange`       | Done        | 3 folding range contributors (AST, comments, use blocks) |
 | `textDocument/selectionRange`     | Done        | 1 selection range contributor (AST-based smart select) |
 | `textDocument/inlayHint`          | Done        | 1 inlay hint contributor (parameter names)         |
+| `textDocument/semanticTokens`     | Done        | 1 contributor (AST-based token classification)     |
 | `$/cancelRequest`                 | Done        | Request cancellation                               |
 | `workspace/symbol`               | Done        | Project-wide symbol search via index               |
 | `workspace/didChangeWatchedFiles` | Done        | File system change notifications, incremental re-indexing |
@@ -137,12 +138,9 @@ Features that significantly improve developer experience.
 
 ### Phase 4 — Advanced Features
 
-- [ ] **`textDocument/semanticTokens`** (`semanticTokensProvider`)
-  Rich syntax highlighting with semantic understanding. Token types:
-  `class`, `interface`, `enum`, `function`, `method`, `property`, `variable`,
-  `parameter`, `namespace`, `type`.
-  - *Full and delta modes:* `semanticTokens/full` + `semanticTokens/full/delta`
-  - *Requires token legend registration in `InitializeResult`*
+- [x] **`textDocument/semanticTokens`** (`semanticTokensProvider`)
+  Implemented with 1 contributor: AST-based token classification.
+  - *Architecture:* `SemanticTokenContributor` interface + `#[AsSemanticTokenContributor]`
 
 - [ ] **`textDocument/linkedEditingRange`** (`linkedEditingRangeProvider`)
   Synchronized editing of related ranges (e.g. opening/closing XML tags,

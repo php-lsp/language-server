@@ -43,14 +43,14 @@ composer build:run:local   # Run compiled PHAR
 ```
 app/
 ├── Application.php            # Kernel — extends LanguageServerKernel
-├── Controller/                # LSP request handlers (34 controllers, routes via #[Route] attributes)
+├── Controller/                # LSP request handlers (35 controllers, routes via #[Route] attributes)
 │   ├── InitializeController.php
 │   ├── InitializedController.php
 │   ├── SetTraceController.php       # $/setTrace — trace level configuration
 │   ├── CancelRequestController.php  # $/cancelRequest — request cancellation
 │   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
 │   ├── Debug/                 # Debug HTTP server controllers (4): index list, get, search, keys
-│   ├── TextDocument/          # textDocument/* method handlers (24 controllers)
+│   ├── TextDocument/          # textDocument/* method handlers (25 controllers)
 │   │   ├── CodeActionController.php
 │   │   ├── CompletionController.php
 │   │   ├── DeclarationController.php
@@ -73,13 +73,14 @@ app/
 │   │   ├── ReferencesController.php
 │   │   ├── RenameController.php
 │   │   ├── SelectionRangeController.php
+│   │   ├── SemanticTokensController.php
 │   │   ├── SignatureHelpController.php
 │   │   └── TypeDefinitionController.php
 │   └── Workspace/             # workspace/* method handlers
 │       └── DidChangeWatchedFilesController.php
 ├── Core/UriHelper.php         # URI → file path conversion utility
 ├── Core/Cancellation/         # CancellationToken, CancellationTokenRegistry (with auto-eviction)
-├── Core/Contracts/            # Plugin interfaces and attributes (18 directories)
+├── Core/Contracts/            # Plugin interfaces and attributes (19 directories)
 │   ├── CodeAction/            # CodeActionContributor, AsCodeActionContributor
 │   ├── Completion/            # CompletionContributor, AsCompletionContributor
 │   ├── Declaration/           # DeclarationContributor, AsDeclarationContributor
@@ -96,9 +97,10 @@ app/
 │   ├── DocumentSymbol/        # DocumentSymbolContributor, AsDocumentSymbolContributor
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
 │   ├── SelectionRange/        # SelectionRangeContributor, AsSelectionRangeContributor
+│   ├── SemanticToken/         # SemanticTokenContributor, AsSemanticTokenContributor, SemanticTokenContext, SemanticTokenConsumer
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
 │   └── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
-├── Module/                    # Feature implementations (23 modules)
+├── Module/                    # Feature implementations (24 modules)
 │   ├── CodeAction/            # Code action contributors (2): import symbol, remove unused import
 │   ├── Completion/            # Completion contributors (15): keywords, classes, functions, interfaces, traits, enums, constants, superglobals, shortcuts, class members, class constants, enum cases, use statements, namespaces, variables
 │   ├── Debug/                 # Debug HTTP server (DebugHttpServer, DebugHtmlRenderer)
@@ -116,6 +118,7 @@ app/
 │   ├── PsiFile/               # AST parsing via nikic/php-parser
 │   ├── References/            # Reference contributors (7): class, function, method, property, variable, interface, class constant
 │   ├── SelectionRange/        # Selection range contributors (1): AST-based smart selection
+│   ├── SemanticToken/         # Semantic token support: AstSemanticTokenContributor, RawSemanticToken, SemanticTokenLegend, SemanticTokenEncoder
 │   ├── Signature/             # Signature contributors (3): function, method, constructor
 │   ├── Telemetry/             # APM tracing (OpenTelemetry + SigNoz)
 │   ├── TypeDefinition/        # Type definition contributors (1): type-aware navigation via TypeResolver
@@ -169,6 +172,7 @@ Available contributor types and their DI tags:
 | `#[AsInlayHintContributor]`  | `lsp.inlayHintContributors`    |
 | `#[AsReferenceContributor]`  | `lsp.referenceContributors`    |
 | `#[AsSelectionRangeContributor]`| `lsp.selectionRangeContributors`|
+| `#[AsSemanticTokenContributor]`| `lsp.semanticTokenContributors`|
 | `#[AsSignatureContributor]`  | `lsp.signatureContributors`    |
 | `#[AsTypeDefinitionContributor]`| `lsp.typeDefinitionContributors`|
 | `#[AsIndexer]`               | `lsp.indexers`                 |

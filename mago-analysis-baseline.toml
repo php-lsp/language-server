@@ -2485,6 +2485,36 @@ message = "Assigning `mixed` type to a variable may lead to unexpected behavior.
 count = 2
 
 [[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "impossible-condition"
+message = "This condition (type `false`) will always evaluate to false."
+count = 1
+
+[[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `App\Module\SemanticToken\AstSemanticTokenContributor::addtokenforidentifier`: expected `PhpParser\Node\Identifier`, but found `mixed`.'
+count = 4
+
+[[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `App\Module\SemanticToken\AstSemanticTokenContributor::visitparams`: expected `list<PhpParser\Node\Param>`, but possibly received `array<array-key, PhpParser\Node\Param>`.'
+count = 2
+
+[[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "redundant-comparison"
+message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
+count = 1
+
+[[issues]]
 file = "app/Module/Signature/FunctionSignatureContributor.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #3 of `App\Module\Indexing\IndexLookup::findbyfield`: expected `string`, but found `mixed`.'

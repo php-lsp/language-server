@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Module\Indexing\Indexer;
+use App\Module\SemanticToken\SemanticTokenLegend;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\CodeActionOptions;
@@ -25,6 +26,7 @@ use Lsp\Protocol\Type\InlayHintOptions;
 use Lsp\Protocol\Type\ReferenceOptions;
 use Lsp\Protocol\Type\RenameOptions;
 use Lsp\Protocol\Type\SelectionRangeOptions;
+use Lsp\Protocol\Type\SemanticTokensOptions;
 use Lsp\Protocol\Type\ServerCapabilities;
 use Lsp\Protocol\Type\ServerInfo;
 use Lsp\Protocol\Type\SignatureHelpOptions;
@@ -91,6 +93,10 @@ final class InitializeController
                     workspaceDiagnostics: false,
                 ),
                 selectionRangeProvider: new SelectionRangeOptions(),
+                semanticTokensProvider: new SemanticTokensOptions(
+                    legend: SemanticTokenLegend::legend(),
+                    full: true,
+                ),
                 workspaceSymbolProvider: new WorkspaceSymbolOptions(),
                 workspace: new WorkspaceOptions(
                     workspaceFolders: new WorkspaceFoldersServerCapabilities(

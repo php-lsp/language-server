@@ -439,6 +439,30 @@ message = "Method has a high halstead difficulty"
 count = 1
 
 [[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (4.87)."
+count = 1
+
+[[issues]]
+file = "app/Module/SemanticToken/AstSemanticTokenContributor.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
 file = "app/Module/Signature/ConstructorSignatureContributor.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."

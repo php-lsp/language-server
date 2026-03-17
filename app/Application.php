@@ -17,6 +17,7 @@ use App\Core\Contracts\Indexing\AsIndexer;
 use App\Core\Contracts\InlayHint\AsInlayHintContributor;
 use App\Core\Contracts\References\AsReferenceContributor;
 use App\Core\Contracts\SelectionRange\AsSelectionRangeContributor;
+use App\Core\Contracts\SemanticToken\AsSemanticTokenContributor;
 use App\Core\Contracts\Signature\AsSignatureContributor;
 use App\Core\Contracts\TypeDefinition\AsTypeDefinitionContributor;
 use App\DependencyInjection\HydratorCompilerPass;
@@ -44,6 +45,7 @@ final class Application extends LanguageServerKernel
         AsImplementationContributor::class => 'lsp.implementationContributors',
         AsInlayHintContributor::class => 'lsp.inlayHintContributors',
         AsSelectionRangeContributor::class => 'lsp.selectionRangeContributors',
+        AsSemanticTokenContributor::class => 'lsp.semanticTokenContributors',
         AsSignatureContributor::class => 'lsp.signatureContributors',
         AsTypeDefinitionContributor::class => 'lsp.typeDefinitionContributors',
     ];

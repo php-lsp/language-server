@@ -26,6 +26,7 @@ the others.
 | Inlay hint | `InlayHintContributor` | `#[AsInlayHintContributor]` | `lsp.inlayHintContributors` |
 | Find references | `ReferenceContributor` | `#[AsReferenceContributor]` | `lsp.referenceContributors` |
 | Selection range | `SelectionRangeContributor` | `#[AsSelectionRangeContributor]` | `lsp.selectionRangeContributors` |
+| Semantic tokens | `SemanticTokenContributor` | `#[AsSemanticTokenContributor]` | `lsp.semanticTokenContributors` |
 | Function signatures | `SignatureContributor` | `#[AsSignatureContributor]` | `lsp.signatureContributors` |
 | Go to type definition | `TypeDefinitionContributor` | `#[AsTypeDefinitionContributor]` | `lsp.typeDefinitionContributors` |
 | Indexing | `IndexerInterface` | `#[AsIndexer]` | `lsp.indexers` |
