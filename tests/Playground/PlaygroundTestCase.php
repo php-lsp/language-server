@@ -324,6 +324,147 @@ abstract class PlaygroundTestCase extends TestCase
     }
 
     /**
+     * Send a textDocument/prepareCallHierarchy request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function prepareCallHierarchy(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/prepareCallHierarchy', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a callHierarchy/incomingCalls request.
+     *
+     * @param array<string, mixed> $item A CallHierarchyItem from prepareCallHierarchy
+     * @return array<string, mixed> The response
+     */
+    protected static function incomingCalls(array $item): array
+    {
+        return self::$client->request('callHierarchy/incomingCalls', [
+            'item' => $item,
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a callHierarchy/outgoingCalls request.
+     *
+     * @param array<string, mixed> $item A CallHierarchyItem from prepareCallHierarchy
+     * @return array<string, mixed> The response
+     */
+    protected static function outgoingCalls(array $item): array
+    {
+        return self::$client->request('callHierarchy/outgoingCalls', [
+            'item' => $item,
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/documentSymbol request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function documentSymbol(string $relativePath): array
+    {
+        return self::$client->request('textDocument/documentSymbol', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/documentHighlight request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function documentHighlight(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/documentHighlight', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/implementation request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function implementation(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/implementation', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/prepareRename request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function prepareRename(string $relativePath, int $line, int $character): array
+    {
+        return self::$client->request('textDocument/prepareRename', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/rename request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function rename(string $relativePath, int $line, int $character, string $newName): array
+    {
+        return self::$client->request('textDocument/rename', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'position' => ['line' => $line, 'character' => $character],
+            'newName' => $newName,
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/semanticTokens/full request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function semanticTokensFull(string $relativePath): array
+    {
+        return self::$client->request('textDocument/semanticTokens/full', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a textDocument/formatting request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function formatting(string $relativePath): array
+    {
+        return self::$client->request('textDocument/formatting', [
+            'textDocument' => ['uri' => self::playgroundFileUri($relativePath)],
+            'options' => ['tabSize' => 4, 'insertSpaces' => true],
+        ], static::$requestTimeout);
+    }
+
+    /**
+     * Send a workspace/symbol request.
+     *
+     * @return array<string, mixed> The response
+     */
+    protected static function workspaceSymbol(string $query = ''): array
+    {
+        return self::$client->request('workspace/symbol', [
+            'query' => $query,
+        ], static::$requestTimeout);
+    }
+
+    /**
      * Assert that the response JSON matches the expected structure.
      *
      * Compares the full message structure. The `id` and `jsonrpc` fields are

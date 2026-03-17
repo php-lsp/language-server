@@ -1544,30 +1544,6 @@ count = 1
 
 [[issues]]
 file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
-code = "impossible-assignment"
-message = "Invalid assignment: the right-hand side has type `never` and cannot produce a value."
-count = 1
-
-[[issues]]
-file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
-code = "invalid-array-access"
-message = 'Cannot access array index on object `App\Module\PsiFile\FifoCache<Lsp\Protocol\Type\TextDocumentIdentifier>` that does not implement `ArrayAccess`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
-code = "invalid-array-index"
-message = 'Invalid index type `string` used for array access on `App\Module\PsiFile\FifoCache<Lsp\Protocol\Type\TextDocumentIdentifier>`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
-code = "never-return"
-message = "Cannot return value with type 'never' from this function."
-count = 1
-
-[[issues]]
-file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\textdocumentidentifier::__construct`: expected `non-empty-string`, but possibly received `string`.'
 count = 1
@@ -1576,18 +1552,6 @@ count = 1
 file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\workspace\uri\uri::createlocal`: expected `non-empty-string`, but possibly received `string`.'
-count = 1
-
-[[issues]]
-file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
-code = "redundant-comparison"
-message = "Redundant `!==` comparison: left-hand side is always not identical to right-hand side."
-count = 1
-
-[[issues]]
-file = "app/Module/Document/InMemoryDocumentIdentifierFactory.php"
-code = "redundant-condition"
-message = "This condition (type `true`) will always evaluate to true."
 count = 1
 
 [[issues]]

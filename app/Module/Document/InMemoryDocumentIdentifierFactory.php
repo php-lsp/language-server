@@ -24,7 +24,7 @@ class InMemoryDocumentIdentifierFactory implements DocumentIdentifierFactoryInte
     #[Override]
     public function create(string $path): TextDocumentIdentifier
     {
-        $value = $this->cache[$path];
+        $value = $this->cache->get($path);
         if ($value !== null) {
             return $value;
         }
