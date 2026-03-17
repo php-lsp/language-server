@@ -14,10 +14,13 @@ use App\Core\Contracts\CallHierarchy\PrepareCallHierarchyConsumer;
 use App\Core\Contracts\CallHierarchy\PrepareCallHierarchyContext;
 use App\Module\Document\DocumentIdentifierFactoryInterface;
 use App\Module\Indexing\Data\FunctionData;
+use App\Module\Indexing\Data\MethodData;
+use App\Module\Indexing\Indexer\ClassMethodIndexer;
 use App\Module\Indexing\Indexer\FunctionCallUsageIndexer;
 use App\Module\Indexing\Indexer\FunctionIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
+use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use Lsp\Extension\DocumentManager\Editor\EditorInterface;
 use Lsp\Protocol\Type\CallHierarchyIncomingCall;
@@ -26,7 +29,6 @@ use Lsp\Protocol\Type\CallHierarchyOutgoingCall;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
 use Lsp\Protocol\Type\SymbolKind;
-use Lsp\Protocol\Type\TextDocumentIdentifier;
 use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
@@ -67,6 +69,11 @@ final class FunctionCallHierarchyContributor implements CallHierarchyContributor
             [$startLine, $startCol] = Tree::toLineColumn($source->getDocument(), $data->startPosition);
             [$endLine, $endCol] = Tree::toLineColumn($source->getDocument(), $data->endPosition);
 
+            $selectionRange = CallHierarchyHelper::findFunctionNameRange($source, $data) ?? new Range(
+                new Position($startLine, $startCol),
+                new Position($startLine, $startCol),
+            );
+
             $consumer(new CallHierarchyItem(
                 name: $functionName,
                 kind: SymbolKind::FunctionKind,
@@ -75,10 +82,7 @@ final class FunctionCallHierarchyContributor implements CallHierarchyContributor
                     new Position($startLine, $startCol),
                     new Position($endLine, $endCol),
                 ),
-                selectionRange: new Range(
-                    new Position($startLine, $startCol),
-                    new Position($startLine, $startCol),
-                ),
+                selectionRange: $selectionRange,
                 detail: $data->returnType,
                 data: ['type' => 'function', 'name' => $functionName],
             ));
@@ -112,20 +116,19 @@ final class FunctionCallHierarchyContributor implements CallHierarchyContributor
             $uri = $entry->uri;
             $source = $this->fileManager->findPsiFile(
                 $context->editor,
-                new TextDocumentIdentifier($uri),
+                $this->documentIdentifierFactory->create($uri),
             );
             if ($source === null) {
                 continue;
             }
 
-            /** @var array{int<0, 2147483647>, int<0, 2147483647>} $lineCol */
-            $lineCol = Tree::toLineColumn($source->getDocument(), $value[1]);
-            $callRange = new Range(
-                new Position($lineCol[0], $lineCol[1]),
-                new Position($lineCol[0], $lineCol[1]),
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $value[1],
+                strlen($functionName),
             );
 
-            $callerInfo = $this->findEnclosingCallable($source, $value[1]);
+            $callerInfo = CallHierarchyHelper::findEnclosingCallable($source, $value[1]);
             $callerKey = $uri . ':' . ($callerInfo['name'] ?? '__global__');
 
             if (!array_key_exists($callerKey, $callers)) {
@@ -180,60 +183,12 @@ final class FunctionCallHierarchyContributor implements CallHierarchyContributor
                 continue;
             }
 
-            $this->collectOutgoingFunctionCalls($source, $funcData, $entry->uri, $context->editor, $consumer);
+            $this->collectOutgoingCalls($source, $funcData, $entry->uri, $context->editor, $consumer);
         }
     }
 
-    /**
-     * @return array{name: string, kind: SymbolKind, range: Range, selectionRange: Range, data: array<string, string>}|null
-     */
-    private function findEnclosingCallable(mixed $file, int $pos): ?array
-    {
-        if (!$file instanceof \App\Module\PsiFile\PHPPsiFile) {
-            return null;
-        }
-
-        $nodes = $file->findAtPosition($pos);
-        foreach (array_reverse($nodes) as $node) {
-            if ($node instanceof Node\Stmt\Function_) {
-                $name = $node->namespacedName?->toString() ?? $node->name->toString();
-                $range = Tree::getRange($node, $file);
-                $selectionRange = Tree::getRange($node->name, $file);
-
-                return [
-                    'name' => $name,
-                    'kind' => SymbolKind::FunctionKind,
-                    'range' => $range,
-                    'selectionRange' => $selectionRange,
-                    'data' => ['type' => 'function', 'name' => $name],
-                ];
-            }
-            if ($node instanceof Node\Stmt\ClassMethod) {
-                $classNode =
-                    Tree::parentOfType($node, Node\Stmt\Class_::class) ?? Tree::parentOfType(
-                        $node,
-                        Node\Stmt\Interface_::class,
-                    ) ?? Tree::parentOfType($node, Node\Stmt\Trait_::class);
-                $className = $classNode?->namespacedName?->toString() ?? $classNode?->name?->toString() ?? '';
-                $methodName = $node->name->toString();
-                $range = Tree::getRange($node, $file);
-                $selectionRange = Tree::getRange($node->name, $file);
-
-                return [
-                    'name' => $className . '::' . $methodName,
-                    'kind' => SymbolKind::MethodKind,
-                    'range' => $range,
-                    'selectionRange' => $selectionRange,
-                    'data' => ['type' => 'method', 'name' => $methodName, 'class' => $className],
-                ];
-            }
-        }
-
-        return null;
-    }
-
-    private function collectOutgoingFunctionCalls(
-        \App\Module\PsiFile\PHPPsiFile $source,
+    private function collectOutgoingCalls(
+        PHPPsiFile $source,
         FunctionData $funcData,
         string $uri,
         EditorInterface $editor,
@@ -255,36 +210,100 @@ final class FunctionCallHierarchyContributor implements CallHierarchyContributor
             return;
         }
 
-        $calls = $finder->findInstanceOf($targetFunc->stmts, Node\Expr\FuncCall::class);
-
         /** @var array<string, array{item: CallHierarchyItem, ranges: list<Range>}> $outgoing */
         $outgoing = [];
 
-        foreach ($calls as $call) {
+        $funcCalls = $finder->findInstanceOf($targetFunc->stmts, Node\Expr\FuncCall::class);
+        foreach ($funcCalls as $call) {
             if (!$call->name instanceof Node\Name) {
                 continue;
             }
 
             $calledName = $call->name->toString();
+            $key = 'func:' . $calledName;
 
-            [$line, $col] = Tree::toLineColumn($source->getDocument(), $call->getStartFilePos());
-            $callRange = new Range(
-                new Position($line, $col),
-                new Position($line, $col),
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $call->getStartFilePos(),
+                strlen($calledName),
             );
 
-            if (!array_key_exists($calledName, $outgoing)) {
+            if (!array_key_exists($key, $outgoing)) {
                 $targetItem = $this->resolveTargetItem($calledName, $editor);
                 if ($targetItem === null) {
                     continue;
                 }
-                $outgoing[$calledName] = [
+                $outgoing[$key] = [
                     'item' => $targetItem,
                     'ranges' => [],
                 ];
             }
 
-            $outgoing[$calledName]['ranges'][] = $callRange;
+            $outgoing[$key]['ranges'][] = $callRange;
+        }
+
+        $methodCalls = $finder->findInstanceOf($targetFunc->stmts, Node\Expr\MethodCall::class);
+        foreach ($methodCalls as $call) {
+            if (!$call->name instanceof Node\Identifier) {
+                continue;
+            }
+
+            $calledName = $call->name->toString();
+            $key = 'method:' . $calledName;
+
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $call->name->getStartFilePos(),
+                strlen($calledName),
+            );
+
+            if (!array_key_exists($key, $outgoing)) {
+                $targetItem = $this->resolveMethodTarget($calledName, $call, $source, $editor);
+                if ($targetItem === null) {
+                    continue;
+                }
+                $outgoing[$key] = [
+                    'item' => $targetItem,
+                    'ranges' => [],
+                ];
+            }
+
+            $outgoing[$key]['ranges'][] = $callRange;
+        }
+
+        $staticCalls = $finder->findInstanceOf($targetFunc->stmts, Node\Expr\StaticCall::class);
+        foreach ($staticCalls as $call) {
+            if (!$call->name instanceof Node\Identifier) {
+                continue;
+            }
+
+            $calledName = $call->name->toString();
+            $calledClass = $call->class instanceof Node\Name ? $call->class->toString() : null;
+            $key = 'static:' . ($calledClass ?? '') . '::' . $calledName;
+
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $call->name->getStartFilePos(),
+                strlen($calledName),
+            );
+
+            if (!array_key_exists($key, $outgoing)) {
+                if ($calledClass !== null) {
+                    $lookupKey = $calledClass . '::' . $calledName;
+                    $targetItem = $this->resolveMethodTargetByKey($lookupKey, $calledName, $calledClass, $editor);
+                    if ($targetItem === null) {
+                        continue;
+                    }
+                    $outgoing[$key] = [
+                        'item' => $targetItem,
+                        'ranges' => [],
+                    ];
+                } else {
+                    continue;
+                }
+            }
+
+            $outgoing[$key]['ranges'][] = $callRange;
         }
 
         foreach ($outgoing as $entry) {
@@ -310,6 +329,11 @@ final class FunctionCallHierarchyContributor implements CallHierarchyContributor
             [$startLine, $startCol] = Tree::toLineColumn($source->getDocument(), $data->startPosition);
             [$endLine, $endCol] = Tree::toLineColumn($source->getDocument(), $data->endPosition);
 
+            $selectionRange = CallHierarchyHelper::findFunctionNameRange($source, $data) ?? new Range(
+                new Position($startLine, $startCol),
+                new Position($startLine, $startCol),
+            );
+
             return new CallHierarchyItem(
                 name: $functionName,
                 kind: SymbolKind::FunctionKind,
@@ -318,16 +342,76 @@ final class FunctionCallHierarchyContributor implements CallHierarchyContributor
                     new Position($startLine, $startCol),
                     new Position($endLine, $endCol),
                 ),
-                selectionRange: new Range(
-                    new Position($startLine, $startCol),
-                    new Position($startLine, $startCol),
-                ),
+                selectionRange: $selectionRange,
                 detail: $data->returnType,
                 data: ['type' => 'function', 'name' => $functionName],
             );
         }
 
         return null;
+    }
+
+    private function resolveMethodTarget(
+        string $methodName,
+        Node\Expr\MethodCall $call,
+        PHPPsiFile $source,
+        EditorInterface $editor,
+    ): ?CallHierarchyItem {
+        if ($call->var instanceof Node\Expr\Variable && $call->var->name === 'this') {
+            $classNode = Tree::parentOfType($call, Node\Stmt\Class_::class);
+            if ($classNode !== null) {
+                $className = $classNode->namespacedName?->toString() ?? $classNode->name?->toString() ?? '';
+
+                return $this->resolveMethodTargetByKey(
+                    $className . '::' . $methodName,
+                    $methodName,
+                    $className,
+                    $editor,
+                );
+            }
+        }
+
+        return null;
+    }
+
+    private function resolveMethodTargetByKey(
+        string $lookupKey,
+        string $methodName,
+        string $className,
+        EditorInterface $editor,
+    ): ?CallHierarchyItem {
+        $entry = $this->indexLookup->findEntry(ClassMethodIndexer::class, $lookupKey);
+        if ($entry === null) {
+            return null;
+        }
+
+        /** @var MethodData $data */
+        $data = $entry->value;
+        $source = $this->fileManager->findPsiFile($editor, $this->documentIdentifierFactory->create($entry->uri));
+        if ($source === null) {
+            return null;
+        }
+
+        [$startLine, $startCol] = Tree::toLineColumn($source->getDocument(), $data->startPosition);
+        [$endLine, $endCol] = Tree::toLineColumn($source->getDocument(), $data->endPosition);
+
+        $selectionRange = CallHierarchyHelper::findMethodNameRange($source, $data) ?? new Range(
+            new Position($startLine, $startCol),
+            new Position($startLine, $startCol),
+        );
+
+        return new CallHierarchyItem(
+            name: $lookupKey,
+            kind: SymbolKind::MethodKind,
+            uri: $entry->uri,
+            range: new Range(
+                new Position($startLine, $startCol),
+                new Position($endLine, $endCol),
+            ),
+            selectionRange: $selectionRange,
+            detail: $data->returnType,
+            data: ['type' => 'method', 'name' => $methodName, 'class' => $className],
+        );
     }
 
     private function resolveFunctionName(?Node $element): ?string

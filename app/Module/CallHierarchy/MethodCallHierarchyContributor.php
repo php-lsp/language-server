@@ -12,8 +12,11 @@ use App\Core\Contracts\CallHierarchy\OutgoingCallsConsumer;
 use App\Core\Contracts\CallHierarchy\OutgoingCallsContext;
 use App\Core\Contracts\CallHierarchy\PrepareCallHierarchyConsumer;
 use App\Core\Contracts\CallHierarchy\PrepareCallHierarchyContext;
+use App\Module\Document\DocumentIdentifierFactoryInterface;
+use App\Module\Indexing\Data\FunctionData;
 use App\Module\Indexing\Data\MethodData;
 use App\Module\Indexing\Indexer\ClassMethodIndexer;
+use App\Module\Indexing\Indexer\FunctionIndexer;
 use App\Module\Indexing\Indexer\MethodCallUsageIndexer;
 use App\Module\Indexing\IndexLookup;
 use App\Module\PsiFile\InMemoryPsiFileManager;
@@ -26,7 +29,6 @@ use Lsp\Protocol\Type\CallHierarchyOutgoingCall;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
 use Lsp\Protocol\Type\SymbolKind;
-use Lsp\Protocol\Type\TextDocumentIdentifier;
 use Override;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
@@ -37,6 +39,7 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
     public function __construct(
         private readonly IndexLookup $indexLookup,
         private readonly InMemoryPsiFileManager $fileManager,
+        private readonly DocumentIdentifierFactoryInterface $documentIdentifierFactory,
     ) {}
 
     #[Override]
@@ -65,7 +68,7 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
         $data = $entry->value;
         $source = $this->fileManager->findPsiFile(
             $context->editor,
-            new TextDocumentIdentifier($entry->uri),
+            $this->documentIdentifierFactory->create($entry->uri),
         );
         if ($source === null) {
             return;
@@ -73,6 +76,11 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
 
         [$startLine, $startCol] = Tree::toLineColumn($source->getDocument(), $data->startPosition);
         [$endLine, $endCol] = Tree::toLineColumn($source->getDocument(), $data->endPosition);
+
+        $selectionRange = CallHierarchyHelper::findMethodNameRange($source, $data) ?? new Range(
+            new Position($startLine, $startCol),
+            new Position($startLine, $startCol),
+        );
 
         $consumer(new CallHierarchyItem(
             name: $lookupKey,
@@ -82,10 +90,7 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
                 new Position($startLine, $startCol),
                 new Position($endLine, $endCol),
             ),
-            selectionRange: new Range(
-                new Position($startLine, $startCol),
-                new Position($startLine, $startCol),
-            ),
+            selectionRange: $selectionRange,
             detail: $data->returnType,
             data: ['type' => 'method', 'name' => $methodName, 'class' => $className],
         ));
@@ -100,6 +105,7 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
         }
 
         $methodName = $data['name'] ?? null;
+        $targetClassName = $data['class'] ?? null;
         if (!is_string($methodName)) {
             return;
         }
@@ -114,24 +120,27 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
                 continue;
             }
 
+            if (is_string($targetClassName) && $value[2] !== null && $value[2] !== $targetClassName) {
+                continue;
+            }
+
             /** @var non-empty-string $uri */
             $uri = $entry->uri;
             $source = $this->fileManager->findPsiFile(
                 $context->editor,
-                new TextDocumentIdentifier($uri),
+                $this->documentIdentifierFactory->create($uri),
             );
             if ($source === null) {
                 continue;
             }
 
-            /** @var array{int<0, 2147483647>, int<0, 2147483647>} $lineCol */
-            $lineCol = Tree::toLineColumn($source->getDocument(), $value[1]);
-            $callRange = new Range(
-                new Position($lineCol[0], $lineCol[1]),
-                new Position($lineCol[0], $lineCol[1]),
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $value[1],
+                strlen($methodName),
             );
 
-            $callerInfo = $this->findEnclosingCallable($source, $value[1]);
+            $callerInfo = CallHierarchyHelper::findEnclosingCallable($source, $value[1]);
             $callerKey = $uri . ':' . ($callerInfo['name'] ?? '__global__');
 
             if (!array_key_exists($callerKey, $callers)) {
@@ -188,57 +197,13 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
 
         $source = $this->fileManager->findPsiFile(
             $context->editor,
-            new TextDocumentIdentifier($entry->uri),
+            $this->documentIdentifierFactory->create($entry->uri),
         );
         if ($source === null) {
             return;
         }
 
         $this->collectOutgoingMethodCalls($source, $methodData, $entry->uri, $context->editor, $consumer);
-    }
-
-    /**
-     * @return array{name: string, kind: SymbolKind, range: Range, selectionRange: Range, data: array<string, string>}|null
-     */
-    private function findEnclosingCallable(PHPPsiFile $file, int $pos): ?array
-    {
-        $nodes = $file->findAtPosition($pos);
-        foreach (array_reverse($nodes) as $node) {
-            if ($node instanceof Node\Stmt\Function_) {
-                $name = $node->namespacedName?->toString() ?? $node->name->toString();
-                $range = Tree::getRange($node, $file);
-                $selectionRange = Tree::getRange($node->name, $file);
-
-                return [
-                    'name' => $name,
-                    'kind' => SymbolKind::FunctionKind,
-                    'range' => $range,
-                    'selectionRange' => $selectionRange,
-                    'data' => ['type' => 'function', 'name' => $name],
-                ];
-            }
-            if ($node instanceof Node\Stmt\ClassMethod) {
-                $classNode =
-                    Tree::parentOfType($node, Node\Stmt\Class_::class) ?? Tree::parentOfType(
-                        $node,
-                        Node\Stmt\Interface_::class,
-                    ) ?? Tree::parentOfType($node, Node\Stmt\Trait_::class);
-                $className = $classNode?->namespacedName?->toString() ?? $classNode?->name?->toString() ?? '';
-                $mName = $node->name->toString();
-                $range = Tree::getRange($node, $file);
-                $selectionRange = Tree::getRange($node->name, $file);
-
-                return [
-                    'name' => $className . '::' . $mName,
-                    'kind' => SymbolKind::MethodKind,
-                    'range' => $range,
-                    'selectionRange' => $selectionRange,
-                    'data' => ['type' => 'method', 'name' => $mName, 'class' => $className],
-                ];
-            }
-        }
-
-        return null;
     }
 
     private function collectOutgoingMethodCalls(
@@ -290,10 +255,10 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
             $calledName = $call->name->toString();
             $key = 'method:' . $calledName;
 
-            [$line, $col] = Tree::toLineColumn($source->getDocument(), $call->name->getStartFilePos());
-            $callRange = new Range(
-                new Position($line, $col),
-                new Position($line, $col),
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $call->name->getStartFilePos(),
+                strlen($calledName),
             );
 
             if (!array_key_exists($key, $outgoing)) {
@@ -320,10 +285,10 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
             $calledClass = $call->class instanceof Node\Name ? $call->class->toString() : null;
             $key = 'static:' . ($calledClass ?? '') . '::' . $calledName;
 
-            [$line, $col] = Tree::toLineColumn($source->getDocument(), $call->name->getStartFilePos());
-            $callRange = new Range(
-                new Position($line, $col),
-                new Position($line, $col),
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $call->name->getStartFilePos(),
+                strlen($calledName),
             );
 
             if (!array_key_exists($key, $outgoing)) {
@@ -354,10 +319,10 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
             $calledName = $call->name->toString();
             $key = 'func:' . $calledName;
 
-            [$line, $col] = Tree::toLineColumn($source->getDocument(), $call->getStartFilePos());
-            $callRange = new Range(
-                new Position($line, $col),
-                new Position($line, $col),
+            $callRange = CallHierarchyHelper::makeNameRange(
+                $source->getDocument(),
+                $call->getStartFilePos(),
+                strlen($calledName),
             );
 
             if (!array_key_exists($key, $outgoing)) {
@@ -418,13 +383,21 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
 
         /** @var MethodData $data */
         $data = $entry->value;
-        $source = $this->fileManager->findPsiFile($editor, new TextDocumentIdentifier($entry->uri));
+        $source = $this->fileManager->findPsiFile(
+            $editor,
+            $this->documentIdentifierFactory->create($entry->uri),
+        );
         if ($source === null) {
             return null;
         }
 
         [$startLine, $startCol] = Tree::toLineColumn($source->getDocument(), $data->startPosition);
         [$endLine, $endCol] = Tree::toLineColumn($source->getDocument(), $data->endPosition);
+
+        $selectionRange = CallHierarchyHelper::findMethodNameRange($source, $data) ?? new Range(
+            new Position($startLine, $startCol),
+            new Position($startLine, $startCol),
+        );
 
         return new CallHierarchyItem(
             name: $lookupKey,
@@ -434,10 +407,7 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
                 new Position($startLine, $startCol),
                 new Position($endLine, $endCol),
             ),
-            selectionRange: new Range(
-                new Position($startLine, $startCol),
-                new Position($startLine, $startCol),
-            ),
+            selectionRange: $selectionRange,
             detail: $data->returnType,
             data: ['type' => 'method', 'name' => $methodName, 'class' => $className],
         );
@@ -445,21 +415,25 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
 
     private function resolveFunctionTarget(string $functionName, EditorInterface $editor): ?CallHierarchyItem
     {
-        foreach ($this->indexLookup->findByField(
-            \App\Module\Indexing\Indexer\FunctionIndexer::class,
-            'fqn',
-            $functionName,
-        ) as $entry) {
-            /** @var \App\Module\Indexing\Data\FunctionData $data */
+        foreach ($this->indexLookup->findByField(FunctionIndexer::class, 'fqn', $functionName) as $entry) {
+            /** @var FunctionData $data */
             $data = $entry->value;
 
-            $source = $this->fileManager->findPsiFile($editor, new TextDocumentIdentifier($entry->uri));
+            $source = $this->fileManager->findPsiFile(
+                $editor,
+                $this->documentIdentifierFactory->create($entry->uri),
+            );
             if ($source === null) {
                 continue;
             }
 
             [$startLine, $startCol] = Tree::toLineColumn($source->getDocument(), $data->startPosition);
             [$endLine, $endCol] = Tree::toLineColumn($source->getDocument(), $data->endPosition);
+
+            $selectionRange = CallHierarchyHelper::findFunctionNameRange($source, $data) ?? new Range(
+                new Position($startLine, $startCol),
+                new Position($startLine, $startCol),
+            );
 
             return new CallHierarchyItem(
                 name: $functionName,
@@ -469,10 +443,7 @@ final class MethodCallHierarchyContributor implements CallHierarchyContributor
                     new Position($startLine, $startCol),
                     new Position($endLine, $endCol),
                 ),
-                selectionRange: new Range(
-                    new Position($startLine, $startCol),
-                    new Position($startLine, $startCol),
-                ),
+                selectionRange: $selectionRange,
                 detail: $data->returnType,
                 data: ['type' => 'function', 'name' => $functionName],
             );

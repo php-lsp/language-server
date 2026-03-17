@@ -29,15 +29,24 @@ use PHPUnit\Framework\Attributes\TestDox;
 #[Group('unit')]
 final class FunctionCallHierarchyContributorTest extends TestCase
 {
+    private function createDocFactory(): \PHPUnit\Framework\MockObject\MockObject
+    {
+        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
+        $docFactory->method('create')->willReturnCallback(
+            static fn(string $uri) => new TextDocumentIdentifier($uri),
+        );
+
+        return $docFactory;
+    }
+
     #[TestDox('prepare returns empty when file not found')]
     public function testPrepareReturnsEmptyWhenNoFile(): void
     {
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn(null);
-        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $docFactory);
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new PrepareCallHierarchyContext(
@@ -58,9 +67,8 @@ final class FunctionCallHierarchyContributorTest extends TestCase
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
-        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $docFactory);
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new PrepareCallHierarchyContext(
@@ -97,10 +105,7 @@ final class FunctionCallHierarchyContributorTest extends TestCase
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
 
-        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
-        $docFactory->method('create')->willReturn(new TextDocumentIdentifier('file:///test.php'));
-
-        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $docFactory);
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
 
         $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
         $context = new PrepareCallHierarchyContext(
@@ -115,6 +120,49 @@ final class FunctionCallHierarchyContributorTest extends TestCase
         $this->assertInstanceOf(CallHierarchyItem::class, $consumer->results[0]);
         $this->assertSame('myFunc', $consumer->results[0]->name);
         $this->assertSame(SymbolKind::FunctionKind, $consumer->results[0]->kind);
+    }
+
+    #[TestDox('prepare returns non-zero-width selectionRange')]
+    public function testPrepareReturnsNonZeroWidthSelectionRange(): void
+    {
+        $code = '<?php function myFunc() {}';
+        $psiFile = PsiFileFactory::fromCode($code);
+
+        $funcData = new FunctionData(
+            fqn: 'myFunc',
+            startPosition: strpos($code, 'function'),
+            endPosition: strlen($code) - 1,
+            returnType: null,
+            parameters: [],
+        );
+
+        $lookup = IndexTestHelper::createLookup([
+            'php.functions.fqn' => [
+                'file:///test.php' => ['myFunc' => $funcData],
+            ],
+        ]);
+
+        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager->method('findPsiFile')->willReturn($psiFile);
+
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
+
+        $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
+        $context = new PrepareCallHierarchyContext(
+            ProtocolFactory::textDocumentIdentifier(),
+            ProtocolFactory::position(0, 18),
+            $editor,
+        );
+        $consumer = new PrepareCallHierarchyConsumer();
+        $contributor->prepare($context, $consumer);
+
+        $this->assertNotEmpty($consumer->results);
+        $selectionRange = $consumer->results[0]->selectionRange;
+        $this->assertNotSame(
+            $selectionRange->start->character,
+            $selectionRange->end->character,
+            'selectionRange should not be zero-width',
+        );
     }
 
     #[TestDox('incoming calls finds callers of a function')]
@@ -132,9 +180,8 @@ final class FunctionCallHierarchyContributorTest extends TestCase
 
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($callerFile);
-        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $docFactory);
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
 
         $item = new CallHierarchyItem(
             name: 'myFunc',
@@ -154,14 +201,55 @@ final class FunctionCallHierarchyContributorTest extends TestCase
         $this->assertSame('caller', $consumer->results[0]->from->name);
     }
 
+    #[TestDox('incoming calls returns non-zero-width fromRanges')]
+    public function testIncomingCallsReturnsNonZeroWidthFromRanges(): void
+    {
+        $callerCode = '<?php function caller() { myFunc(); }';
+        $callerFile = PsiFileFactory::fromCode($callerCode, 'file:///caller.php');
+
+        $funcPos = strpos($callerCode, 'myFunc()');
+        $lookup = IndexTestHelper::createLookup([
+            'php.functionCallUsages' => [
+                'file:///caller.php' => [['myFunc', $funcPos]],
+            ],
+        ]);
+
+        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager->method('findPsiFile')->willReturn($callerFile);
+
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
+
+        $item = new CallHierarchyItem(
+            name: 'myFunc',
+            kind: SymbolKind::FunctionKind,
+            uri: 'file:///test.php',
+            range: new Range(new Position(0, 0), new Position(0, 0)),
+            selectionRange: new Range(new Position(0, 0), new Position(0, 0)),
+            data: ['type' => 'function', 'name' => 'myFunc'],
+        );
+
+        $editor = MockHelper::mock(\Lsp\Extension\DocumentManager\Editor\EditorInterface::class);
+        $context = new IncomingCallsContext($item, $editor);
+        $consumer = new IncomingCallsConsumer();
+        $contributor->incomingCalls($context, $consumer);
+
+        $this->assertNotEmpty($consumer->results);
+        $fromRanges = $consumer->results[0]->fromRanges;
+        $this->assertNotEmpty($fromRanges);
+        $this->assertNotSame(
+            $fromRanges[0]->start->character,
+            $fromRanges[0]->end->character,
+            'fromRanges should not be zero-width',
+        );
+    }
+
     #[TestDox('incoming calls returns empty for non-function type')]
     public function testIncomingCallsReturnsEmptyForNonFunctionType(): void
     {
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
-        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $docFactory);
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
 
         $item = new CallHierarchyItem(
             name: 'test',
@@ -185,9 +273,8 @@ final class FunctionCallHierarchyContributorTest extends TestCase
     {
         $lookup = IndexTestHelper::createLookup();
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
-        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
 
-        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $docFactory);
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
 
         $item = new CallHierarchyItem(
             name: 'test',
@@ -236,10 +323,7 @@ final class FunctionCallHierarchyContributorTest extends TestCase
         $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
 
-        $docFactory = MockHelper::mock(DocumentIdentifierFactoryInterface::class);
-        $docFactory->method('create')->willReturn(new TextDocumentIdentifier('file:///test.php'));
-
-        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $docFactory);
+        $contributor = new FunctionCallHierarchyContributor($lookup, $fileManager, $this->createDocFactory());
 
         $item = new CallHierarchyItem(
             name: 'myFunc',

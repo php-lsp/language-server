@@ -50,15 +50,27 @@ count = 1
 
 [[issues]]
 file = "app/Module/CallHierarchy/FunctionCallHierarchyContributor.php"
+code = "halstead"
+message = "Method has a high halstead effort"
+count = 1
+
+[[issues]]
+file = "app/Module/CallHierarchy/FunctionCallHierarchyContributor.php"
+code = "halstead"
+message = "Method has a high halstead volume"
+count = 1
+
+[[issues]]
+file = "app/Module/CallHierarchy/FunctionCallHierarchyContributor.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (4.040000000000001)."
+message = "Class has a high kan defect score (4.83)."
 count = 1
 
 [[issues]]
 file = "app/Module/CallHierarchy/FunctionCallHierarchyContributor.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
-count = 1
+count = 2
 
 [[issues]]
 file = "app/Module/CallHierarchy/MethodCallHierarchyContributor.php"
@@ -81,7 +93,7 @@ count = 1
 [[issues]]
 file = "app/Module/CallHierarchy/MethodCallHierarchyContributor.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (5.390000000000001)."
+message = "Class has a high kan defect score (5.09)."
 count = 1
 
 [[issues]]
