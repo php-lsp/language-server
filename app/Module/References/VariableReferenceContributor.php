@@ -42,7 +42,7 @@ final class VariableReferenceContributor implements ReferenceContributor
         $scope = $this->findScope($element);
 
         $finder = new NodeFinder();
-        $searchNodes = $scope instanceof Node ? [$scope] : $file->ast->children;
+        $searchNodes = $scope instanceof Node ? [$scope] : $file->getChildren();
 
         $variables = $finder->findInstanceOf($searchNodes, Node\Expr\Variable::class);
 
@@ -53,7 +53,7 @@ final class VariableReferenceContributor implements ReferenceContributor
 
             /** @var array{int<0, 2147483647>, int<0, 2147483647>} $lineCol */
             $lineCol = Tree::toLineColumn(
-                $file->ast->document,
+                $file->getDocument(),
                 $variable->getStartFilePos(),
             );
             $position = new Position($lineCol[0], $lineCol[1]);

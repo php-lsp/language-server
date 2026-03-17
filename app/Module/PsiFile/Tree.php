@@ -45,8 +45,17 @@ class Tree
      *
      * @return T[]
      */
-    public static function childrenOfType(Node|SourceFileRoot|null $node, string $class): array
+    public static function childrenOfType(Node|PsiFileInterface|SourceFileRoot|null $node, string $class): array
     {
+        if ($node instanceof PsiFileInterface) {
+            $result = [];
+            foreach ($node->getChildren() as $child) {
+                self::collectChildrenOfType($child, $class, $result);
+            }
+
+            return $result;
+        }
+
         $result = [];
         self::collectChildrenOfType($node, $class, $result);
 
@@ -89,8 +98,17 @@ class Tree
      *
      * @return T[]
      */
-    public static function childrenOfTypes(Node|SourceFileRoot|null $node, string ...$classes): array
+    public static function childrenOfTypes(Node|PsiFileInterface|SourceFileRoot|null $node, string ...$classes): array
     {
+        if ($node instanceof PsiFileInterface) {
+            $result = [];
+            foreach ($node->getChildren() as $child) {
+                self::collectChildrenOfTypes($child, $classes, $result);
+            }
+
+            return $result;
+        }
+
         return self::childrenOfTypesInternal($node, $classes);
     }
 

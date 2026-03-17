@@ -217,60 +217,6 @@ message = 'Possible argument type mismatch for argument #3 of `Lsp\Extension\Doc
 count = 1
 
 [[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `lsp\protocol\type\documentsymbol::__construct`: expected `string`, but found `mixed`.'
-count = 3
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 3
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `PhpParser\Node` does not accept it.'
-count = 3
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `App\Controller\TextDocument\DocumentSymbolController::processstatement` is possibly `null`, but parameter type `App\Module\PsiFile\PHPPsiFile` does not accept it.'
-count = 2
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "possibly-null-iterator"
-message = 'Expression being iterated (type `array<array-key, PhpParser\Node>|null`) might be `null` at runtime.'
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 2
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
-count = 1
-
-[[issues]]
 file = "app/Controller/TextDocument/FormattingController.php"
 code = "mixed-argument"
 message = "Invalid argument type for argument #2 of `exec`: expected `array<array-key, mixed>|null`, but found `mixed`."
@@ -458,21 +404,9 @@ count = 1
 
 [[issues]]
 file = "app/Controller/WorkspaceSymbolController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `App\Core\Contracts\PrefixMatcher\StrContainsMatcher::match`: expected `string`, but found `mixed`.'
-count = 8
-
-[[issues]]
-file = "app/Controller/WorkspaceSymbolController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `lsp\protocol\type\symbolinformation::__construct`: expected `string`, but found `mixed`.'
-count = 7
-
-[[issues]]
-file = "app/Controller/WorkspaceSymbolController.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #4 of `lsp\protocol\type\symbolinformation::__construct`: expected `null|string`, but found `mixed`.'
-count = 2
+code = "less-specific-nested-return-statement"
+message = '''Returned type `list{list{class-string('App\Module\Indexing\Indexer\ClassIndexer'), enum(Lsp\Protocol\Type\SymbolKind::ClassKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed), null}, list{class-string('App\Module\Indexing\Indexer\InterfaceIndexer'), enum(Lsp\Protocol\Type\SymbolKind::InterfaceKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed), null}, list{class-string('App\Module\Indexing\Indexer\TraitIndexer'), enum(Lsp\Protocol\Type\SymbolKind::ClassKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed), (closure(App\Module\Indexing\Storage\Entry<mixed>): string('trait'))}, list{class-string('App\Module\Indexing\Indexer\EnumIndexer'), enum(Lsp\Protocol\Type\SymbolKind::EnumKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed), null}, list{class-string('App\Module\Indexing\Indexer\FunctionIndexer'), enum(Lsp\Protocol\Type\SymbolKind::FunctionKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed), null}, list{class-string('App\Module\Indexing\Indexer\ClassMethodIndexer'), enum(Lsp\Protocol\Type\SymbolKind::MethodKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed)}, list{class-string('App\Module\Indexing\Indexer\PropertyIndexer'), enum(Lsp\Protocol\Type\SymbolKind::PropertyKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): truthy-string), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed)}, list{class-string('App\Module\Indexing\Indexer\GlobalConstantIndexer'), enum(Lsp\Protocol\Type\SymbolKind::ConstantKind), (closure(App\Module\Indexing\Storage\Entry<mixed>): mixed), null}}` is less specific than the declared return type `list<array{0: class-string, 1: enum(Lsp\Protocol\Type\SymbolKind), 2: (closure(App\Module\Indexing\Storage\Entry<mixed>): string), 3: (closure(App\Module\Indexing\Storage\Entry<mixed>): null|string)|null}>` for function `app\controller\workspacesymbolcontroller::getsources` due to nested 'mixed'.'''
+count = 1
 
 [[issues]]
 file = "app/Controller/WorkspaceSymbolController.php"
@@ -484,13 +418,49 @@ count = 1
 file = "app/Controller/WorkspaceSymbolController.php"
 code = "mixed-property-access"
 message = "Attempting to access a property on a non-object type (`mixed`)."
-count = 18
+count = 5
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-return-statement"
+message = "Could not infer a precise return type for function `16754467769548697979:2303`. Saw type `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-return-statement"
+message = "Could not infer a precise return type for function `16754467769548697979:2366`. Saw type `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-return-statement"
+message = "Could not infer a precise return type for function `16754467769548697979:2964`. Saw type `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "mixed-return-statement"
+message = "Could not infer a precise return type for function `16754467769548697979:3214`. Saw type `mixed`."
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "possibly-invalid-argument"
+message = '''Possible argument type mismatch for argument #1 of `App\Module\Indexing\IndexLookup::findbykey`: expected `class-string<App\Core\Contracts\Indexing\IndexerInterface<('T.app\module\indexing\indexlookup::findbykey() extends mixed)>>`, but possibly received `class-string`.'''
+count = 1
 
 [[issues]]
 file = "app/Controller/WorkspaceSymbolController.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `lsp\protocol\type\location::__construct`: expected `non-empty-string`, but possibly received `string`.'
-count = 8
+count = 1
+
+[[issues]]
+file = "app/Controller/WorkspaceSymbolController.php"
+code = "unused-parameter"
+message = "Parameter `$e` is never used."
+count = 1
 
 [[issues]]
 file = "app/Core/Contracts/Documentation/DocumentationConsumer.php"
@@ -1161,6 +1131,12 @@ count = 1
 [[issues]]
 file = "app/Module/Declaration/FunctionDeclarationContributor.php"
 code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `app\module\psifile\tree::tolinecolumn`: expected `Lsp\Extension\DocumentManager\Editor\Document\Document`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "mixed-argument"
 message = 'Invalid argument type for argument #3 of `App\Module\Indexing\IndexLookup::findbyfield`: expected `string`, but found `mixed`.'
 count = 1
 
@@ -1174,6 +1150,12 @@ count = 1
 file = "app/Module/Declaration/FunctionDeclarationContributor.php"
 code = "non-existent-method"
 message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Declaration/FunctionDeclarationContributor.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
 count = 1
 
 [[issues]]
@@ -1193,18 +1175,6 @@ file = "app/Module/Declaration/FunctionDeclarationContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
-
-[[issues]]
-file = "app/Module/Declaration/FunctionDeclarationContributor.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `app\module\psifile\tree::tolinecolumn` is possibly `null`, but parameter type `Lsp\Extension\DocumentManager\Editor\Document\Document` does not accept it.'
-count = 1
-
-[[issues]]
-file = "app/Module/Declaration/FunctionDeclarationContributor.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 2
 
 [[issues]]
 file = "app/Module/Declaration/GlobalConstantDeclarationContributor.php"
@@ -1311,6 +1281,12 @@ count = 1
 [[issues]]
 file = "app/Module/Definition/FunctionDefinitionContributor.php"
 code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `app\module\psifile\tree::tolinecolumn`: expected `Lsp\Extension\DocumentManager\Editor\Document\Document`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/FunctionDefinitionContributor.php"
+code = "mixed-argument"
 message = 'Invalid argument type for argument #3 of `App\Module\Indexing\IndexLookup::findbyfield`: expected `string`, but found `mixed`.'
 count = 1
 
@@ -1324,6 +1300,12 @@ count = 1
 file = "app/Module/Definition/FunctionDefinitionContributor.php"
 code = "non-existent-method"
 message = 'Method `tostring` does not exist on type `PhpParser\Node\Expr`.'
+count = 1
+
+[[issues]]
+file = "app/Module/Definition/FunctionDefinitionContributor.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
 count = 1
 
 [[issues]]
@@ -1343,18 +1325,6 @@ file = "app/Module/Definition/FunctionDefinitionContributor.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #2 of `lsp\protocol\type\position::__construct`: expected `int<0, 2147483647>`, but possibly received `int`.'
 count = 1
-
-[[issues]]
-file = "app/Module/Definition/FunctionDefinitionContributor.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `app\module\psifile\tree::tolinecolumn` is possibly `null`, but parameter type `Lsp\Extension\DocumentManager\Editor\Document\Document` does not accept it.'
-count = 1
-
-[[issues]]
-file = "app/Module/Definition/FunctionDefinitionContributor.php"
-code = "possibly-null-property-access"
-message = "Attempting to access a property on a possibly `null` value."
-count = 2
 
 [[issues]]
 file = "app/Module/Definition/MethodDefinitionContributor.php"
@@ -1456,6 +1426,54 @@ count = 1
 file = "app/Module/Document/LocalFileDocumentLoader.php"
 code = "unreachable-match-default-arm"
 message = "This default arm is unreachable."
+count = 1
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "missing-override-attribute"
+message = 'Missing `#[Override]` attribute on overriding method `App\Module\DocumentSymbol\AstDocumentSymbolContributor::contribute`.'
+count = 1
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `lsp\protocol\type\documentsymbol::__construct`: expected `string`, but found `mixed`.'
+count = 3
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 2
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "possible-method-access-on-null"
+message = "Attempting to call a method on `null`."
+count = 4
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `app\module\psifile\tree::getrange` is possibly `null`, but parameter type `PhpParser\Node` does not accept it.'
+count = 3
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "possibly-null-argument"
+message = 'Argument #2 of method `App\Module\DocumentSymbol\AstDocumentSymbolContributor::processstatement` is possibly `null`, but parameter type `App\Core\Contracts\PsiFile\PsiFileInterface` does not accept it.'
+count = 2
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "redundant-null-coalesce"
+message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
+count = 1
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "unknown-iterator-type"
+message = "Cannot determine the type of the expression provided to `foreach`."
 count = 1
 
 [[issues]]
@@ -2361,6 +2379,12 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"
 code = "invalid-return-statement"
+message = '''Invalid return type for function `app\module\psifile\tree::childrenoftypes`: expected `array<array-key, ('T.app\module\psifile\tree::childrenoftypes() extends PhpParser\Node)>`, but found `array{}|list<PhpParser\Node>`.'''
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "invalid-return-statement"
 message = '''Invalid return type for function `app\module\psifile\tree::childrenoftypesinternal`: expected `array<array-key, ('T.app\module\psifile\tree::childrenoftypesinternal() extends PhpParser\Node)>`, but found `list<PhpParser\Node>`.'''
 count = 1
 
@@ -2410,6 +2434,12 @@ count = 4
 file = "app/Module/PsiFile/Tree.php"
 code = "possibly-invalid-argument"
 message = '''Possible argument type mismatch for argument #2 of `app\module\psifile\tree::childrenoftypesinternal`: expected `list<class-string<'T.app\module\psifile\tree::childrenoftypes() extends PhpParser\Node>>`, but possibly received `array<array-key, class-string<'T.app\module\psifile\tree::childrenoftypes() extends PhpParser\Node>>`.'''
+count = 1
+
+[[issues]]
+file = "app/Module/PsiFile/Tree.php"
+code = "possibly-invalid-argument"
+message = '''Possible argument type mismatch for argument #2 of `app\module\psifile\tree::collectchildrenoftypes`: expected `list<class-string<PhpParser\Node>>`, but possibly received `array<array-key, class-string<'T.app\module\psifile\tree::childrenoftypes() extends PhpParser\Node>>`.'''
 count = 1
 
 [[issues]]

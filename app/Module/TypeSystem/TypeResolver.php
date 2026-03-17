@@ -133,7 +133,7 @@ final class TypeResolver implements TypeResolverInterface
         $foundType = null;
 
         /** @var array<Node\Stmt> $stmts */
-        $stmts = $psiFile->ast->children;
+        $stmts = $psiFile->getChildren();
 
         try {
             $nodeScopeResolver = $this->phpstan->getNodeScopeResolver();

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Module\SelectionRange;
 
+use App\Core\Contracts\PsiFile\PsiFileInterface;
 use App\Core\Contracts\SelectionRange\AsSelectionRangeContributor;
 use App\Core\Contracts\SelectionRange\SelectionRangeConsumer;
 use App\Core\Contracts\SelectionRange\SelectionRangeContext;
 use App\Core\Contracts\SelectionRange\SelectionRangeContributor;
 use App\Module\PsiFile\InMemoryPsiFileManager;
-use App\Module\PsiFile\PHPPsiFile;
 use App\Module\PsiFile\Tree;
 use Lsp\Protocol\Type\Position;
 use Lsp\Protocol\Type\Range;
@@ -40,7 +40,7 @@ final class AstSelectionRangeContributor implements SelectionRangeContributor
         }
     }
 
-    private function buildSelectionRange(PHPPsiFile $psiFile, Position $position): ?SelectionRange
+    private function buildSelectionRange(PsiFileInterface $psiFile, Position $position): ?SelectionRange
     {
         $nodes = $psiFile->findAtPosition($position);
         if ($nodes === []) {
@@ -88,7 +88,7 @@ final class AstSelectionRangeContributor implements SelectionRangeContributor
         return $selectionRange;
     }
 
-    private function nodeToRange(Node $node, PHPPsiFile $psiFile): ?Range
+    private function nodeToRange(Node $node, PsiFileInterface $psiFile): ?Range
     {
         $startFilePos = $node->getStartFilePos();
         $endFilePos = $node->getEndFilePos();
@@ -97,7 +97,7 @@ final class AstSelectionRangeContributor implements SelectionRangeContributor
             return null;
         }
 
-        $document = $psiFile->ast->document;
+        $document = $psiFile->getDocument();
         [$startLine, $startCol] = Tree::toLineColumn($document, $startFilePos);
         [$endLine, $endCol] = Tree::toLineColumn($document, $endFilePos + 1);
 

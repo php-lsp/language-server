@@ -35,12 +35,12 @@ final class ParameterNameInlayHintContributor implements InlayHintContributor
             return;
         }
 
-        $document = $file->ast->document;
+        $document = $file->getDocument();
         $rangeStart = $context->range->start->line;
         $rangeEnd = $context->range->end->line;
 
         $callNodes = new NodeFinder()->find(
-            $file->ast->children,
+            $file->getChildren(),
             static fn(Node $node): bool => (
                 self::isCallNode($node)
                 && Tree::toLspLine($node->getEndLine()) >= $rangeStart

@@ -37,48 +37,6 @@ message = "Literal argument `3` should be passed as a named argument for clarity
 count = 1
 
 [[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "app/Controller/TextDocument/DocumentSymbolController.php"
-code = "kan-defect"
-message = "Class has a high kan defect score (2.74)."
-count = 1
-
-[[issues]]
-file = "app/Controller/WorkspaceSymbolController.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "app/Controller/WorkspaceSymbolController.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "app/Controller/WorkspaceSymbolController.php"
-code = "halstead"
-message = "Method has a high halstead effort"
-count = 1
-
-[[issues]]
-file = "app/Controller/WorkspaceSymbolController.php"
-code = "kan-defect"
-message = "Class has a high kan defect score (2.55)."
-count = 1
-
-[[issues]]
 file = "app/Listener/DebugServerListener.php"
 code = "no-isset"
 message = "Use of the `isset` construct."
@@ -289,6 +247,24 @@ message = "Avoid `elseif` clauses."
 count = 8
 
 [[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "app/Module/DocumentSymbol/AstDocumentSymbolContributor.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (2.74)."
+count = 1
+
+[[issues]]
 file = "app/Module/Documentation/ClassDocumentationContributor.php"
 code = "kan-defect"
 message = "Class has a high kan defect score (1.7000000000000002)."
@@ -427,6 +403,12 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
+file = "app/Module/InlayHint/InlayHintFactory.php"
+code = "literal-named-argument"
+message = "Literal argument `'$'` should be passed as a named argument for clarity."
+count = 1
+
+[[issues]]
 file = "app/Module/PsiFile/FifoCache.php"
 code = "literal-named-argument"
 message = "Literal argument `1` should be passed as a named argument for clarity."
@@ -441,7 +423,7 @@ count = 1
 [[issues]]
 file = "app/Module/PsiFile/Tree.php"
 code = "kan-defect"
-message = "Class has a high kan defect score (3.5700000000000003)."
+message = "Class has a high kan defect score (4.17)."
 count = 1
 
 [[issues]]

@@ -14,6 +14,7 @@ use App\Module\Indexing\Indexer\InterfaceIndexer;
 use App\Module\Indexing\Indexer\PropertyIndexer;
 use App\Module\Indexing\Indexer\TraitIndexer;
 use App\Module\Indexing\IndexLookup;
+use App\Module\Indexing\Storage\Entry;
 use Lsp\Kernel\Attribute\AsController;
 use Lsp\Protocol\Type\Location;
 use Lsp\Protocol\Type\Position;
@@ -41,97 +42,51 @@ final class WorkspaceSymbolController
         $zeroPosition = new Position(0, 0);
         $defaultRange = new Range($zeroPosition, $zeroPosition);
 
-        foreach ($this->indexLookup->findByKey(ClassIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->fqn)) {
-                continue;
+        foreach ($this->getSources() as [$indexerClass, $kind, $nameExtractor, $containerExtractor]) {
+            foreach ($this->indexLookup->findByKey($indexerClass) as $entry) {
+                $name = $nameExtractor($entry);
+                if ($query !== '' && !$matcher->match($name)) {
+                    continue;
+                }
+                $symbols[] = new SymbolInformation(
+                    location: new Location(uri: $entry->uri, range: $defaultRange),
+                    name: $name,
+                    kind: $kind,
+                    containerName: $containerExtractor !== null ? $containerExtractor($entry) : null,
+                );
             }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: $entry->value->fqn,
-                kind: SymbolKind::ClassKind,
-            );
-        }
-
-        foreach ($this->indexLookup->findByKey(InterfaceIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->fqn)) {
-                continue;
-            }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: $entry->value->fqn,
-                kind: SymbolKind::InterfaceKind,
-            );
-        }
-
-        foreach ($this->indexLookup->findByKey(TraitIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->fqn)) {
-                continue;
-            }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: $entry->value->fqn,
-                kind: SymbolKind::ClassKind,
-                containerName: 'trait',
-            );
-        }
-
-        foreach ($this->indexLookup->findByKey(EnumIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->fqn)) {
-                continue;
-            }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: $entry->value->fqn,
-                kind: SymbolKind::EnumKind,
-            );
-        }
-
-        foreach ($this->indexLookup->findByKey(FunctionIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->fqn)) {
-                continue;
-            }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: $entry->value->fqn,
-                kind: SymbolKind::FunctionKind,
-            );
-        }
-
-        foreach ($this->indexLookup->findByKey(ClassMethodIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->name)) {
-                continue;
-            }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: $entry->value->name,
-                kind: SymbolKind::MethodKind,
-                containerName: $entry->value->className,
-            );
-        }
-
-        foreach ($this->indexLookup->findByKey(PropertyIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->name)) {
-                continue;
-            }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: '$' . $entry->value->name,
-                kind: SymbolKind::PropertyKind,
-                containerName: $entry->value->className,
-            );
-        }
-
-        foreach ($this->indexLookup->findByKey(GlobalConstantIndexer::class) as $entry) {
-            if ($query !== '' && !$matcher->match($entry->value->name)) {
-                continue;
-            }
-            $symbols[] = new SymbolInformation(
-                location: new Location(uri: $entry->uri, range: $defaultRange),
-                name: $entry->value->name,
-                kind: SymbolKind::ConstantKind,
-            );
         }
 
         return $symbols;
+    }
+
+    /**
+     * @return list<array{class-string, SymbolKind, \Closure(Entry): string, (\Closure(Entry): ?string)|null}>
+     */
+    private function getSources(): array
+    {
+        $fqn = static fn(Entry $e): string => $e->value->fqn;
+        $name = static fn(Entry $e): string => $e->value->name;
+
+        return [
+            [ClassIndexer::class, SymbolKind::ClassKind, $fqn, null],
+            [InterfaceIndexer::class, SymbolKind::InterfaceKind, $fqn, null],
+            [TraitIndexer::class, SymbolKind::ClassKind, $fqn, static fn(Entry $e): string => 'trait'],
+            [EnumIndexer::class, SymbolKind::EnumKind, $fqn, null],
+            [FunctionIndexer::class, SymbolKind::FunctionKind, $fqn, null],
+            [
+                ClassMethodIndexer::class,
+                SymbolKind::MethodKind,
+                $name,
+                static fn(Entry $e): string => $e->value->className,
+            ],
+            [
+                PropertyIndexer::class,
+                SymbolKind::PropertyKind,
+                static fn(Entry $e): string => '$' . $e->value->name,
+                static fn(Entry $e): string => $e->value->className,
+            ],
+            [GlobalConstantIndexer::class, SymbolKind::ConstantKind, $name, null],
+        ];
     }
 }

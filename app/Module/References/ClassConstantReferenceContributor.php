@@ -62,7 +62,7 @@ final class ClassConstantReferenceContributor implements ReferenceContributor
             }
 
             /** @var array{int<0, 2147483647>, int<0, 2147483647>} $lineCol */
-            $lineCol = Tree::toLineColumn($source->ast->document, $value[2]);
+            $lineCol = Tree::toLineColumn($source->getDocument(), $value[2]);
             $position = new Position($lineCol[0], $lineCol[1]);
 
             $consumer(new Location(

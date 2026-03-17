@@ -53,7 +53,7 @@ final class ConstructorSignatureContributor implements SignatureContributor
                 continue;
             }
 
-            $definition = $this->findConstructorDefinition($source->ast->children, $className);
+            $definition = $this->findConstructorDefinition($source->getChildren(), $className);
             if ($definition === null) {
                 continue;
             }

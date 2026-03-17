@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Controller\TextDocument;
 
 use App\Controller\TextDocument\DocumentSymbolController;
+use App\Core\Contracts\PsiFile\PsiFileManagerInterface;
+use App\Module\DocumentSymbol\AstDocumentSymbolContributor;
+use App\Module\Telemetry\TracerInterface;
 use App\Tests\Support\MockHelper;
 use App\Tests\Support\ProtocolFactory;
 use App\Tests\Support\PsiFileFactory;
@@ -23,10 +26,16 @@ final class DocumentSymbolControllerTest extends TestCase
     public function testReturnsClassSymbol(): void
     {
         $psiFile = PsiFileFactory::fromCode('<?php class Foo { public $bar; public function baz() {} }');
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $tracer = MockHelper::mock(TracerInterface::class);
+        $tracer->method('trace')->willReturnCallback(fn(string $name, callable $fn) => $fn());
 
-        $controller = new DocumentSymbolController($fileManager);
+        $controller = new DocumentSymbolController(
+            [new AstDocumentSymbolContributor()],
+            $fileManager,
+            $tracer,
+        );
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DocumentSymbolParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -51,10 +60,16 @@ final class DocumentSymbolControllerTest extends TestCase
     public function testReturnsFunctionSymbol(): void
     {
         $psiFile = PsiFileFactory::fromCode('<?php function myFunc() {}');
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $tracer = MockHelper::mock(TracerInterface::class);
+        $tracer->method('trace')->willReturnCallback(fn(string $name, callable $fn) => $fn());
 
-        $controller = new DocumentSymbolController($fileManager);
+        $controller = new DocumentSymbolController(
+            [new AstDocumentSymbolContributor()],
+            $fileManager,
+            $tracer,
+        );
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DocumentSymbolParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),
@@ -71,10 +86,16 @@ final class DocumentSymbolControllerTest extends TestCase
     public function testReturnsEmptyForEmptyFile(): void
     {
         $psiFile = PsiFileFactory::fromCode('<?php echo 1;');
-        $fileManager = MockHelper::mock(\App\Module\PsiFile\InMemoryPsiFileManager::class);
+        $fileManager = MockHelper::mock(PsiFileManagerInterface::class);
         $fileManager->method('findPsiFile')->willReturn($psiFile);
+        $tracer = MockHelper::mock(TracerInterface::class);
+        $tracer->method('trace')->willReturnCallback(fn(string $name, callable $fn) => $fn());
 
-        $controller = new DocumentSymbolController($fileManager);
+        $controller = new DocumentSymbolController(
+            [new AstDocumentSymbolContributor()],
+            $fileManager,
+            $tracer,
+        );
         $editor = MockHelper::mock(EditorInterface::class);
         $params = new DocumentSymbolParams(
             textDocument: ProtocolFactory::textDocumentIdentifier(),

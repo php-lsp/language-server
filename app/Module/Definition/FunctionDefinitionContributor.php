@@ -55,7 +55,7 @@ final class FunctionDefinitionContributor implements DefinitionContributor
             $textDocumentIdentifier = $this->documentIdentifierFactory->create($value->uri);
             $source = $this->fileManager->findPsiFile($context->editor, $textDocumentIdentifier);
 
-            [$line, $column] = Tree::toLineColumn($source->ast->document, $data->startPosition);
+            [$line, $column] = Tree::toLineColumn($source->getDocument(), $data->startPosition);
 
             $exactPosition = new Position($line, $column);
             $startRange = new Range($exactPosition, $exactPosition);

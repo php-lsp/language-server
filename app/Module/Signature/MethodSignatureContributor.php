@@ -56,7 +56,7 @@ final class MethodSignatureContributor implements SignatureContributor
                 new TextDocumentIdentifier($uri),
             );
             if ($source !== null) {
-                $definition = $this->findMethodDefinition($source->ast->children, $className, $methodName);
+                $definition = $this->findMethodDefinition($source->getChildren(), $className, $methodName);
                 if ($definition !== null) {
                     $consumer($definition);
                 }

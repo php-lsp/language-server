@@ -99,10 +99,10 @@ final class ImportSymbolCodeActionContributor implements CodeActionContributor
     /**
      * @return list<string>
      */
-    private function getExistingUseStatements(\App\Module\PsiFile\PHPPsiFile $file): array
+    private function getExistingUseStatements(\App\Core\Contracts\PsiFile\PsiFileInterface $file): array
     {
         $uses = [];
-        $useNodes = Tree::childrenOfType($file->ast, Node\UseItem::class);
+        $useNodes = Tree::childrenOfType($file, Node\UseItem::class);
 
         foreach ($useNodes as $use) {
             $uses[] = $use->name->toString();
@@ -111,9 +111,9 @@ final class ImportSymbolCodeActionContributor implements CodeActionContributor
         return $uses;
     }
 
-    private function findUseInsertPosition(\App\Module\PsiFile\PHPPsiFile $file): Position
+    private function findUseInsertPosition(\App\Core\Contracts\PsiFile\PsiFileInterface $file): Position
     {
-        $useNodes = Tree::childrenOfType($file->ast, Node\Stmt\Use_::class);
+        $useNodes = Tree::childrenOfType($file, Node\Stmt\Use_::class);
 
         if ($useNodes !== []) {
             $lastUse = end($useNodes);
@@ -121,7 +121,7 @@ final class ImportSymbolCodeActionContributor implements CodeActionContributor
             return new Position(Tree::nodeEndLine($lastUse) + 1, 0);
         }
 
-        $namespaceNodes = Tree::childrenOfType($file->ast, Node\Stmt\Namespace_::class);
+        $namespaceNodes = Tree::childrenOfType($file, Node\Stmt\Namespace_::class);
         if ($namespaceNodes !== []) {
             return new Position(Tree::nodeStartLine($namespaceNodes[0]) + 1, 0);
         }

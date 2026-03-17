@@ -35,13 +35,13 @@ final class RemoveUnusedImportCodeActionContributor implements CodeActionContrib
             return;
         }
 
-        $useStatements = Tree::childrenOfType($file->ast, Node\Stmt\Use_::class);
+        $useStatements = Tree::childrenOfType($file, Node\Stmt\Use_::class);
         if ($useStatements === []) {
             return;
         }
 
         $finder = new NodeFinder();
-        $allNames = $finder->findInstanceOf($file->ast->children, Node\Name::class);
+        $allNames = $finder->findInstanceOf($file->getChildren(), Node\Name::class);
 
         $usedNames = [];
         foreach ($allNames as $name) {

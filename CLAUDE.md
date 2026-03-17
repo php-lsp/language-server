@@ -93,11 +93,12 @@ app/
 │   ├── Notification/          # ProgressNotifierInterface
 │   ├── PrefixMatcher/         # PrefixMatcher interface, StrContainsMatcher
 │   ├── PsiFile/               # PsiFileInterface, PsiFileManagerInterface
+│   ├── DocumentSymbol/        # DocumentSymbolContributor, AsDocumentSymbolContributor
 │   ├── References/            # ReferenceContributor, AsReferenceContributor
 │   ├── SelectionRange/        # SelectionRangeContributor, AsSelectionRangeContributor
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
 │   └── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
-├── Module/                    # Feature implementations (22 modules)
+├── Module/                    # Feature implementations (23 modules)
 │   ├── CodeAction/            # Code action contributors (2): import symbol, remove unused import
 │   ├── Completion/            # Completion contributors (15): keywords, classes, functions, interfaces, traits, enums, constants, superglobals, shortcuts, class members, class constants, enum cases, use statements, namespaces, variables
 │   ├── Debug/                 # Debug HTTP server (DebugHttpServer, DebugHtmlRenderer)
@@ -105,6 +106,7 @@ app/
 │   ├── Definition/            # Definition contributors (4): class, function, method, variable
 │   ├── Documentation/         # Documentation/hover contributors (7): docblock, nodes-trace, class, function, method, property, constant
 │   ├── Document/              # Document loading and identification
+│   ├── DocumentSymbol/        # Document symbol contributors (1): AST-based class/function/enum/trait symbols
 │   ├── FoldingRange/          # Folding range contributors (3): AST nodes, comments, use blocks
 │   ├── Highlight/             # Document highlight contributors (2): variable, name
 │   ├── Implementation/        # Implementation contributors (1): interface/class implementations
@@ -161,6 +163,7 @@ Available contributor types and their DI tags:
 | `#[AsDefinitionContributor]` | `lsp.definitionContributors`   |
 | `#[AsDocumentationContributor]`| `lsp.documentationContributors`|
 | `#[AsDocumentHighlightContributor]`| `lsp.documentHighlightContributors`|
+| `#[AsDocumentSymbolContributor]`| `lsp.documentSymbolContributors`|
 | `#[AsFoldingRangeContributor]`| `lsp.foldingRangeContributors` |
 | `#[AsImplementationContributor]`| `lsp.implementationContributors`|
 | `#[AsInlayHintContributor]`  | `lsp.inlayHintContributors`    |

@@ -21,7 +21,7 @@ final class PositionResolver
         $textDocumentIdentifier = $this->documentIdentifierFactory->create($uri);
         $source = $this->fileManager->findPsiFile($editor, $textDocumentIdentifier);
         if ($source !== null) {
-            [$line, $column] = Tree::toLineColumn($source->ast->document, $startPosition);
+            [$line, $column] = Tree::toLineColumn($source->getDocument(), $startPosition);
             $position = new Position($line, $column);
 
             return new Range($position, $position);
