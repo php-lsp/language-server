@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Core\Contracts\CallHierarchy\AsCallHierarchyContributor;
 use App\Core\Contracts\CodeAction\AsCodeActionContributor;
 use App\Core\Contracts\Completion\AsCompletionContributor;
 use App\Core\Contracts\Declaration\AsDeclarationContributor;
@@ -33,6 +34,7 @@ final class Application extends LanguageServerKernel
     /** @var array<class-string, string> */
     public const array ATTRIBUTES = [
         AsIndexer::class => 'lsp.indexers',
+        AsCallHierarchyContributor::class => 'lsp.callHierarchyContributors',
         AsCodeActionContributor::class => 'lsp.codeActionContributors',
         AsCompletionContributor::class => 'lsp.completionContributors',
         AsReferenceContributor::class => 'lsp.referenceContributors',

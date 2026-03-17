@@ -8,6 +8,7 @@ use App\Module\Indexing\Indexer;
 use App\Module\SemanticToken\SemanticTokenLegend;
 use App\Module\Workspace\ProjectManager;
 use Lsp\Kernel\Attribute\AsController;
+use Lsp\Protocol\Type\CallHierarchyOptions;
 use Lsp\Protocol\Type\CodeActionOptions;
 use Lsp\Protocol\Type\CompletionOptions;
 use Lsp\Protocol\Type\DeclarationOptions;
@@ -72,6 +73,7 @@ final class InitializeController
                 definitionProvider: new DefinitionOptions(),
                 typeDefinitionProvider: new TypeDefinitionOptions(),
                 implementationProvider: new ImplementationOptions(),
+                callHierarchyProvider: new CallHierarchyOptions(),
                 documentHighlightProvider: new DocumentHighlightOptions(),
                 foldingRangeProvider: new FoldingRangeOptions(),
                 inlayHintProvider: new InlayHintOptions(),

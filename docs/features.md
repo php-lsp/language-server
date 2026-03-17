@@ -146,9 +146,10 @@ Features that significantly improve developer experience.
   Synchronized editing of related ranges (e.g. opening/closing XML tags,
   matching variable names in string interpolation).
 
-- [ ] **`callHierarchy/incomingCalls` / `outgoingCalls`**
+- [x] **`callHierarchy/incomingCalls` / `outgoingCalls`**
   Call hierarchy — who calls this function, and what does this function call.
-  - *Requires:* `textDocument/prepareCallHierarchy` + the two direction methods
+  Implemented with 2 contributors: function and method call hierarchy.
+  - *Architecture:* `CallHierarchyContributor` interface + `#[AsCallHierarchyContributor]`
   - *PHPStorm equivalent:* "Call Hierarchy" (Ctrl+Alt+H)
 
 - [ ] **`typeHierarchy/supertypes` / `subtypes`**

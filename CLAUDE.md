@@ -43,14 +43,15 @@ composer build:run:local   # Run compiled PHAR
 ```
 app/
 ├── Application.php            # Kernel — extends LanguageServerKernel
-├── Controller/                # LSP request handlers (35 controllers, routes via #[Route] attributes)
+├── Controller/                # LSP request handlers (38 controllers, routes via #[Route] attributes)
 │   ├── InitializeController.php
 │   ├── InitializedController.php
 │   ├── SetTraceController.php       # $/setTrace — trace level configuration
 │   ├── CancelRequestController.php  # $/cancelRequest — request cancellation
 │   ├── WorkspaceSymbolController.php  # workspace/symbol — project-wide symbol search
+│   ├── CallHierarchy/         # callHierarchy/* method handlers (2): incoming/outgoing calls
 │   ├── Debug/                 # Debug HTTP server controllers (4): index list, get, search, keys
-│   ├── TextDocument/          # textDocument/* method handlers (25 controllers)
+│   ├── TextDocument/          # textDocument/* method handlers (26 controllers)
 │   │   ├── CodeActionController.php
 │   │   ├── CompletionController.php
 │   │   ├── DeclarationController.php
@@ -67,6 +68,7 @@ app/
 │   │   ├── HoverController.php
 │   │   ├── ImplementationController.php
 │   │   ├── InlayHintController.php
+│   │   ├── PrepareCallHierarchyController.php
 │   │   ├── PrepareRenameController.php
 │   │   ├── PublishDiagnosticsController.php
 │   │   ├── RangeFormattingController.php
@@ -80,7 +82,8 @@ app/
 │       └── DidChangeWatchedFilesController.php
 ├── Core/UriHelper.php         # URI → file path conversion utility
 ├── Core/Cancellation/         # CancellationToken, CancellationTokenRegistry (with auto-eviction)
-├── Core/Contracts/            # Plugin interfaces and attributes (19 directories)
+├── Core/Contracts/            # Plugin interfaces and attributes (20 directories)
+│   ├── CallHierarchy/         # CallHierarchyContributor, AsCallHierarchyContributor
 │   ├── CodeAction/            # CodeActionContributor, AsCodeActionContributor
 │   ├── Completion/            # CompletionContributor, AsCompletionContributor
 │   ├── Declaration/           # DeclarationContributor, AsDeclarationContributor
@@ -100,7 +103,8 @@ app/
 │   ├── SemanticToken/         # SemanticTokenContributor, AsSemanticTokenContributor, SemanticTokenContext, SemanticTokenConsumer
 │   ├── Signature/             # SignatureContributor, AsSignatureContributor
 │   └── TypeDefinition/        # TypeDefinitionContributor, AsTypeDefinitionContributor
-├── Module/                    # Feature implementations (24 modules)
+├── Module/                    # Feature implementations (25 modules)
+│   ├── CallHierarchy/         # Call hierarchy contributors (2): function, method
 │   ├── CodeAction/            # Code action contributors (2): import symbol, remove unused import
 │   ├── Completion/            # Completion contributors (15): keywords, classes, functions, interfaces, traits, enums, constants, superglobals, shortcuts, class members, class constants, enum cases, use statements, namespaces, variables
 │   ├── Debug/                 # Debug HTTP server (DebugHttpServer, DebugHtmlRenderer)
@@ -160,6 +164,7 @@ Available contributor types and their DI tags:
 
 | Attribute                    | Tag                            |
 |------------------------------|--------------------------------|
+| `#[AsCallHierarchyContributor]` | `lsp.callHierarchyContributors` |
 | `#[AsCodeActionContributor]` | `lsp.codeActionContributors`   |
 | `#[AsCompletionContributor]` | `lsp.completionContributors`   |
 | `#[AsDeclarationContributor]`| `lsp.declarationContributors`  |

@@ -15,6 +15,7 @@ the others.
 
 | Type | Interface | Attribute | DI Tag |
 |------|-----------|-----------|--------|
+| Call hierarchy | `CallHierarchyContributor` | `#[AsCallHierarchyContributor]` | `lsp.callHierarchyContributors` |
 | Code action | `CodeActionContributor` | `#[AsCodeActionContributor]` | `lsp.codeActionContributors` |
 | Code completion | `CompletionContributor` | `#[AsCompletionContributor]` | `lsp.completionContributors` |
 | Go to declaration | `DeclarationContributor` | `#[AsDeclarationContributor]` | `lsp.declarationContributors` |
